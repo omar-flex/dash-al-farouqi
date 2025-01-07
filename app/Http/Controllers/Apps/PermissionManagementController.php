@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Apps;
 
-use App\DataTables\PermissionsDataTable;
+use App\DataTables\Auth\PermissionsDataTable;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

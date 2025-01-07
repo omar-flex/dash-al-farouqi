@@ -16,14 +16,13 @@ class RolesPermissionsSeeder extends Seeder
     {
         $roles = [
             'administrator',
-            'customs-supervisor',
-            'warehouse-manager',
-            'senior-management',
+            'Customs Supervisor',
+            'Warehouse Manager',
+            'Senior Management',
         ];
 
-
-        foreach ($roles as $role ) {
-            Role::create(['name' => $role]);
+        foreach ($roles as $role) {
+            Role::updateOrCreate(['name' => $role]);
         }
 
         User::find(1)->assignRole('administrator');

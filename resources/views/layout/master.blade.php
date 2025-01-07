@@ -38,6 +38,8 @@
     @endforeach
     <!--end::Custom Stylesheets-->
 
+    <link rel="stylesheet" href="{{asset('assets/plugins/custom/font-awesome/css/all.min.css')}}">
+    @include('layout.modal')
     @livewireStyles
 </head>
 <!--end::Head-->
@@ -69,6 +71,8 @@
 <!--end::Custom Javascript-->
 @stack('scripts')
 <!--end::Javascript-->
+
+<link rel="stylesheet" href="{{asset('assets/plugins/custom/font-awesome/js/pro.min.js')}}">
 
 <script>
     document.addEventListener('livewire:init', () => {

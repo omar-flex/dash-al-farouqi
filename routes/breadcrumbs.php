@@ -16,52 +16,18 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
-Breadcrumbs::for('contract.hotels.index', function (BreadcrumbTrail $trail) {
+
+Breadcrumbs::for('warehouse-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
-    $trail->push('Hotels', route('contract.hotels'));
+    $trail->push('Warehouse Management', route('warehouse-management.warehouses.index'));
 });
 
-Breadcrumbs::for('contract.hotels.show', function (BreadcrumbTrail $trail, $hotel) {
-    $trail->parent('contract.hotels.index');
-    $trail->push(ucwords($hotel->partner_id->name), route('contract.hotels.show', $hotel->partner_id->id));
+Breadcrumbs::for('warehouse-management.warehouses.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('warehouse-management.index');
+    $trail->push('Warehouses', route('warehouse-management.warehouses.index'));
 });
 
-Breadcrumbs::for('contract.transportations.index', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Transportation', route('contract.transportations'));
-});
-
-Breadcrumbs::for('contract.transportations.show', function (BreadcrumbTrail $trail, $transportation) {
-    $trail->parent('contract.transportations.index');
-    $trail->push(ucwords($transportation?->partner_id?->name), route('contract.transportations.show', $transportation->partner_id->id));
-});
-
-Breadcrumbs::for('contract.restaurants.index', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Restaurant', route('contract.restaurants'));
-});
-
-Breadcrumbs::for('contract.restaurants.show', function (BreadcrumbTrail $trail, $restaurant) {
-    $trail->parent('contract.restaurants.index');
-    $trail->push(ucwords($restaurant?->name), route('contract.restaurants.show', $restaurant->id));
-});
-
-Breadcrumbs::for('contract.guides.index', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Guides', route('contract.guides'));
-});
-
-Breadcrumbs::for('contract.guides.show', function (BreadcrumbTrail $trail, $guide) {
-    $trail->parent('contract.guides.index');
-    $trail->push(ucwords($guide?->name), route('contract.guides.show', $guide->id));
-});
-
-/*Breadcrumbs::for('contract.transportations.show', function (BreadcrumbTrail $trail, $transportation) {
-    $trail->parent('contract.hotels.index');
-    $trail->push(ucwords($transportation?->partner_id?->name), route('contract.transportations.show', $transportation->partner_id->id));
-});*/
-
-/*// Home > Dashboard > User Management
+// Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push('User Management', route('user-management.users.index'));
@@ -95,4 +61,4 @@ Breadcrumbs::for('user-management.roles.show', function (BreadcrumbTrail $trail,
 Breadcrumbs::for('user-management.permissions.index', function (BreadcrumbTrail $trail) {
     $trail->parent('user-management.index');
     $trail->push('Permissions', route('user-management.permissions.index'));
-});*/
+});

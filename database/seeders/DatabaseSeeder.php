@@ -19,15 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersSeeder::class,
             RolesPermissionsSeeder::class,
+            PermissionsSeeder::class,
+            StorageCategoriesSeeder::class
         ]);
-
-        \App\Models\User::factory(20)->create();
-
-        Address::factory(20)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Apps;
 
-use App\DataTables\UsersAssignedRoleDataTable;
+use App\DataTables\Auth\UsersAssignedRoleDataTable;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;

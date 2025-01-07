@@ -9,6 +9,7 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TransportationController;
+use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,16 +29,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/retentionRevenuePerformanceAnalysis', [DashboardController::class, 'retentionRevenuePerformanceAnalysis'])->name('retentionRevenuePerformanceAnalysis');
-
-
-  /*  Route::name('user-management.')->group(function () {
+    Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
         Route::resource('/user-management/permissions', PermissionManagementController::class);
-    });*/
+    });
 
-
+    Route::name('warehouse-management.')
+        ->prefix('warehouse-management/')
+        ->group(function () {
+            Route::resource('warehouses', WarehouseController::class);
+            Route::resource('locations', WarehouseController::class);
+        });
 });
 
 Route::get('/error', function () {
