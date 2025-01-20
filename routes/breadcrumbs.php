@@ -16,7 +16,7 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
-
+//Warehouse Management
 Breadcrumbs::for('warehouse-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push('Warehouse Management', route('warehouse-management.warehouses.index'));
@@ -25,6 +25,27 @@ Breadcrumbs::for('warehouse-management.index', function (BreadcrumbTrail $trail)
 Breadcrumbs::for('warehouse-management.warehouses.index', function (BreadcrumbTrail $trail) {
     $trail->parent('warehouse-management.index');
     $trail->push('Warehouses', route('warehouse-management.warehouses.index'));
+});
+
+Breadcrumbs::for('warehouse-management.locations.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('warehouse-management.index');
+    $trail->push('Locations', route('warehouse-management.locations.index'));
+});
+
+//Operation Management
+Breadcrumbs::for('operation-management.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Operation Management', route('operation-management.enter_requests.index'));
+});
+
+Breadcrumbs::for('operation-management.enter_requests.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('operation-management.index');
+    $trail->push('Enter Requests', route('operation-management.enter_requests.index'));
+});
+
+Breadcrumbs::for('operation-management.enter_requests.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('operation-management.enter_requests.index');
+    $trail->push('Create', route('operation-management.enter_requests.create'));
 });
 
 // Home > Dashboard > User Management

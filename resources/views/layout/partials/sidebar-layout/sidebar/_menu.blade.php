@@ -13,9 +13,36 @@
                     <span class="menu-icon">
                         <i class="fa-sharp-duotone fa-solid fa-chart-network"></i>
                     </span>
-                    <span class="menu-title">Dashboards</span>
+                    <span class="menu-title fs-7">Dashboards</span>
                 </a>
             </div>
+
+            @canany(['list_enter_requests'])
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ request()->routeIs('operation-management.*') ? 'here show' : '' }}">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <i class="fa-sharp-duotone fa-solid fa-cogs fa-lg"></i>
+                    </span>
+                    <span class="menu-title fs-7 ">Operation Management</span>
+                    <span class="menu-arrow"></span>
+                </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        @can('list_enter_requests')
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('operation-management.enter_requests.*') ? 'active' : '' }}"
+                                   href="{{ route('operation-management.enter_requests.index') }}">
+                             <span class="menu-icon">
+                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
+                             </span>
+                                    <span class="menu-title fs-7">Enter Requests</span>
+                                </a>
+                            </div>
+                        @endcanany
+                    </div>
+
+                </div>
+            @endcan
 
             @canany(['list_warehouses','list_locations'])
                 <div data-kt-menu-trigger="click"
@@ -24,7 +51,7 @@
                     <span class="menu-icon">
                         <i class="fa-sharp-duotone fa-solid fa-warehouse fa-lg"></i>
                     </span>
-                    <span class="menu-title">WH Management</span>
+                    <span class="menu-title fs-7">Warehouse Management</span>
                     <span class="menu-arrow"></span>
                 </span>
                     <div class="menu-sub menu-sub-accordion">
@@ -35,7 +62,7 @@
                              <span class="menu-icon">
                                      <i class="fa-sharp-duotone fa-solid fa-warehouse-full"></i>
                              </span>
-                                    <span class="menu-title">Warehouses</span>
+                                    <span class="menu-title fs-7">Warehouses</span>
                                 </a>
                             </div>
                         @endcanany
@@ -46,7 +73,7 @@
                              <span class="menu-icon">
                                  <i class="fa-sharp-duotone fa-solid fa-chart-tree-map"></i>
                              </span>
-                                    <span class="menu-title">Locations</span>
+                                    <span class="menu-title fs-7">Locations</span>
                                 </a>
                             </div>
                         @endcanany
@@ -62,7 +89,7 @@
                     <span class="menu-icon">
                        <i class="fa-sharp-duotone fa-solid fa-users-gear fa-lg"></i>
                     </span>
-                    <span class="menu-title">User Management</span>
+                    <span class="menu-title fs-7">User Management</span>
                     <span class="menu-arrow"></span>
                 </span>
                 <div class="menu-sub menu-sub-accordion">
@@ -72,7 +99,7 @@
                              <span class="menu-icon">
                                       <i class="fa-sharp-duotone fa-solid fa-users"></i>
                              </span>
-                            <span class="menu-title">Users</span>
+                            <span class="menu-title fs-7">Users</span>
                         </a>
                     </div>
                     <div class="menu-item">
@@ -81,7 +108,7 @@
                             <span class="menu-icon">
                               <i class="fa-sharp-duotone fa-solid fa-shield-check"></i>
                              </span>
-                            <span class="menu-title">Roles</span>
+                            <span class="menu-title fs-7">Roles</span>
                         </a>
                     </div>
                     <div class="menu-item">
@@ -90,7 +117,7 @@
                             <span class="menu-icon">
                               <i class="fa-sharp-duotone fa-solid fa-key-skeleton-left-right"></i>
                             </span>
-                            <span class="menu-title">Permissions</span>
+                            <span class="menu-title fs-7">Permissions</span>
                         </a>
                     </div>
                 </div>

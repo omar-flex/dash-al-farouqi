@@ -1,38 +1,40 @@
-@if(isset($warehouse))
-    <form action="{{ route('warehouse-management.warehouses.update', $warehouse) }}" id="{{$payload->formId}}"
+@if(isset($location))
+    <form action="{{ route('warehouse-management.locations.update', $location) }}" id="{{$payload->formId}}"
           method="POST"
           enctype="multipart/form-data">
         @method('PUT')
         @else
-            <form action="{{ route('warehouse-management.warehouses.store') }}" method="POST"
+            <form action="{{ route('warehouse-management.locations.store') }}" method="POST"
                   id="{{$payload->formId}}"
                   enctype="multipart/form-data">
                 @endif
                 @csrf
                 <div class="row">
                     <div class="col-md-4 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Warehouse Name</label>
-                        <input type="text" name="warehouse_name" class="form-control form-control-solid-bg mb-2"
+                        <label class="required fw-semibold fs-6 mb-2">Location Name</label>
+                        <input type="text" name="location_name" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
-                               placeholder="Warehouse Name"
-                               @isset($warehouse) value="{{ $warehouse->name }}" @endisset>
+                               placeholder="Location Name"
+                               @isset($location) value="{{ $location->name }}" @endisset>
                     </div>
                     <div class="col-md-4 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Warehouse Code</label>
+                        <label class="required fw-semibold fs-6 mb-2">Location Code</label>
                         <input type="text" name="code" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Warehouse Code"
-                               @isset($warehouse) value="{{ $warehouse->code }}" @endisset>
+                               @isset($location) value="{{ $location->code }}" @endisset>
                     </div>
                     <div class="col-md-4 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Status</label>
-                        <select name="is_active" class="form-select form-select-solid mb-2" id="statuses"
-                                data-control="select2" data-placeholder="Select an Status">
-                            <option value="1" @if(isset($warehouse) && $warehouse->is_active) selected @endif> Active
-                            </option>
-                            <option value="0" @if(isset($warehouse) && !$warehouse->is_active) selected @endif>
-                                Inactive
-                            </option>
+                        <label class="required fw-semibold fs-6 mb-2">Warehouse</label>
+                        <select name="warehouse_id" class="form-select form-select-solid mb-2" id="warehouses"
+                                data-control="select2" data-placeholder="Select an Warehouse">
+                            <option></option>
+                            @foreach($payload->warehouses as $warehouse )
+                                <option value="{{$warehouse->id}}"
+                                        @if(isset($location) && $location->warehouse_id == $warehouse->id) selected @endif>
+                                    {{$warehouse->name .' - ' . $warehouse->code}}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -47,7 +49,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#statuses').select2({
+            $('#warehouses').select2({
                 dropdownParent: $('#modal'),
             });
         });

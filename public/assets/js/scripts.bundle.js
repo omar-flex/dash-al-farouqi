@@ -102,7 +102,6 @@ function editModal(editClass, route, title = 'Edit', form_id, table_id, paramete
                             if (data.status === 422) {
                                 $("#btn-submit").prop("disabled", false)
                                 $.each(data.errors, function (index, value) {
-                                    console.log(index)
                                     var error = '<span class="text-danger span_error"> ' + value + '</span>'
                                     $('[name="' + index + '"]').parent().last().append(error)
                                 });

@@ -4,11 +4,14 @@ use App\Http\Controllers\Apps\PermissionManagementController;
 use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GuidesController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OperationManagement\EnterRequestController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TransportationController;
+use App\Http\Controllers\WarehouseManagement\LocationController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,18 +32,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::name('user-management.')->group(function () {
-        Route::resource('/user-management/users', UserManagementController::class);
-        Route::resource('/user-management/roles', RoleManagementController::class);
-        Route::resource('/user-management/permissions', PermissionManagementController::class);
-    });
+    Route::resource('customers', CustomerController::class);
 
     Route::name('warehouse-management.')
         ->prefix('warehouse-management/')
         ->group(function () {
             Route::resource('warehouses', WarehouseController::class);
-            Route::resource('locations', WarehouseController::class);
+            Route::resource('locations', LocationController::class);
+            Route::get('/locations-line/{id}/edit', [LocationController::class, 'locationsLine'])->name('line-locations');
+            Route::post('/locations-line/{id}/update', [LocationController::class, 'locationsLineUpdate'])->name('line-locations-update');
         });
+
+    Route::name('operation-management.')
+        ->prefix('operation-management/')
+        ->group(function () {
+            Route::resource('enter_requests', EnterRequestController::class);
+        });
+
+    Route::name('user-management.')->group(function () {
+        Route::resource('/user-management/users', UserManagementController::class);
+        Route::resource('/user-management/roles', RoleManagementController::class);
+        Route::resource('/user-management/permissions', PermissionManagementController::class);
+    });
 });
 
 Route::get('/error', function () {

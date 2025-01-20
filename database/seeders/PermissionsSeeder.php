@@ -17,14 +17,17 @@ class PermissionsSeeder extends Seeder
 
         $permissions = [
             'warehouses',
-            'locations'
+            'locations',
+            'enter_requests',
+            'customers'
         ];
 
         $cans = ['list_', 'add_', 'edit_', 'delete_'];
 
         foreach ($permissions as $permission) {
             foreach ($cans as $can) {
-                Permission::updateOrcreate(['name' => $can . $permission]);
+                $permission_new = Permission::updateOrcreate(['name' => $can . $permission]);
+                Role::findByName('administrator')->givePermissionTo($permission_new);
             }
         }
     }

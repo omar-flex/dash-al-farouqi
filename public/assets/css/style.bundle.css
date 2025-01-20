@@ -48492,7 +48492,7 @@ body[data-kt-sticky-landing-header=on] {
 }
 
 [data-bs-theme=light] {
-  --bs-app-bg-color: #fcfcfc;
+  --bs-app-bg-color: #f0f4f3;
   --bs-app-blank-bg-color: #fcfcfc;
   --bs-app-header-base-bg-color: transparent;
   --bs-app-header-base-box-shadow: none;
