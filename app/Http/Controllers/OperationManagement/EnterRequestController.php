@@ -6,13 +6,16 @@ namespace App\Http\Controllers\OperationManagement;
 use App\DataTables\OperationManagement\EnterRequestsDataTable;
 use App\DataTables\WarehouseManagement\WarehousesDataTable;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
 use App\Http\Requests\WarehouseManagement\WarehouseRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\EnterRequest;
+use App\Models\EnterRequestCar;
 use App\Models\EnterRequestStatus;
 use App\Models\Warehouse;
+use Illuminate\Support\Arr;
 
 
 class EnterRequestController extends Controller
@@ -43,6 +46,16 @@ class EnterRequestController extends Controller
         ];
 
         return $dataTable->render('pages.apps.operation-management.enter-requests.list', compact('payload'));
+    }
+
+    public function show(EnterRequest $enterRequest)
+    {
+        $payload = (object)[
+            'title' => 'Enter Request',
+            'resource' => $this->resource,
+        ];
+
+        return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'payload'));
     }
 
     public function create()
@@ -138,12 +151,30 @@ class EnterRequestController extends Controller
         return response()->json(['message' => $message ?? null, 'enter_request_id' => $enterRequest->id, 'status' => 200]);
     }
 
-    public function destroy(Warehouse $warehouse)
+    public function destroy(EnterRequest $enterRequest)
     {
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
 
-        $warehouse->delete();
+        $enterRequest->delete();
+    }
+
+    public function cars($enter_request_id, CarsRequest $request)
+    {
+        $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
+
+        foreach ($request->numbers as $index => $number) {
+            EnterRequestCar::create([
+                'number' => $number,
+                'seal_number' => Arr::get($request->seal_numbers, $index),
+                'is_status' => Arr::get($request->statuses, $index),
+                'enter_request_id' => $enter_request_id,
+            ]);
+        }
+
+        $cares_list = view('pages.apps.operation-management.enter-requests.sections._cares-list', compact('enterRequest'))->render();
+
+        return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
     }
 
 }

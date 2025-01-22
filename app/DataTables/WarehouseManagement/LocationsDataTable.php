@@ -3,6 +3,7 @@
 namespace App\DataTables\WarehouseManagement;
 
 
+use App\Actions\GetThemeType;
 use App\Models\WarehouseLocation;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
@@ -23,6 +24,15 @@ class LocationsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->rawColumns(['wh_name', 'code'])
+            ->editColumn('code', content: function (WarehouseLocation $model) {
+                $class = app(GetThemeType::class)->handle('bg-?', $model->code);
+                return '<div class="badge text-white ' . $class . ' fw-bold">' . $model->code . '</div>';
+            })
+            ->editColumn('wh_name', content: function (WarehouseLocation $model) {
+                $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->wh_name);
+                return '<div class="badge ' . $class . ' fw-bold">' . $model->wh_name . '</div>';
+            })
             ->editColumn('total_capacity', function (WarehouseLocation $model) {
                 return $model->total_capacity . ' cpm';
             })
@@ -45,12 +55,12 @@ class LocationsDataTable extends DataTable
 
 
         return $model->select("warehouse_locations.*",
-            DB::raw("CONCAT(warehouse_locations.name, ' - ', warehouse_locations.code) AS wh_name"),
+            DB::raw("CONCAT(warehouses.name, ' - ', warehouses.code) AS wh_name"),
             DB::raw('COALESCE(capacity_sums.total_capacity, 0) as total_capacity'))
             ->leftJoin('warehouses', 'warehouses.id', '=', 'warehouse_locations.warehouse_id')
             ->leftJoinSub($capacitySubquery, 'capacity_sums', function ($join) {
                 $join->on('capacity_sums.location_id', '=', 'warehouse_locations.id');
-            })
+            })->withCount('Lines')
             ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
             })->when(request('warehouse_id'), function ($q) {
@@ -84,6 +94,7 @@ class LocationsDataTable extends DataTable
             Column::make('name')->title('Name')->addClass('text-center'),
             Column::make('code')->title('Code')->addClass('text-center'),
             Column::make('total_capacity')->title('Total Capacity')->addClass('text-center'),
+            Column::make('lines_count')->searchable(false)->orderable(false)->addClass('text-center'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->prefix('operation-management/')
         ->group(function () {
             Route::resource('enter_requests', EnterRequestController::class);
+            Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
         });
 
     Route::name('user-management.')->group(function () {

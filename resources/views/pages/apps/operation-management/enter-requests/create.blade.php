@@ -189,7 +189,7 @@
 
                             <div class="col-md-12 form-group">
                                 <input type="submit" class="btn btn-light-success btn-sm float-end mx-2"
-                                       value="Confirming"
+                                       value="Submitted"
                                        id="btn-submit">
                                 <input type="submit" class="btn btn-light-warning btn-sm float-end"
                                        value="Save as Draft"

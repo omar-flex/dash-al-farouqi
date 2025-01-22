@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\EnterRequest;
 use App\Models\User;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
@@ -47,6 +48,12 @@ Breadcrumbs::for('operation-management.enter_requests.create', function (Breadcr
     $trail->parent('operation-management.enter_requests.index');
     $trail->push('Create', route('operation-management.enter_requests.create'));
 });
+
+Breadcrumbs::for('operation-management.enter_requests.show', function (BreadcrumbTrail $trail, EnterRequest $enterRequest) {
+    $trail->parent('operation-management.enter_requests.index');
+    $trail->push($enterRequest->bound_number, route('operation-management.enter_requests.show', $enterRequest));
+});
+
 
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {

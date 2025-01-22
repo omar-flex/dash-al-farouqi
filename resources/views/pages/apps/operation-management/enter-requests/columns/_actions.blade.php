@@ -7,7 +7,7 @@
     @endcan
     @if($model->status_id == \App\Models\EnterRequestStatus::DRAFT)
         @can('delete_'.$resource)
-            <a class="btn btn-sm btn-light btn-active-light-danger remove_btn" id="{{$model->id}}" title="Delete"
+            <a class="btn btn-sm btn-light btn-active-light-danger  remove_btn" id="{{$model->id}}" title="Delete"
                aria-name="{{$name ?? 'NA'}}">
                 <i class="fa-sharp-duotone fa-solid fa-trash-alt fa-xl"></i>
             </a>

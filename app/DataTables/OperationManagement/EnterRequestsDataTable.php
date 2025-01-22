@@ -3,6 +3,7 @@
 namespace App\DataTables\OperationManagement;
 
 
+use App\Actions\GetThemeType;
 use App\Models\EnterRequest;
 use App\Models\WarehouseLocation;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -24,7 +25,14 @@ class EnterRequestsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', function (EnterRequest $model) {
+            ->rawColumns(['status_name', 'bound_number'])
+            ->editColumn('bound_number', content: function (EnterRequest $model) {
+                return '<a href="' . route('operation-management.enter_requests.show', $model->id) . '">' . $model->bound_number . '</a>';
+            })
+            ->editColumn('status_name', content: function (EnterRequest $model) {
+                $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
+                return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
+            })->addColumn('action', function (EnterRequest $model) {
                 $resource = 'locations';
                 $name = $model->bound_number;
                 return view('pages.apps.operation-management.enter-requests.columns._actions', compact('model', 'resource', 'name'));
@@ -67,11 +75,12 @@ class EnterRequestsDataTable extends DataTable
     {
         return [
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
-            Column::make('bound_number')->title('Bound Number')->addClass('text-center'),
+            Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
             Column::make('customs_entry_center')->title('Custom Entry Center')->addClass('text-center'),
             Column::make('gross_weight')->title('Gross weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
+            Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

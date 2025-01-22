@@ -3,11 +3,15 @@
 namespace App\DataTables\WarehouseManagement;
 
 
+use App\Actions\GetThemeType;
+use App\Models\LocationLine;
 use App\Models\Partner;
 use App\Models\Warehouse;
+use App\Models\WarehouseLocation;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
@@ -23,10 +27,17 @@ class WarehousesDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['is_active'])
+            ->rawColumns(['is_active', 'code'])
+            ->editColumn('code', content: function (Warehouse $model) {
+                return '<div class="badge badge-light-dark fw-bold">' . $model->code . '</div>';
+            })
             ->editColumn('is_active', function (Warehouse $model) {
                 $class = $model->is_active ? 'badge-light-primary' : 'badge-light-danger';
                 return sprintf('<div class="badge  ' . $class . ' fw-bold">%s</div>', $model->is_active ? 'Active' : 'Inactive');
+            })->addColumn('total_capacity', function (Warehouse $model) {
+                $locations_ids = $model->Locations()->pluck('id')->toArray();
+                $total_capacity = LocationLine::whereIn('location_id', $locations_ids)->sum('capacity');
+                return $total_capacity . ' cpm';
             })
             ->addColumn('action', function (Warehouse $model) {
                 $resource = 'warehouses';
@@ -41,10 +52,9 @@ class WarehousesDataTable extends DataTable
      */
     public function query(Warehouse $model): QueryBuilder
     {
-        return $model->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
+        return $model->withCount('Locations')->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
             return $q->latest();
-        })
-            ->newQuery();
+        })->newQuery();
     }
 
     /**
@@ -71,7 +81,9 @@ class WarehousesDataTable extends DataTable
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
             Column::make('name'),
             Column::make('code'),
-            Column::make('is_active')->title('Status')->addClass('text-center'),
+            Column::make('locations_count')->searchable(false)->orderable(false)->addClass('text-center'),
+            Column::make('total_capacity')->searchable(false)->orderable(false)->addClass('text-center'),
+            //Column::make('is_active')->title('Status')->addClass('text-center'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)
