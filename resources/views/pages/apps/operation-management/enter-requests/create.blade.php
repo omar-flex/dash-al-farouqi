@@ -173,9 +173,7 @@
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest)
-                                {{ $enterRequest->general_description_goods }}
-                            @endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
                     </div>
                     @if(!isset($enterRequest))
                         <div class="col-md-8 mb-7">
