@@ -99,6 +99,25 @@
                 <div class="fw-bold mt-5"> Description</div>
                 <div class="text-gray-600">{{$enterRequest->general_description_goods}}</div>
 
+                <div class="fw-bold mt-5"> Files</div>
+
+                @foreach($enterRequest->files as $file)
+                    <div class="d-flex align-items-center mb-7">
+                        <div class="symbol symbol-30px me-5">
+                            <img alt="Icon" src="{{$file->getIcon()}}">
+                        </div>
+                        <div class="fw-semibold">
+                            <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename" target="_blank"
+                               href="{{$file->getUrl()}}" id="filename_{{$file->id}}">{{$file->filename}}</a>
+                        </div>
+
+                        {{--<a class="btn btn-clean btn-sm btn-icon btn-icon-danger btn-active-light-danger ms-auto file_remove_btn"
+                           id="{{$file->id}}" title="File Delete">
+                            <i class="fas fa-trash-alt fa-xl"></i>
+                        </a>--}}
+                    </div>
+                @endforeach
+
             </div>
         </div>
     </div>

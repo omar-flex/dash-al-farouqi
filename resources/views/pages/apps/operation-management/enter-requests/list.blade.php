@@ -21,12 +21,19 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end gap-3" data-kt-user-table-toolbar="base">
                     @can('add_'.$payload->resource)
-                        <a class="btn btn-light-primary btn-sm"
-                           href="{{route('operation-management.'.$payload->resource.'.create')}}">
+                        <a class="btn btn-light-primary btn-sm" id="add">
                             {!! getIcon('plus', 'fs-2', '', 'i') !!}
                             Add {{$payload->sub_title}}
                         </a>
                     @endcan
+
+                    {{-- @can('add_'.$payload->resource)
+                         <a class="btn btn-light-primary btn-sm"
+                            href="{{route('operation-management.'.$payload->resource.'.create')}}">
+                             {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                             Add {{$payload->sub_title}}
+                         </a>
+                     @endcan--}}
                 </div>
             </div>
         </div>
@@ -42,9 +49,37 @@
     @push('scripts')
         {{ $dataTable->scripts() }}
         <script>
-            @can('edit_'.$payload->resource)
-            editModal('edit_btn', 'operation-management/{{$payload->resource}}', 'Edit {{$payload->title}}', '{{$payload->formId}}', '{{$payload->tableId}}')
+
+            @can('add_'.$payload->resource)
+            $('#add').on('click', function () {
+                $.ajax({
+                    url: '{{ route('operation-management.'.$payload->resource.'.create')}}',
+                    method: 'get',
+                    success: function (data) {
+                        $('#modal-body').html(data);
+                        $('#modal-title').text('Add {{$payload->title}}');
+                        $('#modal').modal('show');
+                    }
+                });
+            });
             @endcan
+
+            @can('edit_'.$payload->resource)
+            $(document).on('click', '.edit_btn', function () {
+                let id = $(this).attr('id');
+                let url = '/operation-management/{{$payload->resource}}/' + id + '/edit'
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    success: function (data) {
+                        $('#modal-body').html(data);
+                        $('#modal-title').text('Edit {{$payload->title}}');
+                        $('#modal').modal('show');
+                    }
+                });
+            });
+            @endcan
+
             @can('delete_'.$payload->resource)
             remove('remove_btn', 'operation-management/{{$payload->resource}}', '{{$payload->tableId}}', '{{ csrf_token() }}')
             @endcan

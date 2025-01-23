@@ -28,4 +28,9 @@ class EnterRequest extends Model
         return $this->hasMany(EnterRequestCar::class);
     }
 
+    public function Files()
+    {
+        return $this->hasMany(ManifestFile::class, 'manifest_id');
+    }
+
 }

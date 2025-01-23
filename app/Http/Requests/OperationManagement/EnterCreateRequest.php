@@ -12,7 +12,7 @@ class EnterCreateRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'customer_id' => 'required|exists:customers,id',
             'manifest_bound_number' => 'required|numeric',
             'manifest_type_number' => 'required|numeric',
@@ -20,7 +20,6 @@ class EnterCreateRequest extends FormRequest
             'manifest_year' => 'required|numeric',
             'quantity_packages' => 'required|numeric',
             'manifest_date' => 'required|date_format:Y-m-d',
-            'organize_center' => 'required|string|max:255',
             'quantity_car' => 'required|string|max:255',
             'general_description_goods' => 'required',
             'total_cost' => 'required',
@@ -28,6 +27,12 @@ class EnterCreateRequest extends FormRequest
             'net_weight' => 'required|numeric',
             'cpm' => 'required|numeric',
             'country_id' => 'nullable|exists:countries,id',
+            'files' => 'required|max:10240',
         ];
+
+        if ($this->routeIs('operation-management.enter_requests.update')) {
+            $rules["files"] = "nullable";
+        }
+        return $rules;
     }
 }

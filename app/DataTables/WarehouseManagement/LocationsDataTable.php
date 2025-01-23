@@ -90,9 +90,10 @@ class LocationsDataTable extends DataTable
     {
         return [
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
-            Column::make('wh_name')->title('Warehouse Name')->addClass('text-center'),
             Column::make('name')->title('Name')->addClass('text-center'),
             Column::make('code')->title('Code')->addClass('text-center'),
+            Column::make('position')->addClass('text-center'),
+            Column::make('wh_name')->title('Warehouse')->addClass('text-center'),
             Column::make('total_capacity')->title('Total Capacity')->addClass('text-center'),
             Column::make('lines_count')->searchable(false)->orderable(false)->addClass('text-center'),
             Column::computed('action')

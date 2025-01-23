@@ -77,7 +77,6 @@ class EnterRequestsDataTable extends DataTable
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
             Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
-            Column::make('customs_entry_center')->title('Custom Entry Center')->addClass('text-center'),
             Column::make('gross_weight')->title('Gross weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),

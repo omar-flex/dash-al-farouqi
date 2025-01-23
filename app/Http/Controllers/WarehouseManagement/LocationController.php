@@ -61,6 +61,7 @@ use Illuminate\Support\Arr;
         $data['name'] = $request->location_name;
         $data['code'] = $request->code;
         $data['warehouse_id'] = $request->warehouse_id;
+        $data['position'] = $request->position;
 
         WarehouseLocation::create($data);
 
@@ -84,7 +85,8 @@ use Illuminate\Support\Arr;
 
         $data['name'] = $request->location_name;
         $data['code'] = $request->code;
-        $data['is_active'] = $request->is_active ? 1 : 0;
+        $data['warehouse_id'] = $request->warehouse_id;
+        $data['position'] = $request->position;
 
         $location->update($data);
 

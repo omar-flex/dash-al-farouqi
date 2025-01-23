@@ -9,7 +9,8 @@
 
                     <label class="fw-semibold fs-6 mx-2"><span class="text-primary">{{$location->warehouse->name}}</span>
                         ( <strong>{{$location->warehouse->code}}</strong> )
-                        - <span class="text-primary">{{$location->name}}</span> ( <strong>{{$location->code}} </strong> )
+                        - <span class="text-primary">{{$location->name}}</span> ( <strong>{{$location->code}} </strong> ) -
+                        - <span class="text-primary">Position</span> ( <strong>{{$location->position}} </strong> )
                     </label>
 
                     <hr class="text-gray-200">
@@ -86,7 +87,7 @@
                                             <option></option>
                                             @foreach($payload->categories as $category)
                                                 <option value="{{ $category->id }}"
-                                                        @if($line->category_id && $category->id ) selected @endif >
+                                                        @if($line->category_id == $category->id ) selected @endif >
                                                     {{ $category->name}}
                                                 </option>
                                             @endforeach

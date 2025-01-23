@@ -10,21 +10,34 @@
                 @endif
                 @csrf
                 <div class="row">
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Location Name</label>
                         <input type="text" name="location_name" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Location Name"
                                @isset($location) value="{{ $location->name }}" @endisset>
                     </div>
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Location Code</label>
                         <input type="text" name="code" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Warehouse Code"
                                @isset($location) value="{{ $location->code }}" @endisset>
                     </div>
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-6 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Position</label>
+                        <select name="position" class="form-select form-select-solid mb-2" id="positions"
+                                data-control="select2" data-placeholder="Select an Position">
+                            <option></option>
+                            <option value="R" @if(isset($location) && $location->position == 'R') selected @endif>
+                                Right
+                            </option>
+                            <option value="L" @if(isset($location) && !$location->position == 'L') selected @endif>
+                                Left
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Warehouse</label>
                         <select name="warehouse_id" class="form-select form-select-solid mb-2" id="warehouses"
                                 data-control="select2" data-placeholder="Select an Warehouse">
@@ -49,7 +62,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#warehouses').select2({
+            $('#warehouses,#positions').select2({
                 dropdownParent: $('#modal'),
             });
         });

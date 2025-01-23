@@ -40,6 +40,7 @@
 
     <link rel="stylesheet" href="{{asset('assets/plugins/custom/font-awesome/css/all.min.css')}}">
     @include('layout.modal')
+    @include('layout.customer_modal')
     @livewireStyles
 </head>
 <!--end::Head-->

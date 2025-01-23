@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string('customs_entry_center')->nullable();
             $table->integer('manifest_year')->nullable();
             $table->date('manifest_date')->nullable();
-            $table->string('organize_center')->nullable();
             $table->string('quantity_car')->nullable();
             $table->integer('quantity_packages')->nullable();
             $table->text('general_description_goods')->nullable();

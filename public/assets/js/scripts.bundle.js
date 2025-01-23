@@ -183,6 +183,10 @@ function remove(removeClass, url, table_id, csrf_token, table_type = false) {
 $('#btn_model_close').on('click', function () {
     $('#modal-body').empty()
 });
+
+$('#btn_customer_model_close').on('click', function () {
+    $('#customer-modal-body').empty()
+});
 // Init components
 var KTComponents = function () {
     // Public methods

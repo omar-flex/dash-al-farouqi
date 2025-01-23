@@ -4,18 +4,18 @@ namespace App\Http\Controllers\OperationManagement;
 
 
 use App\DataTables\OperationManagement\EnterRequestsDataTable;
-use App\DataTables\WarehouseManagement\WarehousesDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
-use App\Http\Requests\WarehouseManagement\WarehouseRequest;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestCar;
 use App\Models\EnterRequestStatus;
-use App\Models\Warehouse;
+use App\Models\ManifestFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class EnterRequestController extends Controller
@@ -23,7 +23,7 @@ class EnterRequestController extends Controller
 
     public function __construct()
     {
-        $this->formId = 'formPartner';
+        $this->formId = 'enterRequest';
         $this->resource = 'enter_requests';
     }
 
@@ -66,6 +66,7 @@ class EnterRequestController extends Controller
         $payload = (object)[
             'title' => 'Enter Request Create',
             'formId' => $this->formId,
+            'tableId' => 'enter_requests_table',
             'resource' => $this->resource,
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name'])
@@ -81,7 +82,7 @@ class EnterRequestController extends Controller
 
         $data = $request->validated();
 
-        $data['bound_number'] = $request->manifest_year . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
+        $data['bound_number'] = $request->manifest_year . '/' . $request->customs_entry_center . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
 
         if ($request->button_clicked == 'btn-draft') {
             $data['status_id'] = EnterRequestStatus::DRAFT;
@@ -99,9 +100,24 @@ class EnterRequestController extends Controller
             $data['cpm_result'] = $cpm_calculated;
         }
 
-        $enterRequest = EnterRequest::create($data);
+        $enterRequest = EnterRequest::create(Arr::except($data, 'files'));
 
-        return response()->json(['message' => $message, 'enter_request_id' => $enterRequest->id, 'status' => 200]);
+        foreach ($request->file('files') as $file) {
+            $extension = $file->getClientOriginalExtension();
+            $originalFileName = $file->getClientOriginalName();
+            $fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
+            $fileNameToStore = uniqid('') . '.' . $extension;
+            $path = Storage::putFileAs("EnterRequestManifests", $file, $fileNameToStore);
+            ManifestFile::create([
+                'filename' => $fileNameWithoutExt,
+                'path' => $path,
+                'extension' => $extension,
+                'manifest_id' => $enterRequest->id,
+                'user_id' => Auth::id(),
+            ]);
+        }
+
+        return response()->json(['message' => $message, 'status' => 200]);
     }
 
     public function edit(EnterRequest $enterRequest)
@@ -113,6 +129,7 @@ class EnterRequestController extends Controller
             'title' => 'Enter Request Edit',
             'formId' => $this->formId,
             'resource' => $this->resource,
+            'tableId' => 'enter_requests_table',
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name'])
         ];
@@ -127,7 +144,7 @@ class EnterRequestController extends Controller
 
         $data = $request->validated();
 
-        $data['bound_number'] = $request->manifest_year . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
+        $data['bound_number'] = $request->manifest_year . '/' . $request->customs_entry_center . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
 
         if ($request->button_clicked == 'btn-draft') {
             $data['status_id'] = EnterRequestStatus::DRAFT;
