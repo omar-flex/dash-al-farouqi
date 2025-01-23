@@ -15,7 +15,7 @@ class EnterRequestStatusesSeeder extends Seeder
     {
         $statuses = [
             ['id' => 1, 'name' => 'Manifest office Draft'],
-            ['id' => 2, 'name' => 'Manifest office Confirming'],
+            ['id' => 2, 'name' => 'Car Check'],
         ];
 
         DB::table('enter_request_statuses')->insert($statuses);
