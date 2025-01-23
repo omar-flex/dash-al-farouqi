@@ -108,7 +108,7 @@ class EnterRequestController extends Controller
             $originalFileName = $file->getClientOriginalName();
             $fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
             $fileNameToStore = uniqid('') . '.' . $extension;
-            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
+            $path = Storage::putFileAs($file, $fileNameToStore);
             ManifestFile::create([
                 'filename' => $fileNameWithoutExt,
                 'path' => $path,
