@@ -16,6 +16,7 @@ use App\Models\ManifestFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class EnterRequestController extends Controller
@@ -107,7 +108,7 @@ class EnterRequestController extends Controller
             $originalFileName = $file->getClientOriginalName();
             $fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
             $fileNameToStore = uniqid('') . '.' . $extension;
-            $path = Storage::putFileAs("EnterRequestManifests", $file, $fileNameToStore);
+            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
             ManifestFile::create([
                 'filename' => $fileNameWithoutExt,
                 'path' => $path,
