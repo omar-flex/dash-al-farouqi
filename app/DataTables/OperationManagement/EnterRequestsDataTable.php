@@ -5,11 +5,9 @@ namespace App\DataTables\OperationManagement;
 
 use App\Actions\GetThemeType;
 use App\Models\EnterRequest;
-use App\Models\WarehouseLocation;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
@@ -26,6 +24,9 @@ class EnterRequestsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->rawColumns(['status_name', 'bound_number'])
+            ->editColumn('created_at', function (EnterRequest $model) {
+                return $model->created_at->format('d M Y, h:i a');
+            })
             ->editColumn('net_weight', content: function (EnterRequest $model) {
                 return number_format($model->net_weight, '2');
             })
@@ -83,6 +84,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('net_weight')->title('Net weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
+            Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

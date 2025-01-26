@@ -82,9 +82,11 @@
                        </div>--}}
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Quantity of Car</label>
-                        <input type="number" step="any" name="quantity_car" min="0"
+                        <input type="number" step="any" min="0"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Quantity of Car"
+                               @if(isset($enterRequest) && $enterRequest->cars()->count() > 0) disabled
+                               @else name="quantity_car" @endif
                                @isset($enterRequest) value="{{ $enterRequest->quantity_car }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
@@ -173,7 +175,9 @@
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest)
+                                {{ $enterRequest->general_description_goods }}
+                            @endisset</textarea>
                     </div>
                     @if(!isset($enterRequest))
                         <div class="col-md-8 mb-7">
@@ -221,12 +225,28 @@
                     @endif
 
                     <div class="col-md-12 form-group">
-                        <input type="submit" class="btn btn-light-success btn-sm float-end mx-2"
-                               value="Submitted"
-                               id="btn-submit">
-                        <input type="submit" class="btn btn-light-warning btn-sm float-end"
-                               value="Save as Draft"
-                               id="btn-draft">
+
+                        @if(isset($enterRequest))
+                            @if($enterRequest->status_id == \App\Models\EnterRequestStatus::DRAFT)
+                                <input type="submit" class="btn btn-light-warning btn-sm float-end"
+                                       value="Save as Draft"
+                                       id="btn-draft">
+                                <input type="submit" class="btn btn-light-success btn-sm float-end mx-2"
+                                       value="Submitted"
+                                       id="btn-submit">
+                            @else
+                                <input type="submit" class="btn btn-light-success btn-sm float-end mx-2"
+                                       value="Save"
+                                       id="btn-submit">
+                            @endif
+                        @else
+                            <input type="submit" class="btn btn-light-warning btn-sm float-end"
+                                   value="Save as Draft"
+                                   id="btn-draft">
+                            <input type="submit" class="btn btn-light-success btn-sm float-end mx-2"
+                                   value="Submitted"
+                                   id="btn-submit">
+                        @endif
                     </div>
                 </div>
 

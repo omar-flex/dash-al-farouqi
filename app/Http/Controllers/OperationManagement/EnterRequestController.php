@@ -89,7 +89,7 @@ class EnterRequestController extends Controller
             $data['status_id'] = EnterRequestStatus::DRAFT;
             $message = 'Added Draft Successfully';
         } elseif ($request->button_clicked == 'btn-submit') {
-            $data['status_id'] = EnterRequestStatus::CONFIRMING;
+            $data['status_id'] = EnterRequestStatus::CAR_CHECK;
             $message = 'Added Successfully';
         }
 
@@ -147,12 +147,12 @@ class EnterRequestController extends Controller
 
         $data['bound_number'] = $request->manifest_year . '/' . $request->customs_entry_center . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
 
-        if ($request->button_clicked == 'btn-draft') {
-            $data['status_id'] = EnterRequestStatus::DRAFT;
-            $message = 'Update Draft Successfully';
-        } elseif ($request->button_clicked == 'btn-submit') {
-            $data['status_id'] = EnterRequestStatus::CONFIRMING;
-            $message = 'Update Successfully';
+        if ($enterRequest->status_id == EnterRequestStatus::DRAFT) {
+            if ($request->button_clicked == 'btn-draft') {
+                $data['status_id'] = EnterRequestStatus::DRAFT;
+            } elseif ($request->button_clicked == 'btn-submit') {
+                $data['status_id'] = EnterRequestStatus::CAR_CHECK;
+            }
         }
 
         $data['cpm_result'] = $request->cpm;
@@ -164,9 +164,13 @@ class EnterRequestController extends Controller
             $data['cpm_result'] = $cpm_calculated;
         }
 
+        if ($enterRequest->cars()->count() > 0) {
+            $data['quantity_car'] = $enterRequest->quantity_car;
+        }
+
         $enterRequest->update($data);
 
-        return response()->json(['message' => $message ?? null, 'enter_request_id' => $enterRequest->id, 'status' => 200]);
+        return response()->json(['message' => 'Update Successfully', 'enter_request_id' => $enterRequest->id, 'status' => 200]);
     }
 
     public function destroy(EnterRequest $enterRequest)
@@ -195,6 +199,8 @@ class EnterRequestController extends Controller
                 'enter_request_id' => $enter_request_id,
             ]);
         }
+
+        $enterRequest->update(['status_id' => EnterRequestStatus::WH_ENTER_PRODUCT]);
 
         $cares_list = view('pages.apps.operation-management.enter-requests.sections._cares-list', compact('enterRequest'))->render();
 

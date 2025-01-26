@@ -116,7 +116,8 @@
                             toastr.error('Oops,there were an errors...');
                         } else {
                             toastr.success(data.message);
-                            $('#div_cars').empty().append(data.html)
+                            location.reload(true);
+                            //$('#div_cars').empty().append(data.html)
                             $('#btn-submit').addClass('d-none')
                         }
                     },

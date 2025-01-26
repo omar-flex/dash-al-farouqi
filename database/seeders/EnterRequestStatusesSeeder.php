@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\EnterRequestStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -14,12 +15,14 @@ class EnterRequestStatusesSeeder extends Seeder
     public function run(): void
     {
         $statuses = [
-            ['id' => 1, 'name' => 'Manifest office Draft'],
-            ['id' => 2, 'name' => 'Car Check'],
+            ['name' => 'Manifest office Draft'],
+            ['name' => 'Car Check'],
+            ['name' => 'WH Enter Product'],
         ];
 
-        DB::table('enter_request_statuses')->insert($statuses);
-
+        foreach ($statuses as $status) {
+            EnterRequestStatus::updateOrCreate($status);
+        }
 
     }
 }
