@@ -25,9 +25,13 @@
                 <div class="col-md-4 mb-3">
                     <label class="fw-semibold fs-6 mb-2 @if(!$is_cars) required @endif">Seal Numbers</label>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-2 mb-3">
                     <label class="fw-semibold fs-6 mb-2 @if(!$is_cars) required @endif"> Status </label>
                 </div>
+                <div class="col-md-2 mb-3">
+                    <label class="fw-semibold fs-6 mb-2 @if(!$is_cars) required @endif"> Tracking Device </label>
+                </div>
+
             </div>
 
             @csrf
@@ -45,12 +49,20 @@
                                 <input class="form-control form-control-solid-bg form-control-sm"
                                        placeholder="Seal Numbers" type="text" name="seal_numbers[]"/>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-2 mb-2">
                                 <select name="statuses[]"
                                         class="form-select form-select-solid form-select-sm mb-2 statuses"
                                         data-control="select2" data-placeholder="Select an Status">
                                     <option value="1">Valid</option>
                                     <option value="0">Invalid</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <select name="tracking_devices[]"
+                                        class="form-select form-select-solid form-select-sm mb-2 tracking_devices"
+                                        data-control="select2" data-placeholder="Select an Tracking Device">
+                                    <option value="0">False</option>
+                                    <option value="1">True</option>
                                 </select>
                             </div>
                         </div>

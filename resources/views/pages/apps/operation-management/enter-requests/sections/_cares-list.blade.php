@@ -8,8 +8,13 @@
             <input class="form-control form-control-solid-bg form-control-sm"
                    placeholder="Seal Numbers" type="text" disabled value="{{$car->seal_number}}"/>
         </div>
-        <div class="col-md-4 mb-2">
-            <input class="form-control form-control-solid-bg form-control-sm" type="text" disabled value="{{$car->is_status == 1 ? 'Valid' :'Invalid'}}"/>
+        <div class="col-md-2 mb-2">
+            <input class="form-control form-control-solid-bg form-control-sm" type="text" disabled
+                   value="{{$car->is_status == 1 ? 'Valid' :'Invalid'}}"/>
+        </div>
+        <div class="col-md-2 mb-2">
+            <input class="form-control form-control-solid-bg form-control-sm" type="text" disabled
+                   value="{{$car->is_tracking_device == 1 ? 'True' : 'False'}}"/>
         </div>
     </div>
 @endforeach

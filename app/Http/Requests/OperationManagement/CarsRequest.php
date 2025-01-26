@@ -19,8 +19,11 @@ class CarsRequest extends FormRequest
             'seal_numbers' => 'required|array|min:1',
             'seal_numbers.*' => 'required|string|distinct',
 
-            'statuses' => 'required|array|min:1',
-            'statuses.*' => 'required|in:1,2',
+            'statuses' => 'required|nullable|array|min:1',
+            'statuses.*' => 'required|nullable',
+
+            'tracking_devices' => 'nullable|sometimes|array|min:1',
+            'tracking_devices.*' => 'nullable|sometimes',
 
         ];
 

@@ -191,6 +191,7 @@ class EnterRequestController extends Controller
                 'number' => $number,
                 'seal_number' => Arr::get($request->seal_numbers, $index),
                 'is_status' => Arr::get($request->statuses, $index),
+                'is_tracking_device' => Arr::get($request->tracking_devices, $index),
                 'enter_request_id' => $enter_request_id,
             ]);
         }
