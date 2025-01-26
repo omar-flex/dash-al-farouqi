@@ -46,6 +46,14 @@
                                @isset($customer) value="{{ $customer->national_number }}" @endisset>
                     </div>
 
+                    <div class="col-md-4 mb-7">
+                        <label class=" fw-semibold fs-6 mb-2">  Tax Number </label>
+                        <input type="text" name="tax_number" class="form-control form-control-solid-bg mb-2"
+                               autocomplete="off"
+                               placeholder="Tax Number"
+                               @isset($customer) value="{{ $customer->tax_number }}" @endisset>
+                    </div>
+
 
                 </div>
 

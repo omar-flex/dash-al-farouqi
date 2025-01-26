@@ -23,5 +23,11 @@ class UsersSeeder extends Seeder
                 'email_verified_at' => now(),
             ]);
 
+        User::updateOrCreate([
+            'name' => 'Data Entry',
+            'email' => 'data-entry@gmail.com)'],
+            ['password' => Hash::make('data-entry'),
+                'email_verified_at' => now(),
+            ]);
     }
 }

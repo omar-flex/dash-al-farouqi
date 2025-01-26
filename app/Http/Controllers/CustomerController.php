@@ -45,7 +45,7 @@ class CustomerController extends Controller
         if (!auth()->user()->can('add_' . $this->resource))
             abort(403);
 
-        $data = $request->only('email', 'company_name', 'phone', 'national_number');
+        $data = $request->only('email', 'company_name', 'phone', 'national_number', 'tax_number');
 
         $data['name'] = $request->customer_name;
 

@@ -1,8 +1,9 @@
 @php use App\Actions\GetThemeType; @endphp
 <div class="card mb-5 mb-xl-8">
     <div class="card-body">
-        <div class="d-flex flex-center flex-column py-3">
-            <span class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"> {{$enterRequest?->Customer?->name}} - {{$enterRequest->bound_number}}   </span>
+        <div class="d-flex flex-center flex-column py-3 text-center">
+            <span class="fs-3 text-gray-800 fw-bold mb-3"> {{$enterRequest?->Customer?->name}}  </span>
+            <span class="fs-3 text-gray-800 fw-bold mb-3">{{$enterRequest->bound_number}} </span>
             <div class="mb-4">
                 @php
                     $class = app(GetThemeType::class)->handle('badge-light-?', $enterRequest->Status?->name);
@@ -55,11 +56,11 @@
                     <span class="mx-1 text-gray-600">{{$enterRequest->manifest_date}}</span>
                 </div>
 
-                <div class="mt-5">
+                {{--<div class="mt-5">
                     <span class="fw-bold">Organize Center:</span>
                     <span
                         class="mx-1 text-gray-600 text-capitalize">{{$enterRequest->organize_center}}</span>
-                </div>
+                </div>--}}
 
                 <div class="mt-5">
                     <span class="fw-bold"> Quantity of Car:</span>
