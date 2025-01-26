@@ -31,9 +31,12 @@ class EnterCreateRequest extends FormRequest
         ];
 
         if ($this->routeIs('operation-management.enter_requests.update')) {
-            $rules["files"] = "nullable";
-            if ($this?->enter_request?->cars()?->count() > 0)
+
+            if ($this?->enter_request?->cars()?->count() > 0) {
                 $rules["quantity_car"] = 'nullable';
+                $rules["files"] = "nullable";
+            }
+
 
         }
         return $rules;

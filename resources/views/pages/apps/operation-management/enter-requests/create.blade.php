@@ -175,54 +175,51 @@
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest)
-                                {{ $enterRequest->general_description_goods }}
-                            @endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
                     </div>
-                    @if(!isset($enterRequest))
-                        <div class="col-md-8 mb-7">
-                            <label class="fw-semibold fs-6 mb-2 required">Attached</label>
-                            <div class="fv-row mb-2">
-                                <input type="hidden" name="files">
-                                <div class="dropzone" id="dropzone">
-                                    <div class="dz-message needsclick">
-                                        <i class="ki-duotone ki-file-up text-primary fs-3x">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>
-                                        <div class="ms-4">
-                                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">
-                                                Drop files here or click to upload.
-                                            </h3>
-                                            <span class="fs-7 fw-semi bold text-gray-500">Upload files</span
-                                            >
-                                        </div>
+
+                    <div class="col-md-8 mb-7">
+                        <label class="fw-semibold fs-6 mb-2 required">Attached</label>
+                        @if(isset($enterRequest))
+                            @foreach($enterRequest->files as $file)
+                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2" id="file_{{$file->id}}">
+                                    <div class="symbol symbol-30px me-5">
+                                        <img alt="Icon" src="{{$file->getIcon()}}">
+                                    </div>
+                                    <div class="fw-semibold">
+                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename" target="_blank"
+                                           href="{{$file->getUrl()}}" id="filename_{{$file->id}}"
+                                           title="{{$file->filename}}">{{\Illuminate\Support\Str::limit($file->filename,20)}}</a>
+                                    </div>
+
+                                    <a class="btn btn-clean btn-sm btn-icon btn-icon-danger btn-active-light-danger ms-auto file_remove_btn"
+                                       id="{{$file->id}}" title="File Delete">
+                                        <i class="fas fa-trash-alt fa-xl"></i>
+                                    </a>
+                                </div>
+                            @endforeach
+                        @endif
+                        <div class="fv-row mb-2">
+                            <input type="hidden" name="files">
+                            <div class="dropzone" id="dropzone">
+                                <div class="dz-message needsclick">
+                                    <i class="ki-duotone ki-file-up text-primary fs-3x">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    <div class="ms-4">
+                                        <h3 class="fs-5 fw-bold text-gray-900 mb-1">
+                                            Drop files here or click to upload.
+                                        </h3>
+                                        <span class="fs-7 fw-semi bold text-gray-500">Upload files</span
+                                        >
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-muted fs-7">Set Manifest.</div>
-
                         </div>
-                    @else
-                        <label class="fw-semibold fs-6 mb-2">Attached</label>
-                        @foreach($enterRequest->files as $file)
-                            <div class="d-flex align-items-center col-md-3 mb-7">
-                                <div class="symbol symbol-30px me-5">
-                                    <img alt="Icon" src="{{$file->getIcon()}}">
-                                </div>
-                                <div class="fw-semibold">
-                                    <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename" target="_blank"
-                                       href="{{$file->getUrl()}}" id="filename_{{$file->id}}">{{$file->filename}}</a>
-                                </div>
+                        <div class="text-muted fs-7">Set Manifest.</div>
 
-                                {{--<a class="btn btn-clean btn-sm btn-icon btn-icon-danger btn-active-light-danger ms-auto file_remove_btn"
-                                   id="{{$file->id}}" title="File Delete">
-                                    <i class="fas fa-trash-alt fa-xl"></i>
-                                </a>--}}
-                            </div>
-                        @endforeach
-
-                    @endif
+                    </div>
 
                     <div class="col-md-12 form-group">
 
@@ -274,11 +271,10 @@
                 if (clickedButton) {
                     formData.append('button_clicked', clickedButton);
                 }
-                @if(!isset($enterRequest))
                 myDropzone.files.forEach(function (file, index) {
                     formData.append('files[' + index + ']', file);
                 });
-                @endif
+
                 var url = form.attr('action');
                 $.ajax({
                     type: "POST",
@@ -401,7 +397,7 @@
             });
             @endcan
 
-            @if(!isset($enterRequest))
+
             let myDropzone = new Dropzone("#dropzone", {
                 url: "#",
                 acceptedFiles: "application/pdf,image/*",
@@ -412,7 +408,39 @@
                 maxFilesize: 10,
                 addRemoveLinks: true,
             });
-            @endif
+
+            $(document).on('click', '.file_remove_btn', function () {
+                var id = $(this).attr('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then(function (result) {
+                    if (result.value) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            url: '/operation-management/enter_requests/files/' + id,
+                            method: 'delete',
+                            success: function (data) {
+                                $('#file_' + id).fadeOut('slow', function () {
+                                    $('#file_' + id).remove();
+                                });
+                                toastr.success('Your File has been removed');
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
+                            }
+                        });
+                    }
+                });
+
+            });
         });
     </script>
 
