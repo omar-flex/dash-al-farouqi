@@ -13,6 +13,7 @@ use App\Models\EnterRequest;
 use App\Models\EnterRequestCar;
 use App\Models\EnterRequestStatus;
 use App\Models\ManifestFile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -103,19 +104,8 @@ class EnterRequestController extends Controller
 
         $enterRequest = EnterRequest::create(Arr::except($data, 'files'));
 
-        foreach ($request->file('files') as $file) {
-            $extension = $file->getClientOriginalExtension();
-            $originalFileName = $file->getClientOriginalName();
-            $fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
-            $fileNameToStore = uniqid('') . '.' . $extension;
-            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
-            ManifestFile::create([
-                'filename' => $fileNameWithoutExt,
-                'path' => $path,
-                'extension' => $extension,
-                'manifest_id' => $enterRequest->id,
-                'user_id' => Auth::id(),
-            ]);
+        if ($request->hasFile('files')) {
+            $this->filesCreate($enterRequest, $request->files);
         }
 
         return response()->json(['message' => $message, 'status' => 200]);
@@ -168,7 +158,12 @@ class EnterRequestController extends Controller
             $data['quantity_car'] = $enterRequest->quantity_car;
         }
 
+        $data = Arr::except($data, 'files');
         $enterRequest->update($data);
+
+        if ($request->hasFile('files')) {
+            $this->filesCreate($enterRequest);
+        }
 
         return response()->json(['message' => 'Update Successfully', 'enter_request_id' => $enterRequest->id, 'status' => 200]);
     }
@@ -205,6 +200,34 @@ class EnterRequestController extends Controller
         $cares_list = view('pages.apps.operation-management.enter-requests.sections._cares-list', compact('enterRequest'))->render();
 
         return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
+    }
+
+
+    public function filesCreate($enterRequest)
+    {
+        foreach (request('files') as $file) {
+            $extension = $file->getClientOriginalExtension();
+            $originalFileName = $file->getClientOriginalName();
+            //$fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
+            $fileNameToStore = uniqid('') . '.' . $extension;
+            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
+            ManifestFile::create([
+                'filename' => $fileNameToStore,
+                'path' => $path,
+                'extension' => $extension,
+                'manifest_id' => $enterRequest->id,
+                'user_id' => Auth::id(),
+            ]);
+        }
+    }
+
+    public function fileDelete($file_id)
+    {
+        $file = ManifestFile::where('id', $file_id)->first();
+        if (Storage::path($file->path)) {
+            Storage::delete($file->path);
+        }
+        $file->delete();
     }
 
 }
