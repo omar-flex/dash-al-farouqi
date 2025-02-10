@@ -71,7 +71,7 @@ class EnterRequestController extends Controller
             'products' => Product::all(['id', 'name']),
             'unitMeasures' => UnitMeasure::all(['id', 'name']),
             'locations' => $locations,
-            'categories' => Category::where('type', 'service')->get(['id', 'name_en as name']),
+            //'categories' => Category::where('type', 'service')->get(['id', 'name_en as name']),
         ];
 
         return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'payload'));
