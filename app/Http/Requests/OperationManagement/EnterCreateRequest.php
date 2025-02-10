@@ -20,6 +20,7 @@ class EnterCreateRequest extends FormRequest
             'manifest_year' => 'required|numeric',
             'quantity_packages' => 'required|numeric',
             'manifest_date' => 'required|date_format:Y-m-d',
+            'date' => 'required|date_format:Y-m-d',
             'quantity_car' => 'required|string|max:255',
             'general_description_goods' => 'required',
             'total_cost' => 'required',
@@ -28,6 +29,8 @@ class EnterCreateRequest extends FormRequest
             'cpm' => 'required|numeric',
             'country_id' => 'nullable|exists:countries,id',
             'files' => 'required|max:10240',
+            'notes' => 'nullable|string',
+            'warehouse_id' => 'required|exists:warehouses,id',
         ];
 
         if ($this->routeIs('operation-management.enter_requests.update')) {

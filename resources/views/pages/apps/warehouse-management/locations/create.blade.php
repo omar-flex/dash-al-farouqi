@@ -25,9 +25,9 @@
                                @isset($location) value="{{ $location->code }}" @endisset>
                     </div>
                     <div class="col-md-6 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Position</label>
+                        <label class="required fw-semibold fs-6 mb-2">Side</label>
                         <select name="position" class="form-select form-select-solid mb-2" id="positions"
-                                data-control="select2" data-placeholder="Select an Position">
+                                data-control="select2" data-placeholder="Select an Side">
                             <option></option>
                             <option value="R" @if(isset($location) && $location->position == 'R') selected @endif>
                                 Right

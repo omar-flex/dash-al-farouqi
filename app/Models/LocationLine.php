@@ -8,4 +8,9 @@ class LocationLine extends Model
 {
     protected $guarded = ['id'];
 
+    public function location()
+    {
+        return $this->belongsTo(WarehouseLocation::class);
+    }
+
 }

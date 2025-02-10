@@ -148,22 +148,23 @@
 
                     </div>
 
-                    <div class="col-md-3 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">CPM per BL (bill of loading)</label>
+                    <div class="col-md-2 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">CPM per BL</label>
                         <input type="number" step="any" name="cpm" min="0"
                                class="form-control form-control-solid-bg mb-2"
-                               placeholder="CPM per BL(bill of loading)"
+                               placeholder="CPM"
                                @isset($enterRequest) value="{{ $enterRequest->cpm }}" @endisset>
                     </div>
 
+
                     @isset($enterRequest)
-                        <div class="col-md-2 mb-7">
+                        <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Calculated</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg mb-2"
                                    placeholder="Cpm Calculated" value="{{ $enterRequest->cpm_calculated }}">
                         </div>
-                        <div class="col-md-2 mb-7">
+                        <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Result</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg mb-2"
@@ -171,11 +172,43 @@
                         </div>
                     @endisset
 
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-2 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Date</label>
+                        <input type="date" name="date" id="date"
+                               class="form-control form-control-solid-bg mb-2"
+                               placeholder="Date"
+                               @isset($enterRequest) value="{{ $enterRequest->date }}" @endisset>
+                    </div>
+                    <div class="col-md-2 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">WH</label>
+                        <select name="warehouse_id" class="form-select form-select-solid-bg mb-2"
+                                id="customers"
+                                data-control="select2" data-placeholder="WH">
+                            <option></option>
+                            @foreach($payload->warehouses as $warehouse)
+                                <option value="{{$warehouse->id}}"
+                                        @if(isset($enterRequest) && $enterRequest->warehouse_id == $warehouse->id) selected @endif>
+                                    {{$warehouse->code}}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if(!isset($enterRequest))
+                        <div class="col-md-8">
+
+                        </div>
+                    @endisset
+                    <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
                                   placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
+                    </div>
+                    <div class="col-md-6 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2"> Notes</label>
+                        <textarea class="form-control form-control-solid-bg mb-2"
+                                  name="notes" style="min-height: 30px"
+                                  placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
                     </div>
 
                     <div class="col-md-8 mb-7">

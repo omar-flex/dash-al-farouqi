@@ -9,6 +9,7 @@ use App\Http\Controllers\GuidesController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
@@ -33,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('customers', CustomerController::class);
+    Route::get('products-search', [ProductController::class, 'search'])->name('products.search');
+    Route::resource('products', ProductController::class);
 
     Route::name('warehouse-management.')
         ->prefix('warehouse-management/')
@@ -48,7 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
-            Route::delete('enter_requests/files/{id}',[EnterRequestController::class, 'fileDelete'])->name('enter_requests.files.delete');
+            Route::delete('enter_requests/files/{id}', [EnterRequestController::class, 'fileDelete'])->name('enter_requests.files.delete');
+            Route::get('enter_requests/{id}/pdf', [EnterRequestController::class, 'pdf'])->name('enter_requests.pdf');
         });
 
     Route::name('user-management.')->group(function () {

@@ -7,17 +7,22 @@ use App\DataTables\OperationManagement\EnterRequestsDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
+use App\Models\Category;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestCar;
 use App\Models\EnterRequestStatus;
+use App\Models\LocationLine;
 use App\Models\ManifestFile;
-use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\UnitMeasure;
+use App\Models\Warehouse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class EnterRequestController extends Controller
@@ -52,9 +57,21 @@ class EnterRequestController extends Controller
 
     public function show(EnterRequest $enterRequest)
     {
+        $locations = [];
+
+        $locationLines = LocationLine::with('location', 'location.warehouse')->get();
+        foreach ($locationLines as $key => $locationLine) {
+            $locations [$key]['id'] = $locationLine->id;
+            $locations [$key]['code'] = $locationLine->code . ' - ' . $locationLine->location->code . ' - ' . $locationLine->location->code;
+        }
+
         $payload = (object)[
             'title' => 'Enter Request',
             'resource' => $this->resource,
+            'products' => Product::all(['id', 'name']),
+            'unitMeasures' => UnitMeasure::all(['id', 'name']),
+            'locations' => $locations,
+            'categories' => Category::where('type', 'service')->get(['id', 'name_en as name']),
         ];
 
         return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'payload'));
@@ -71,7 +88,8 @@ class EnterRequestController extends Controller
             'tableId' => 'enter_requests_table',
             'resource' => $this->resource,
             'customers' => Customer::get(['id', 'name']),
-            'countries' => Country::all(['id', 'name'])
+            'countries' => Country::all(['id', 'name']),
+            'warehouses' => Warehouse::all(['id', 'code'])
         ];
 
         return view('pages.apps.operation-management.enter-requests.create', compact('payload'));
@@ -122,7 +140,8 @@ class EnterRequestController extends Controller
             'resource' => $this->resource,
             'tableId' => 'enter_requests_table',
             'customers' => Customer::get(['id', 'name']),
-            'countries' => Country::all(['id', 'name'])
+            'countries' => Country::all(['id', 'name']),
+            'warehouses' => Warehouse::all(['id', 'code'])
         ];
 
         return view('pages.apps.operation-management.enter-requests.create', compact('payload', 'enterRequest'));
@@ -228,6 +247,12 @@ class EnterRequestController extends Controller
             Storage::delete($file->path);
         }
         $file->delete();
+    }
+
+    public function pdf($id)
+    {
+        $enterRequest = EnterRequest::firstWhere('id', $id);
+        return view('pages.pdf_model.receiving_customs_declaration', compact('enterRequest'));
     }
 
 }
