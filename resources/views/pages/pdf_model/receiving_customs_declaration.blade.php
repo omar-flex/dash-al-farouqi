@@ -22,7 +22,7 @@
             <img src="{{asset('assets/media/logos/1536153489395.jpg')}}" alt="Left Logo" class="img-fluid"
                  style="max-width: 180px; max-height: 75px;">
         </div>
-        <div class="col-4 text-start">
+        <div class="col-4 text-start" style="margin: auto">
             <img src="{{asset('assets/media/logos/default-dark.png')}}" alt="Right Logo" class="img-fluid"
                  style="max-width: 180px; max-height: 75px;">
         </div>
