@@ -15,7 +15,7 @@
 <div class="card p-2 border-0">
     <div class="row">
         <div class="col-4 text-end">
-            <img src="{{asset('assets/media/logos/bonded.png')}}" alt="Left Logo" class="img-fluid"
+            <img src="{{asset('assets/media/logos/img.png')}}" alt="Left Logo" class="img-fluid"
                  style="max-width: 180px; max-height: 75px;">
         </div>
         <div class="col-4 text-center">
