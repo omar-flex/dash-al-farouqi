@@ -14,7 +14,7 @@
 <body class="container container-xxl mt-2" style="max-width: 1860px">
 <div class="card p-2 border-0">
     <div class="row">
-        <div class="col-4 text-end">
+        <div class="col-4 text-end" style="margin: auto">
             <img src="{{asset('assets/media/logos/img.png')}}" alt="Left Logo" class="img-fluid"
                  style="max-width: 180px; max-height: 75px;">
         </div>
