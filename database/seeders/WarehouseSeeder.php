@@ -26,7 +26,7 @@ class WarehouseSeeder extends Seeder
         DB::table('warehouse_locations')->truncate();
         Schema::enableForeignKeyConstraints();
 
-        $warehouses = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'];
+        $warehouses = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'];
         $locations = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9'];
         foreach ($warehouses as $warehouse) {
             $warehouse = Warehouse::updateOrcreate(['name' => 'Warehous ' . $warehouse, 'code' => $warehouse]);

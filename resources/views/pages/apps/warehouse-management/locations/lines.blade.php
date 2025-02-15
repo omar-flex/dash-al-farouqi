@@ -18,7 +18,7 @@
                         <div class="col-md-3 mb-3">
                             <label class="required fw-semibold fs-6 mb-2">Name Line</label>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-2 mb-3">  <div class="col-md-1 mb-2">
                             <label class="fw-semibold fs-6 mb-2 required">Code</label>
                         </div>
                         <div class="col-md-3 mb-3">
@@ -162,6 +162,7 @@
             initSelect2();
             checkVariantDetectability();
         });
+
         $(document).on("click", "[data-repeater-delete]", function () {
             if ($('[data-repeater-item]').length > 1) {
                 $(this).closest("[data-repeater-item]").remove();

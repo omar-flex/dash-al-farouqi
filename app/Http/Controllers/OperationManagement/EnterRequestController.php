@@ -7,6 +7,7 @@ use App\DataTables\OperationManagement\EnterRequestsDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
+use App\Http\Requests\OperationManagement\ProductsRequest;
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\Customer;
@@ -62,7 +63,7 @@ class EnterRequestController extends Controller
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();
         foreach ($locationLines as $key => $locationLine) {
             $locations [$key]['id'] = $locationLine->id;
-            $locations [$key]['code'] = $locationLine->code . ' - ' . $locationLine->location->code . ' - ' . $locationLine->location->code;
+            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' .  $locationLine?->code;
         }
 
         $payload = (object)[
@@ -221,6 +222,26 @@ class EnterRequestController extends Controller
         return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
     }
 
+    public function products($enter_request_id, ProductsRequest $request)
+    {
+        $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
+
+        foreach ($request->numbers as $index => $number) {
+            EnterRequestCar::create([
+                'number' => $number,
+                'seal_number' => Arr::get($request->seal_numbers, $index),
+                'is_status' => Arr::get($request->statuses, $index),
+                'is_tracking_device' => Arr::get($request->tracking_devices, $index),
+                'enter_request_id' => $enter_request_id,
+            ]);
+        }
+
+        $enterRequest->update(['status_id' => EnterRequestStatus::WH_ENTER_PRODUCT]);
+
+        $cares_list = view('pages.apps.operation-management.enter-requests.sections._cares-list', compact('enterRequest'))->render();
+
+        return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
+    }
 
     public function filesCreate($enterRequest)
     {

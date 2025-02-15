@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
+            Route::post('/enter_requests/{id}/products/store', [EnterRequestController::class, 'products'])->name('enter_requests.products.store');
             Route::delete('enter_requests/files/{id}', [EnterRequestController::class, 'fileDelete'])->name('enter_requests.files.delete');
             Route::get('enter_requests/{id}/pdf', [EnterRequestController::class, 'pdf'])->name('enter_requests.pdf');
         });
