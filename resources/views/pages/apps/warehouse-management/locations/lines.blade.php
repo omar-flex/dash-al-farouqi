@@ -18,7 +18,7 @@
                         <div class="col-md-3 mb-3">
                             <label class="required fw-semibold fs-6 mb-2">Name Line</label>
                         </div>
-                        <div class="col-md-2 mb-3">  <div class="col-md-1 mb-2">
+                        <div class="col-md-2 mb-3">
                             <label class="fw-semibold fs-6 mb-2 required">Code</label>
                         </div>
                         <div class="col-md-3 mb-3">
