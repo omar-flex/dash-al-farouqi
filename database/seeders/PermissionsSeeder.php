@@ -21,6 +21,7 @@ class PermissionsSeeder extends Seeder
             'enter_requests',
             'customers',
             'products',
+            'outbounds'
         ];
 
         $cans = ['list_', 'add_', 'edit_', 'delete_'];

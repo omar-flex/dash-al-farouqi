@@ -54,6 +54,12 @@ Breadcrumbs::for('operation-management.enter_requests.show', function (Breadcrum
     $trail->push($enterRequest->bound_number, route('operation-management.enter_requests.show', $enterRequest));
 });
 
+Breadcrumbs::for('operation-management.outbounds.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('operation-management.index');
+    $trail->push('Outbounds', route('operation-management.outbounds.index'));
+});
+
+
 
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {

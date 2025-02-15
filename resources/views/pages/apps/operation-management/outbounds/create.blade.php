@@ -3,105 +3,90 @@
         display: none;
     }
 </style>
-@if(isset($enterRequest))
-    <form action="{{ route('operation-management.enter_requests.update', $enterRequest) }}"
+@if(isset($outbound))
+    <form action="{{ route('operation-management.outbounds.update', $outbound) }}"
           id="{{$payload->formId}}"
           method="POST"
           enctype="multipart/form-data">
         @method('PUT')
         @else
-            <form action="{{ route('operation-management.enter_requests.store') }}" method="POST"
+            <form action="{{ route('operation-management.outbounds.store') }}" method="POST"
                   id="{{$payload->formId}}"
                   enctype="multipart/form-data">
                 @endif
                 @csrf
                 <div class="row">
                     <div class="col-md-3 mb-7">
-                        <div class="d-flex justify-content-between">
-                            <label class="required fw-semibold fs-6 mb-2">Customer</label>
-                            @can('add_customers')
-                                <a class="cursor-pointer" id="add_customer">
-                                    <i class="fa-sharp-duotone fa-solid fa-user-plus fa-sm"></i>
-                                    Add Customer
-                                </a>
-                            @endcanany
-                        </div>
-                        <select name="customer_id" class="form-select form-select-solid-bg mb-2"
-                                id="customers"
-                                data-control="select2" data-placeholder="Select an Customer">
+                        <label class="required fw-semibold fs-6 mb-2">Bound Number / Enter Request</label>
+                        <select name="enter_request_id" class="form-select form-select-solid-bg mb-2"
+                                id="outbounds"
+                                data-control="select2" data-placeholder="Select an Bound Number">
                             <option></option>
-                            @foreach($payload->customers as $customer )
-                                <option value="{{$customer->id}}"
-                                        @if(isset($enterRequest) && $enterRequest->customer_id == $customer->id) selected @endif>
-                                    {{$customer->name}}
+                            @foreach($payload->bound_numbers as $bound_number )
+                                <option value="{{$bound_number->id}}"
+                                        @if(isset($outbound) && $outbound->enter_request_id == $bound_number->id) selected @endif>
+                                    {{$bound_number->name}}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-3 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Manifest In Bound Number</label>
-                        <input type="text" name="manifest_bound_number"
+                        <label class="required fw-semibold fs-6 mb-2">Manifest Out Bound Number</label>
+                        <input type="text" name="manifest_outbound_number"
                                class="form-control form-control-solid-bg mb-2"
-                               placeholder="Manifest In Bound Number"
-                               @isset($enterRequest) value="{{ $enterRequest->manifest_bound_number }}" @endisset>
+                               placeholder="Manifest Out bound Number"
+                               @isset($outbound) value="{{ $outbound->manifest_outbound_number }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Manifest Type Number</label>
                         <input type="text" name="manifest_type_number"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Manifest type number"
-                               @isset($enterRequest) value="{{ $enterRequest->manifest_type_number }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->manifest_type_number }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> Custom Entry Center</label>
                         <input type="text" name="customs_entry_center"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Custom Entry Center"
-                               @isset($enterRequest) value="{{ $enterRequest->customs_entry_center }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->customs_entry_center }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Manifest Year</label>
                         <input type="text" name="manifest_year"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Manifest Year"
-                               @isset($enterRequest) value="{{ $enterRequest->manifest_year }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->manifest_year }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Manifest Date</label>
                         <input type="date" name="manifest_date" id="manifest_date"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Manifest Date"
-                               @isset($enterRequest) value="{{ $enterRequest->manifest_date }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->manifest_date }}" @endisset>
                     </div>
-                    {{--   <div class="col-md-4 mb-7">
-                           <label class="required fw-semibold fs-6 mb-2">Organize Center</label>
-                           <input type="text" name="organize_center"
-                                  class="form-control form-control-solid-bg mb-2"
-                                  placeholder="Organize Center"
-                                  @isset($enterRequest) value="{{ $enterRequest->organize_center }}" @endisset>
-                       </div>--}}
+
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Quantity of Car</label>
                         <input type="number" step="any" min="0"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Quantity of Car"
-                               @if(isset($enterRequest) && $enterRequest->cars()->count() > 0) disabled
-                               @else name="quantity_car" @endif
-                               @isset($enterRequest) value="{{ $enterRequest->quantity_car }}" @endisset>
+                               name="quantity_car"
+                               @isset($outbound) value="{{ $outbound->quantity_car }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Quantity of Packages</label>
                         <input type="number" step="any" name="quantity_packages" min="0"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Quantity of Packages"
-                               @isset($enterRequest) value="{{ $enterRequest->quantity_packages }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->quantity_packages }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Total cost</label>
                         <input type="number" step="any" name="total_cost" min="0"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Total cost"
-                               @isset($enterRequest) value="{{ $enterRequest->total_cost }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->total_cost }}" @endisset>
                     </div>
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Gross weight</label>
@@ -109,7 +94,7 @@
                             <input type="number" step="any" name="gross_weight" min="0"
                                    class="form-control form-control-solid-bg "
                                    placeholder="Gross weight"
-                                   @isset($enterRequest) value="{{ $enterRequest->gross_weight }}" @endisset>
+                                   @isset($outbound) value="{{ $outbound->gross_weight }}" @endisset>
                             <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
                         </div>
                     </div>
@@ -119,7 +104,7 @@
                             <input type="number" step="any" name="net_weight" min="0"
                                    class="form-control form-control-solid-bg"
                                    placeholder="Net weight"
-                                   @isset($enterRequest) value="{{ $enterRequest->net_weight }}" @endisset>
+                                   @isset($outbound) value="{{ $outbound->net_weight }}" @endisset>
                             <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
                         </div>
 
@@ -130,20 +115,20 @@
                         <div class="form-check form-check-custom form-check-solid ">
                             <select name="country_id" class="form-select form-select-solid-bg mb-2"
                                     id="countries"
-                                    @if(!(isset($enterRequest) && $enterRequest->country_id)) disabled
+                                    @if(!(isset($outbound) && $outbound->country_id)) disabled
                                     @endif
                                     data-control="select2" data-placeholder="Multiple Countries">
                                 <option></option>
                                 @foreach($payload->countries as $country )
                                     <option value="{{$country->id}}"
-                                            @if(isset($enterRequest) && $enterRequest->country_id == $country->id) selected @endif>
+                                            @if(isset($outbound) && $outbound->country_id == $country->id) selected @endif>
                                         {{$country->name}}
                                     </option>
                                 @endforeach
                             </select>
                             <input class="form-check-input mx-2" type="checkbox" value="1"
                                    id="countryCheckBox"
-                                   @if(!(isset($enterRequest) && $enterRequest->country_id)) checked @endif />
+                                   @if(!(isset($outbound) && $outbound->country_id)) checked @endif />
                         </div>
 
                     </div>
@@ -153,22 +138,22 @@
                         <input type="number" step="any" name="cpm" min="0"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="CPM"
-                               @isset($enterRequest) value="{{ $enterRequest->cpm }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->cpm }}" @endisset>
                     </div>
 
 
-                    @isset($enterRequest)
+                    @isset($outbound)
                         <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Calculated</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg mb-2"
-                                   placeholder="Cpm Calculated" value="{{ $enterRequest->cpm_calculated }}">
+                                   placeholder="Cpm Calculated" value="{{ $outbound->cpm_calculated }}">
                         </div>
                         <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Result</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg mb-2"
-                                   placeholder="Cpm Result" value="{{ $enterRequest->cpm_result }}">
+                                   placeholder="Cpm Result" value="{{ $outbound->cpm_result }}">
                         </div>
                     @endisset
 
@@ -177,7 +162,7 @@
                         <input type="date" name="date" id="date"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Date"
-                               @isset($enterRequest) value="{{ $enterRequest->date }}" @endisset>
+                               @isset($outbound) value="{{ $outbound->date }}" @endisset>
                     </div>
                     <div class="col-md-2 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">WH</label>
@@ -187,13 +172,13 @@
                             <option></option>
                             @foreach($payload->warehouses as $warehouse)
                                 <option value="{{$warehouse->id}}"
-                                        @if(isset($enterRequest) && $enterRequest->warehouse_id == $warehouse->id) selected @endif>
+                                        @if(isset($outbound) && $outbound->warehouse_id == $warehouse->id) selected @endif>
                                     {{$warehouse->code}}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    @if(!isset($enterRequest))
+                    @if(!isset($outbound))
                         <div class="col-md-8">
 
                         </div>
@@ -202,25 +187,27 @@
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
+                                  placeholder="General description Goods">@isset($outbound){{ $outbound->general_description_goods }}@endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2"> Notes</label>
+                        <label class="fw-semibold fs-6 mb-2"> Notes</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="notes" style="min-height: 30px"
-                                  placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
+                                  placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
                     </div>
 
                     <div class="col-md-8 mb-7">
                         <label class="fw-semibold fs-6 mb-2 required">Attached</label>
-                        @if(isset($enterRequest))
-                            @foreach($enterRequest->files as $file)
-                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2" id="file_{{$file->id}}">
+                        @if(isset($outbound))
+                            @foreach($outbound->files as $file)
+                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2"
+                                     id="file_{{$file->id}}">
                                     <div class="symbol symbol-30px me-5">
                                         <img alt="Icon" src="{{$file->getIcon()}}">
                                     </div>
                                     <div class="fw-semibold">
-                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename" target="_blank"
+                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename"
+                                           target="_blank"
                                            href="{{$file->getUrl()}}" id="filename_{{$file->id}}"
                                            title="{{$file->filename}}">{{\Illuminate\Support\Str::limit($file->filename,20)}}</a>
                                     </div>
@@ -236,7 +223,7 @@
                             <input type="hidden" name="files">
                             <div class="dropzone" id="dropzone">
                                 <div class="dz-message needsclick">
-                                    <i class="ki-duotone ki-file-up text-primary fs-3x">
+                                     <i class="ki-duotone ki-file-up text-primary fs-3x">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                     </i>
@@ -256,8 +243,8 @@
 
                     <div class="col-md-12 form-group">
 
-                        @if(isset($enterRequest))
-                            @if($enterRequest->status_id == \App\Models\EnterRequestStatus::DRAFT)
+                        @if(isset($outbound))
+                            @if($outbound->status_id == \App\Models\EnterRequestStatus::DRAFT)
                                 <input type="submit" class="btn btn-light-warning btn-sm float-end"
                                        value="Save as Draft"
                                        id="btn-draft">
@@ -293,7 +280,7 @@
                 clickedButton = $(this).attr('id');
             });
 
-            $('#enterRequest').submit(function (e) {
+            $('#outboundForm').submit(function (e) {
                 $(".span_error").each(function () {
                     $(this).remove()
                 });
@@ -345,7 +332,7 @@
 
             });
 
-            $('#customers,#countries,#warehouses').select2({
+            $('#outbounds,#countries,#warehouses').select2({
                 dropdownParent: $('#modal'),
             });
 
@@ -358,77 +345,6 @@
                     countries.prop("disabled", false)
                 }
             });
-
-            @can('add_customers')
-            $('#add_customer').on('click', function () {
-                $.ajax({
-                    url: '{{route('customers.create')}}',
-                    method: 'get',
-                    success: function (data) {
-                        $('#customer-modal-body').html(data);
-                        $('#customer-modal-title').text('Add Customer');
-                        $('#customer-modal').modal('show');
-                        $('#formCustomer').submit(function (e) {
-                            e.preventDefault();
-                            $(".span_error").each(function () {
-                                $(this).remove()
-                            });
-                            $('#error').empty()
-                            $("#btn-submit").prop("disabled", true)
-                            var form = $(this);
-                            var url = form.attr('action');
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: new FormData(this),
-                                dataType: "json",
-                                contentType: false,
-                                cache: false,
-                                processData: false,
-                                success: function (data) {
-                                    if (data.status === 422) {
-                                        $("#btn-submit").prop("disabled", false)
-                                        $.each(data.errors, function (index, value) {
-                                            var error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                            if (index.split('.').length > 1) {
-                                                $('#error').last().append(error)
-                                            } else {
-                                                let input = $('[name="' + index + '"]').parent().last()
-                                                if (input.length > 0) {
-                                                    input.append(error)
-                                                } else {
-                                                    $('#error').append(error)
-                                                }
-                                            }
-                                        });
-                                        toastr.error('Oops,there were an errors...');
-                                    } else {
-                                        toastr.success('add Successfully');
-                                        $('#customers option').remove();
-                                        $('#customers').append("<option> </option>");
-                                        $.each(data, function (index, value) {
-                                            $('#customers').append("<option value='" + value.id + "'>" + value.name + "</option>");
-                                        });
-                                        $('#customer-modal').modal('hide');
-                                        $('#customer-modal-body').empty()
-
-                                    }
-                                },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    $("#btn-submit").prop("disabled", false)
-                                    toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
-                                }
-                            });
-
-                        });
-                    },
-                    error: function (xhr) {
-                        $("#btn-submit").prop("disabled", false)
-                        toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
-                    }
-                });
-            });
-            @endcan
 
 
             let myDropzone = new Dropzone("#dropzone", {
@@ -458,7 +374,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            url: '/operation-management/enter_requests/files/' + id,
+                            url: '/operation-management/outbounds/files/' + id,
                             method: 'delete',
                             success: function (data) {
                                 $('#file_' + id).fadeOut('slow', function () {

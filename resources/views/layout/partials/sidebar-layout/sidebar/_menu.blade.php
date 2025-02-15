@@ -17,7 +17,7 @@
                 </a>
             </div>
 
-            @canany(['list_enter_requests'])
+            @canany(['list_enter_requests','list_outbounds'])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ request()->routeIs('operation-management.*') ? 'here show' : '' }}">
                 <span class="menu-link">
@@ -36,6 +36,19 @@
                                     <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
                              </span>
                                     <span class="menu-title fs-7">Enter Requests</span>
+                                </a>
+                            </div>
+                        @endcanany
+                    </div>
+                    <div class="menu-sub menu-sub-accordion">
+                        @can('list_outbounds')
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('operation-management.outbounds.*') ? 'active' : '' }}"
+                                   href="{{ route('operation-management.outbounds.index') }}">
+                             <span class="menu-icon">
+                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right fa-flip-horizontal"></i>
+                             </span>
+                                    <span class="menu-title fs-7">Outbound</span>
                                 </a>
                             </div>
                         @endcanany

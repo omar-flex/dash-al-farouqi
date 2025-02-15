@@ -9,6 +9,7 @@ use App\Http\Controllers\GuidesController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
+use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TransportationController;
@@ -49,11 +50,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::name('operation-management.')
         ->prefix('operation-management/')
         ->group(function () {
+            //enter_requests
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
             Route::post('/enter_requests/{id}/products/store', [EnterRequestController::class, 'products'])->name('enter_requests.products.store');
             Route::delete('enter_requests/files/{id}', [EnterRequestController::class, 'fileDelete'])->name('enter_requests.files.delete');
             Route::get('enter_requests/{id}/pdf', [EnterRequestController::class, 'pdf'])->name('enter_requests.pdf');
+
+            //outbound
+            Route::resource('outbounds', OutboundsController::class);
+            Route::delete('outbounds/files/{id}', [OutboundsController::class, 'fileDelete'])->name('outbounds.files.delete');
+            Route::get('outbounds/{id}/pdf', [OutboundsController::class, 'pdf'])->name('outbounds.pdf');
+
         });
 
     Route::name('user-management.')->group(function () {

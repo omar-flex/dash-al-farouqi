@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EnterRequest extends Model
+class Outbound extends Model
 {
     protected $guarded = [];
 
-    public function Customer()
+    public function EnterRequest()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(EnterRequest::class);
     }
 
     public function Warehouse()
@@ -28,14 +28,13 @@ class EnterRequest extends Model
         return $this->belongsTo(EnterRequestStatus::class, 'status_id');
     }
 
-    public function Cars()
-    {
-        return $this->hasMany(EnterRequestCar::class);
-    }
-
     public function Files()
     {
-        return $this->hasMany(ManifestFile::class, 'manifest_id')->where('type', 7);
+        return $this->hasMany(ManifestFile::class, 'manifest_id')->where('type', 4);
     }
 
+    public function Customer()
+    {
+        return $this->hasOneThrough(Customer::class,EnterRequest::class);
+    }
 }

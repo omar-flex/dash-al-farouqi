@@ -63,7 +63,7 @@ class EnterRequestController extends Controller
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();
         foreach ($locationLines as $key => $locationLine) {
             $locations [$key]['id'] = $locationLine->id;
-            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' .  $locationLine?->code;
+            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' . $locationLine?->code;
         }
 
         $payload = (object)[
@@ -193,7 +193,7 @@ class EnterRequestController extends Controller
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
 
-        $files = ManifestFile::where('manifest_id', $enterRequest->id)->get();
+        $files = ManifestFile::where('manifest_id', $enterRequest->id)->where('type', 4)->get();
         foreach ($files as $file) {
             Storage::delete($file->path);
             $file->delete();
@@ -247,7 +247,7 @@ class EnterRequestController extends Controller
     {
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
-            $originalFileName = $file->getClientOriginalName();
+            //$originalFileName = $file->getClientOriginalName();
             //$fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
             $fileNameToStore = uniqid('') . '.' . $extension;
             $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
@@ -257,13 +257,14 @@ class EnterRequestController extends Controller
                 'extension' => $extension,
                 'manifest_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
+                'type' => 7,
             ]);
         }
     }
 
     public function fileDelete($file_id)
     {
-        $file = ManifestFile::where('id', $file_id)->first();
+        $file = ManifestFile::where('id', $file_id)->where('type', 7)->first();
         if (Storage::path($file->path)) {
             Storage::delete($file->path);
         }
