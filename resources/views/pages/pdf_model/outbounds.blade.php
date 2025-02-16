@@ -83,7 +83,7 @@
             <table class="table border-0 mt-3 ">
                 <thead>
                 <tr>
-                    @if($outbound->EnterRequest?->Countr)
+                    @if($outbound->EnterRequest->country_id)
                         <th class="border-0">المنشأ</th>
                     @endif
                     <th class="border-0">عدد الطرود</th>
