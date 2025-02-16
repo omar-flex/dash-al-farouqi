@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ManifestType extends Model
 {
-    const INBOUND = 4;
-    const OUTBOUND = 7;
+    const INBOUND = 7;
+    const OUTBOUND = 4;
 
 }
