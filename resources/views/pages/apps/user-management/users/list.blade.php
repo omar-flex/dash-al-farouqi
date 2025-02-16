@@ -16,7 +16,9 @@
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search user" id="mySearchInput"/>
+                    <input type="text" data-kt-user-table-filter="search"
+                           class="form-control form-control-solid w-250px ps-13" placeholder="Search user"
+                           id="mySearchInput"/>
                 </div>
                 <!--end::Search-->
             </div>
@@ -25,19 +27,13 @@
             <!--begin::Card toolbar-->
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
-                <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                    <!--begin::Add user-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_user">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-light-primary" id="add_user">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         Add User
                     </button>
-                    <!--end::Add user-->
                 </div>
-                <!--end::Toolbar-->
 
-                <!--begin::Modal-->
-                <livewire:user.add-user-modal></livewire:user.add-user-modal>
-                <!--end::Modal-->
             </div>
             <!--end::Card toolbar-->
         </div>
@@ -60,15 +56,9 @@
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
                 window.LaravelDataTables['users-table'].search(this.value).draw();
             });
-            document.addEventListener('livewire:init', function () {
-                Livewire.on('success', function () {
-                    $('#kt_modal_add_user').modal('hide');
-                    window.LaravelDataTables['users-table'].ajax.reload();
-                });
-            });
-            $('#kt_modal_add_user').on('hidden.bs.modal', function () {
-                Livewire.dispatch('new_user');
-            });
+            addModal('add_user', '{{ route('user-management.users.create') }}', 'Add User', 'UserForm', 'users-table');
+            editModal('edit_btn', 'user-management/users', 'Edit User', 'UserForm', 'users-table')
+            remove('remove_btn', 'user-management/users', 'users-table', '{{ csrf_token() }}')
         </script>
     @endpush
 
