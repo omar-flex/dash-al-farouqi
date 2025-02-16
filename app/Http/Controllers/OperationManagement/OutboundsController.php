@@ -105,7 +105,7 @@ use Illuminate\Support\Str;
 
         $outbound = Outbound::create(Arr::except($data, 'files'));
 
-        $cpm_result = round(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);
+        $cpm_result = ceil(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);
 
         $outbound->update(['cpm_result' => $cpm_result]);
 
@@ -151,7 +151,7 @@ use Illuminate\Support\Str;
             }
         }
 
-        $data['cpm_result'] = round(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);;
+        $data['cpm_result'] = ceil(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);;
 
         $data = Arr::except($data, 'files');
         $outbound->update($data);
