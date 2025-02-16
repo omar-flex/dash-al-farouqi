@@ -26,11 +26,8 @@ class OutboundRequest extends FormRequest
             'total_cost' => 'required',
             'gross_weight' => 'required|numeric',
             'net_weight' => 'required|numeric',
-            'cpm' => 'required|numeric',
-            'country_id' => 'nullable|exists:countries,id',
             'files' => 'required|max:10240',
             'notes' => 'nullable|string',
-            'warehouse_id' => 'required|exists:warehouses,id',
         ];
 
         if ($this->routeIs('operation-management.outbounds.update')) {

@@ -11,7 +11,7 @@
         }
     </style>
 </head>
-<body class="container container-xxl mt-2" style="max-width: 1860px">
+<body class="container container-xxl mt-2" style="max-width: 1800px">
 <div class="card p-2 border-0">
     <div class="row">
         <div class="col-4 text-end" style="margin: auto">
@@ -39,11 +39,11 @@
     <table class="table table-bordered mt-3 text-center">
         <thead>
         <tr>
-            <th>رقم البيان</th>
-            <th>التاريخ</th>
-            <th>منظمة في جمرك</th>
-            <th>مركز التنظيم</th>
-            <th>اسم المرسل إليه</th>
+            <th>المعاملة الجمركيه</th>
+            <th>تاريخها</th>
+            <th>من بيان ايداع</th>
+            <th>منظمة في مركز جمركي</th>
+            <th>اسم المرسل </th>
         </tr>
         </thead>
         <tbody>
@@ -56,7 +56,20 @@
         </tr>
         </tbody>
     </table>
-    <h5 class="mt-4 fw-bold">كما هو مصرح بالبيان </h5>
+
+    <div class="col-12 mt-2">
+        <div>
+            <span class="fw-bold"> ملاحظة :</span>
+            <span class="mx-1 text-gray-600">وبعد تحميل البيان بتاريخ  </span>
+            <span
+                class="fw-bold">@isset($outbound->date)
+                    {{\Illuminate\Support\Carbon::parse($outbound->date)->format('Y/m/d')}}
+                @endisset</span>
+            <span>  للبيان و مرفقاته وجدت</span>
+            <span class="fw-bold">  مطابق </span>
+        </div>
+    </div>
+
 
 
     <div class="row">
@@ -80,8 +93,8 @@
                 </thead>
                 <tbody>
                 <tr>
-                    @if($outbound->country_id)
-                        <td class=" text-gray-600 border-0">{{$outbound->Country->name}}</td>
+                    @if($outbound->EnterRequest->country_id)
+                        <td class=" text-gray-600 border-0">{{$outbound->EnterRequest->Country->name}}</td>
                     @endif
                     <td class=" text-gray-600 border-0"><span class="fw-bold mx-1"> ({{$outbound->quantity_packages}})</span>طرد
                     </td>
@@ -99,23 +112,12 @@
             </table>
         </div>
         <hr class="mt-1">
-        <div class="col-12 mt-2">
-            <div>
-                <span class="fw-bold"> ملاحظة :</span>
-                <span class="mx-1 text-gray-600">عند تحميل البيان بتاريخ  </span>
-                <span
-                    class="fw-bold">@isset($outbound->date)
-                        {{\Illuminate\Support\Carbon::parse($outbound->date)->format('Y/m/d')}}
-                    @endisset</span>
-                <span>  تبين مايلي</span>
-                <span class="fw-bold">  مطابق </span>
-            </div>
-        </div>
+
         <div class="col-12 mt-2">
             <div>
                 <span class="fw-bold"> موقع التخزين :</span>
                 <span class="mx-1 text-gray-600">تم التحميل من مستودع  </span>
-                <span class="fw-bold">({{$outbound->Warehouse?->code}})</span>
+                <span class="fw-bold">({{$outbound->EnterRequest->Warehouse?->code}})</span>
             </div>
         </div>
         @if($outbound->notes)

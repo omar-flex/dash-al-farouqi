@@ -32,11 +32,6 @@ use Illuminate\Support\Str;
         $this->tableId = 'outbounds_table';
     }
 
-    public function cpmCalculate($grossWeight)
-    {
-        return $grossWeight / 333;
-    }
-
     public function index(OutboundsDataTable $dataTable)
     {
         if (!auth()->user()->can('list_' . $this->resource))
@@ -45,7 +40,7 @@ use Illuminate\Support\Str;
         $payload = (object)[
             'title' => 'Outbounds',
             'sub_title' => 'Outbound',
-            'tableId' =>  $this->tableId,
+            'tableId' => $this->tableId,
             'formId' => $this->formId,
             'resource' => $this->resource,
         ];
@@ -61,7 +56,7 @@ use Illuminate\Support\Str;
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();
         foreach ($locationLines as $key => $locationLine) {
             $locations [$key]['id'] = $locationLine->id;
-            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' .  $locationLine?->code;
+            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' . $locationLine?->code;
         }
 
         $payload = (object)[
@@ -85,8 +80,7 @@ use Illuminate\Support\Str;
             'resource' => $this->resource,
             'bound_numbers' => EnterRequest::get(['id', 'bound_number as name']),
             'countries' => Country::all(['id', 'name']),
-            'warehouses' => Warehouse::all(['id', 'code']),
-            'tableId' =>  $this->tableId,
+            'tableId' => $this->tableId,
         ];
 
         return view('pages.apps.operation-management.outbounds.create', compact('payload'));
@@ -109,18 +103,14 @@ use Illuminate\Support\Str;
             $message = 'Added Successfully';
         }
 
-        $data['cpm_result'] = $request->cpm;
+        $outbound = Outbound::create(Arr::except($data, 'files'));
 
-        $cpm_calculated = $this->cpmCalculate($request->gross_weight);
-        $data['cpm_calculated'] = $cpm_calculated;
-        if ($cpm_calculated > $request->cpm) {
-            $data['cpm_result'] = $cpm_calculated;
-        }
+        $cpm_result = round(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);
 
-        $enterRequest = Outbound::create(Arr::except($data, 'files'));
+        $outbound->update(['cpm_result' => $cpm_result]);
 
         if ($request->hasFile('files')) {
-            $this->filesCreate($enterRequest);
+            $this->filesCreate($outbound);
         }
 
         return response()->json(['message' => $message, 'status' => 200]);
@@ -161,15 +151,7 @@ use Illuminate\Support\Str;
             }
         }
 
-        $data['cpm_result'] = $request->cpm;
-        $data['country_id'] = $request->country_id;
-
-        $cpm_calculated = $this->cpmCalculate($request->gross_weight);
-        $data['cpm_calculated'] = $cpm_calculated;
-        if ($cpm_calculated > $request->cpm) {
-            $data['cpm_result'] = $cpm_calculated;
-        }
-
+        $data['cpm_result'] = round(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);;
 
         $data = Arr::except($data, 'files');
         $outbound->update($data);
@@ -195,6 +177,7 @@ use Illuminate\Support\Str;
         }
         $outbound->delete();
     }
+
     public function filesCreate($enterRequest)
     {
         foreach (request('files') as $file) {
@@ -214,7 +197,7 @@ use Illuminate\Support\Str;
 
     public function fileDelete($file_id)
     {
-        $file = ManifestFile::where('id', $file_id)->where('type',4)->first();
+        $file = ManifestFile::where('id', $file_id)->where('type', 4)->first();
         if (Storage::path($file->path)) {
             Storage::delete($file->path);
         }

@@ -107,47 +107,25 @@
                                    @isset($outbound) value="{{ $outbound->net_weight }}" @endisset>
                             <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
                         </div>
-
                     </div>
-
-                    <div class="col-md-3 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Country</label>
-                        <div class="form-check form-check-custom form-check-solid ">
-                            <select name="country_id" class="form-select form-select-solid-bg mb-2"
-                                    id="countries"
-                                    @if(!(isset($outbound) && $outbound->country_id)) disabled
-                                    @endif
-                                    data-control="select2" data-placeholder="Multiple Countries">
-                                <option></option>
-                                @foreach($payload->countries as $country )
-                                    <option value="{{$country->id}}"
-                                            @if(isset($outbound) && $outbound->country_id == $country->id) selected @endif>
-                                        {{$country->name}}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <input class="form-check-input mx-2" type="checkbox" value="1"
-                                   id="countryCheckBox"
-                                   @if(!(isset($outbound) && $outbound->country_id)) checked @endif />
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-2 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">CPM per BL</label>
-                        <input type="number" step="any" name="cpm" min="0"
-                               class="form-control form-control-solid-bg mb-2"
-                               placeholder="CPM"
-                               @isset($outbound) value="{{ $outbound->cpm }}" @endisset>
-                    </div>
-
-
                     @isset($outbound)
                         <div class="col-md-3 mb-7">
-                            <label class="fw-semibold fs-6 mb-2">Cpm Calculated</label>
-                            <input type="number" step="any" min="0" disabled
+                            <label class="fw-semibold fs-6 mb-2"> Country </label>
+                            <div class="input-group mb-5">
+                                <input type="text" class="form-control form-control-solid-bg"
+                                       value="{{ $outbound->EnterRequest?->Country?->name ?? 'Multiple Countries' }}"
+                                       disabled>
+                            </div>
+                        </div>
+                    @endisset
+
+                    @isset($outbound)
+                        <div class="col-md-2 mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Bound CPM per BL</label>
+                            <input type="number" step="any" name="cpm" min="0"
                                    class="form-control form-control-solid-bg mb-2"
-                                   placeholder="Cpm Calculated" value="{{ $outbound->cpm_calculated }}">
+                                   placeholder="CPM"
+                                   @isset($outbound) value="{{ $outbound->EnterRequest->cpm }}" @endisset disabled>
                         </div>
                         <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Result</label>
@@ -157,26 +135,12 @@
                         </div>
                     @endisset
 
-                    <div class="col-md-2 mb-7">
+                    <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Date</label>
                         <input type="date" name="date" id="date"
                                class="form-control form-control-solid-bg mb-2"
                                placeholder="Date"
                                @isset($outbound) value="{{ $outbound->date }}" @endisset>
-                    </div>
-                    <div class="col-md-2 mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">WH</label>
-                        <select name="warehouse_id" class="form-select form-select-solid-bg mb-2"
-                                id="warehouses"
-                                data-control="select2" data-placeholder="WH">
-                            <option></option>
-                            @foreach($payload->warehouses as $warehouse)
-                                <option value="{{$warehouse->id}}"
-                                        @if(isset($outbound) && $outbound->warehouse_id == $warehouse->id) selected @endif>
-                                    {{$warehouse->code}}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
                     @if(!isset($outbound))
                         <div class="col-md-8">
@@ -186,14 +150,11 @@
                     <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
-                                  name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($outbound){{ $outbound->general_description_goods }}@endisset</textarea>
+                                  name="general_description_goods" style="min-height: 30px" placeholder="General description Goods">@isset($outbound){{ $outbound->general_description_goods }}@endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-7">
                         <label class="fw-semibold fs-6 mb-2"> Notes</label>
-                        <textarea class="form-control form-control-solid-bg mb-2"
-                                  name="notes" style="min-height: 30px"
-                                  placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
+                        <textarea class="form-control form-control-solid-bg mb-2" name="notes" style="min-height: 30px" placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
                     </div>
 
                     <div class="col-md-8 mb-7">
@@ -223,7 +184,7 @@
                             <input type="hidden" name="files">
                             <div class="dropzone" id="dropzone">
                                 <div class="dz-message needsclick">
-                                     <i class="ki-duotone ki-file-up text-primary fs-3x">
+                                    <i class="ki-duotone ki-file-up text-primary fs-3x">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                     </i>
@@ -332,18 +293,8 @@
 
             });
 
-            $('#outbounds,#countries,#warehouses').select2({
+            $('#outbounds').select2({
                 dropdownParent: $('#modal'),
-            });
-
-            $('#countryCheckBox').change(function () {
-                let countries = $('#countries')
-                if ($(this).is(':checked')) {
-                    countries.prop("disabled", true)
-                    countries.val('').trigger('change');
-                } else {
-                    countries.prop("disabled", false)
-                }
             });
 
 
