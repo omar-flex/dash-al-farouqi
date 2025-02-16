@@ -16,6 +16,7 @@ use App\Models\EnterRequestCar;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
 use App\Models\ManifestFile;
+use App\Models\ManifestType;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
@@ -124,7 +125,7 @@ class EnterRequestController extends Controller
         $enterRequest = EnterRequest::create(Arr::except($data, 'files'));
 
         if ($request->hasFile('files')) {
-            $this->filesCreate($enterRequest, $request->files);
+            $this->filesCreate($enterRequest);
         }
 
         return response()->json(['message' => $message, 'status' => 200]);
@@ -247,8 +248,6 @@ class EnterRequestController extends Controller
     {
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
-            //$originalFileName = $file->getClientOriginalName();
-            //$fileNameWithoutExt = pathinfo($originalFileName, PATHINFO_FILENAME);
             $fileNameToStore = uniqid('') . '.' . $extension;
             $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
             ManifestFile::create([
@@ -257,14 +256,14 @@ class EnterRequestController extends Controller
                 'extension' => $extension,
                 'manifest_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
-                'type' => 7,
+                'type' => ManifestType::INBOUND,
             ]);
         }
     }
 
     public function fileDelete($file_id)
     {
-        $file = ManifestFile::where('id', $file_id)->where('type', 7)->first();
+        $file = ManifestFile::where('id', $file_id)->where('type', ManifestType::INBOUND)->first();
         if (Storage::path($file->path)) {
             Storage::delete($file->path);
         }

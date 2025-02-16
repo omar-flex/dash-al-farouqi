@@ -12,6 +12,7 @@ use App\Models\EnterRequest;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
 use App\Models\ManifestFile;
+use App\Models\ManifestType;
 use App\Models\Outbound;
 use App\Models\Product;
 use App\Models\UnitMeasure;
@@ -169,7 +170,7 @@ use Illuminate\Support\Str;
             abort(403);
 
         $files = ManifestFile::where('manifest_id', $outbound->id)
-            ->where('type', 7)
+            ->where('type', ManifestType::OUTBOUND)
             ->get();
         foreach ($files as $file) {
             Storage::delete($file->path);
@@ -190,7 +191,7 @@ use Illuminate\Support\Str;
                 'extension' => $extension,
                 'manifest_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
-                'type' => 4
+                'type' => ManifestType::OUTBOUND
             ]);
         }
     }
