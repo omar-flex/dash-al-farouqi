@@ -65,7 +65,7 @@ class EnterRequestController extends Controller
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();
         foreach ($locationLines as $key => $locationLine) {
             $locations [$key]['id'] = $locationLine->id;
-            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . ' - ' . $locationLine?->location?->code . ' - ' . $locationLine?->code;
+            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . '-' . $locationLine?->location?->code . '-' . $locationLine?->code;
         }
 
         $payload = (object)[
