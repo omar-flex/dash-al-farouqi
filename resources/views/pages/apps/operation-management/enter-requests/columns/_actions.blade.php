@@ -10,8 +10,8 @@
     @endcan
 
         @can('delete_'.$resource)
-            <a class="btn btn-sm btn-light btn-active-light-danger remove_btn  @if($model->status_id != \App\Models\EnterRequestStatus::DRAFT)  @endif"
-               @if($model->status_id != \App\Models\EnterRequestStatus::DRAFT)
+            <a class="btn btn-sm btn-light btn-active-light-danger remove_btn"
+               @if(!auth()->user()->hasRole('administrator') && $model->status_id != \App\Models\EnterRequestStatus::DRAFT)
                style="pointer-events: none; cursor: default;"
                @endif
                id="{{$model->id}}" title="Delete"

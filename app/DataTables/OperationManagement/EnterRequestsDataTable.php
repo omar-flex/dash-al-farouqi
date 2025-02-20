@@ -37,7 +37,7 @@ class EnterRequestsDataTable extends DataTable
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
                 return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
             })->addColumn('action', function (EnterRequest $model) {
-                $resource = 'locations';
+                $resource = 'enter_requests';
                 $name = $model->bound_number;
                 return view('pages.apps.operation-management.enter-requests.columns._actions', compact('model', 'resource', 'name'));
             })->addIndexColumn();

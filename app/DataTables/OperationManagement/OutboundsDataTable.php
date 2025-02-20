@@ -37,7 +37,7 @@ class OutboundsDataTable extends DataTable
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
                 return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
             })->addColumn('action', function (Outbound $model) {
-                $resource = 'locations';
+                $resource = 'outbounds';
                 $name = $model->bound_number;
                 return view('pages.apps.operation-management.outbounds.columns._actions', compact('model', 'resource', 'name'));
             })->addIndexColumn();
