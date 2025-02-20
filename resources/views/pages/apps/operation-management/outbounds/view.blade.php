@@ -28,7 +28,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link text-active-primary pb-4 @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) active @endif"
                        data-kt-countup-tabs="true" data-bs-toggle="tab"
-                       href="#product_security_tab" data-kt-initialized="1" aria-selected="false" role="tab"
+                       href="#products_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                        tabindex="-1">
                         <i class="fa-sharp-duotone fa-solid fa-container-storage fa-lg"></i>
                         <strong>({{number_format($enterRequest->quantity_packages)}})</strong> Packages
@@ -180,7 +180,7 @@
                 </div>
                 <div
                     class="tab-pane fade @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) active show @endif"
-                    id="product_security_tab" role="tabpanel">
+                    id="products_tab" role="tabpanel">
                     @include('pages.apps.operation-management.enter-requests.sections.packages')
                 </div>
             </div>

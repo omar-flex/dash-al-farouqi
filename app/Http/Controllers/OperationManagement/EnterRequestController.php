@@ -20,6 +20,7 @@ use App\Models\ManifestType;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
+use App\Models\WarehouseItems;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -70,7 +71,6 @@ class EnterRequestController extends Controller
         $payload = (object)[
             'title' => 'Enter Request',
             'resource' => $this->resource,
-            'products' => Product::all(['id', 'name']),
             'unitMeasures' => UnitMeasure::all(['id', 'name']),
             'locations' => $locations,
             //'categories' => Category::where('type', 'service')->get(['id', 'name_en as name']),
@@ -227,21 +227,33 @@ class EnterRequestController extends Controller
     {
         $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
 
-        foreach ($request->numbers as $index => $number) {
-            EnterRequestCar::create([
-                'number' => $number,
-                'seal_number' => Arr::get($request->seal_numbers, $index),
-                'is_status' => Arr::get($request->statuses, $index),
-                'is_tracking_device' => Arr::get($request->tracking_devices, $index),
-                'enter_request_id' => $enter_request_id,
+        foreach ($request->products as $index => $product) {
+            $product = Product::firstOrCreate([
+                'name' => trim($product),
+                'barcode' => trim(Arr::get($request->barcodes, $index)),
+                'unit_measure_id' => trim(Arr::get($request->unit_measures, $index)),
+            ]);
+
+            WarehouseItems::create([
+                'quantity' => trim(Arr::get($request->quantities, $index)),
+                'location_line_id' => trim(Arr::get($request->locations, $index)),
+                'level' => trim(Arr::get($request->levels, $index)),
+                'pallet' => trim(Arr::get($request->pallets, $index)),
+                'product_id' => $product->id,
+                'enter_request_id' => $enterRequest->id,
+                'batch_number' => trim(Arr::get($request->batch_numbers, $index)),
             ]);
         }
 
-        $enterRequest->update(['status_id' => EnterRequestStatus::WH_ENTER_PRODUCT]);
+        if ($request->button_clicked == 'btn-submit') {
+            $enterRequest->update(['status_id' => EnterRequestStatus::AUTHORIZATION]);
+        }
 
-        $cares_list = view('pages.apps.operation-management.enter-requests.sections._cares-list', compact('enterRequest'))->render();
+        $warehouseItems = $enterRequest->WarehouseItems();
 
-        return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
+        $packages_list = view('pages.apps.operation-management.enter-requests.sections.packages', compact('warehouseItems', 'enterRequest'))->render();
+
+        return response()->json(['message' => 'Added Cars Successfully', 'html' => $packages_list, 'status' => 200]);
     }
 
     public function filesCreate($enterRequest)

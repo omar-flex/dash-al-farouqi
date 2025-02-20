@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('barcode')->nullable();
             $table->string('description')->nullable();
             $table->foreignId('unit_measure_id')->nullable()->constrained('unit_measures')->nullOnDelete();
             $table->timestamps();

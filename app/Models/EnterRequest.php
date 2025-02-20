@@ -38,4 +38,9 @@ class EnterRequest extends Model
         return $this->hasMany(ManifestFile::class, 'manifest_id')->where('type', ManifestType::INBOUND);
     }
 
+    public function WarehouseItems()
+    {
+        return $this->hasMany(WarehouseItems::class, 'location_line_id');
+    }
+
 }

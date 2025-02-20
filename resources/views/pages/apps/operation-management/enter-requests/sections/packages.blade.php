@@ -1,6 +1,5 @@
 @php
-    $is_cars = $enterRequest->cars()->count() > 0;
-    $lines = [];
+    $warehouseItems = [];
 @endphp
 <style>
     #suggestions {
@@ -8,6 +7,10 @@
         top: calc(100% + 5px);
         z-index: 1000;
         width: 100%;
+    }
+
+    .span_error {
+        font-size: 10px;
     }
 </style>
 <div class="card card-flush mb-6 mb-xl-9">
@@ -22,44 +25,53 @@
             <div class="card-toolbar">
                 <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
                        id="btn-submit">
+                <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
+                       id="btn-draft">
             </div>
         </div>
         <div class="card-body p-9 pt-4">
             <div class="row px-3">
                 <div class="col-2 mb-3">
-                    <label class="fw-semibold fs-6 mb-3 required" title="Product"> Product </label>
+                    <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2" title="Lot number"> Batch Number </label>
+                    <label class="fw-semibold fs-7 mb-2" title="Lot number"> Barcode </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2 required" title="Unit of Measure"> UoM </label>
+                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
                 </div>
                 <div class="col-1 mb-3">
-                    <label class="fw-semibold fs-6 mb-2 required" title="Quantity">Quantity</label>
+                    <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2 required" title="Location">WH-H-L</label>
+                    <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2" title="Level">Level</label>
+                    <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2" title="Pallet">Pallet</label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-6 mb-2" title="Remove">Remove</label>
+                    <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
                 </div>
 
             </div>
             <div data-repeater-products-list>
-                @if(count($lines) == 0)
+                @if(count($warehouseItems) == 0)
                     <div class="row px-3" data-repeater-products-item>
                         <div class="col-2 mb-2 search-wrapper">
                             <input type="text" name="products[]"
                                    class="form-control form-control-solid-bg form-control-sm searchInput"
                                    autocomplete="off" placeholder="search...">
                             <div class="suggestions list-group"></div>
+                        </div>
+                        <div class="col mb-2">
+                            <input class="form-control form-control-solid-bg form-control-sm codes"
+                                   placeholder="Barcode" type="text" name="barcodes[]"/>
                         </div>
                         <div class="col mb-2">
                             <input class="form-control form-control-solid-bg form-control-sm codes"
@@ -79,11 +91,11 @@
                             </select>
                         </div>
                         <div class="col-1 mb-2">
-                            <input type="number" min="1" class="form-control form-control-sm"
+                            <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
                                    name="quantities[]"
                                    aria-describedby="capacities" placeholder="Qty"/>
                         </div>
-                        <div class="col mb-2">
+                        <div class="col-md-2 mb-2">
                             <select name="locations[]"
                                     class="form-select form-select-solid-bg form-select-sm mb-2 locations"
                                     data-control="select2"
@@ -111,49 +123,67 @@
                         </div>
                     </div>
                 @else
-                    {{--    @foreach($lines as $line)
-                            <div class="row px-3" data-repeater-item>
-                                <input type="hidden" name="lines_id[]" value="{{$line->id}}"/>
-                                <div class="col-md-3 mb-2">
-                                    <input class="form-control form-control-solid-bg form-control-sm name_lines"
-                                           placeholder="Name Line" type="text" name="name_lines[]"
-                                           value="{{$line->name}}"/>
-                                </div>
-                                <div class="col-md-2 mb-2">
-                                    <input class="form-control form-control-solid-bg form-control-sm codes"
-                                           placeholder="Code" type="text" name="codes[]" value="{{$line->code}}"/>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <select name="categories[]"
-                                            class="form-select form-select-solid-bg form-select-sm mb-2 categories"
-                                            data-control="select2"
-                                            data-placeholder="Select an Storage Category">
-                                        <option></option>
-                                        @foreach($payload->categories as $category)
-                                            <option value="{{ $category->id }}"
-                                                    @if($line->category_id == $category->id ) selected @endif >
-                                                {{ $category->name}}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <div class="input-group input-group-sm mb-5">
-                                        <input type="number" step=any min="1" class="form-control"
-                                               name="capacities[]"
-                                               aria-describedby="capacities" placeholder="Capacity"
-                                               value="{{$line->capacity}}"/>
-                                        <span class="input-group-text" id="capacities">cpm</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-1 mb-2">
-                                    <button type="button" data-repeater-delete=""
-                                            class="btn btn-icon btn-light-danger btn-sm">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach--}}
+                    <div class="row px-3" data-repeater-products-item>
+                        <input type="hidden" name="items_id[]" value="{{$warehouseItems->id}}"/>
+                        <div class="col-2 mb-2 search-wrapper">
+                            <input type="text" name="products[]"
+                                   class="form-control form-control-solid-bg form-control-sm searchInput"
+                                   autocomplete="off" placeholder="search...">
+                            <div class="suggestions list-group"></div>
+                        </div>
+                        <div class="col mb-2">
+                            <input class="form-control form-control-solid-bg form-control-sm codes"
+                                   placeholder="Barcode" type="text" name="barcodes[]"/>
+                        </div>
+                        <div class="col mb-2">
+                            <input class="form-control form-control-solid-bg form-control-sm codes"
+                                   placeholder="BN" type="text" name="batch_numbers[]"/>
+                        </div>
+                        <div class="col mb-2">
+                            <select name="unit_measures[]"
+                                    data-control="select2"
+                                    class="form-select form-select-solid-bg form-select-sm mb-2 unit_measures"
+                                    data-placeholder="UoM ">
+                                <option></option>
+                                @foreach($payload->unitMeasures as $unitMeasure)
+                                    <option value="{{ $unitMeasure->id }}">
+                                        {{ $unitMeasure->name}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-1 mb-2">
+                            <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
+                                   name="quantities[]"
+                                   aria-describedby="capacities" placeholder="Qty"/>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <select name="locations[]"
+                                    class="form-select form-select-solid-bg form-select-sm mb-2 locations"
+                                    data-control="select2"
+                                    data-placeholder="WH-H-L">
+                                <option></option>
+                                @foreach($payload->locations as $location)
+                                    <option
+                                        value="{{ Illuminate\Support\Arr::first($location) }}"> {{ Illuminate\Support\Arr::last($location)}} </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <input type="text" class="form-control form-control-sm" name="levels[]"
+                                   placeholder="Level"/>
+                        </div>
+                        <div class="col mb-2">
+                            <input type="text" class="form-control form-control-sm" name="pallets[]"
+                                   placeholder="Pallet"/>
+                        </div>
+                        <div class="col mb-2">
+                            <button type="button" data-repeater-products-delete
+                                    class="btn btn-icon btn-light-danger btn-sm">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 @endif
             </div>
             <div class="form-group mt-3 text-end px-3">
@@ -212,7 +242,6 @@
                     }
                 });
             });
-
             $(document).on('keydown', '.searchInput', function (e) {
                 let $wrapper = $(this).closest('.search-wrapper');
                 let $suggestions = $wrapper.find('.suggestions');
@@ -228,15 +257,13 @@
                     if (currentIndex >= $items.length) currentIndex = 0;
                     $items.removeClass('active');
                     $items.eq(currentIndex).addClass('active');
-                }
-                else if (e.key === 'ArrowUp') {
+                } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
                     currentIndex--;
                     if (currentIndex < 0) currentIndex = $items.length - 1;
                     $items.removeClass('active');
                     $items.eq(currentIndex).addClass('active');
-                }
-                else if (e.key === 'Enter') {
+                } else if (e.key === 'Enter') {
                     e.preventDefault();
                     if (currentIndex >= 0) {
                         let text = $items.eq(currentIndex).text();
@@ -245,7 +272,6 @@
                     }
                 }
             });
-
             $(document).on('click', '.suggestion-item', function (e) {
                 e.preventDefault();
                 let text = $(this).text();
@@ -270,12 +296,20 @@
                 initSelect2();
                 checkVariantDetectability();
             });
+
+            let clickedButton = null;
+
+            $('input[type="submit"]').click(function () {
+                clickedButton = $(this).attr('id');
+            });
+
             $(document).on("click", "[data-repeater-products-delete]", function () {
                 if ($('[data-repeater-products-item]').length > 1) {
                     $(this).closest("[data-repeater-products-item]").remove();
                 }
                 checkVariantDetectability();
             });
+
             initSelect2()
 
             $('#formProducts').submit(function (e) {
@@ -286,6 +320,9 @@
                 $("#btn-submit").prop("disabled", false)
                 var form = $(this);
                 let formData = new FormData(this);
+                if (clickedButton) {
+                    formData.append('button_clicked', clickedButton);
+                }
                 var url = form.attr('action');
                 $.ajax({
                     type: "POST",
