@@ -39,7 +39,7 @@ class EnterRequestController extends Controller
 
     public function cpmCalculate($grossWeight)
     {
-        return $grossWeight / 333;
+        return ceil($grossWeight / 333);
     }
 
     public function index(EnterRequestsDataTable $dataTable)
@@ -107,7 +107,7 @@ class EnterRequestController extends Controller
             $message = 'Added Successfully';
         }
 
-        $data['cpm_result'] = $request->cpm;
+        $data['cpm_result'] = ceil($request->cpm);
 
         $cpm_calculated = $this->cpmCalculate($request->gross_weight);
         $data['cpm_calculated'] = $cpm_calculated;
@@ -159,8 +159,7 @@ class EnterRequestController extends Controller
             }
         }
 
-        $data['cpm_result'] = $request->cpm;
-        $data['country_id'] = $request->country_id;
+        $data['cpm_result'] = ceil($request->cpm);
 
         $cpm_calculated = $this->cpmCalculate($request->gross_weight);
         $data['cpm_calculated'] = $cpm_calculated;
