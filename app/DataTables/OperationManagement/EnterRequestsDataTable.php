@@ -30,6 +30,9 @@ class EnterRequestsDataTable extends DataTable
             ->editColumn('net_weight', content: function (EnterRequest $model) {
                 return number_format($model->net_weight, '2');
             })
+            ->editColumn('gross_weight', content: function (EnterRequest $model) {
+                return number_format($model->gross_weight, '2');
+            })
             ->editColumn('bound_number', content: function (EnterRequest $model) {
                 return '<a href="' . route('operation-management.enter_requests.show', $model->id) . '">' . $model->bound_number . '</a>';
             })
@@ -82,6 +85,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
             Column::make('net_weight')->title('Net weight')->addClass('text-center'),
+            Column::make('gross_weight')->title('Gross Weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
