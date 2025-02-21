@@ -40,7 +40,7 @@ class EnterRequest extends Model
 
     public function WarehouseItems()
     {
-        return $this->hasMany(WarehouseItems::class, 'location_line_id');
+        return $this->hasMany(WarehouseItems::class, 'enter_request_id');
     }
 
 }

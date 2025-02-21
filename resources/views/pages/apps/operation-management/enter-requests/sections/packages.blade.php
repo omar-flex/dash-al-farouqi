@@ -1,6 +1,3 @@
-@php
-    $warehouseItems = [];
-@endphp
 <style>
     #suggestions {
         position: sticky;
@@ -13,194 +10,76 @@
         font-size: 10px;
     }
 </style>
-<div class="card card-flush mb-6 mb-xl-9">
-    <form action="{{ route('operation-management.enter_requests.products.store',$enterRequest->id) }}" method="POST"
-          id="formProducts"
-          enctype="multipart/form-data">
-        @csrf
-        <div class="card-header mt-6">
-            <div class="card-title flex-column">
-                <h2 class="mb-1"> Product item with Locations</h2>
+    <div class="card card-flush mb-6 mb-xl-9">
+        <form action="{{ route('operation-management.enter_requests.products.store',$enterRequest->id) }}" method="POST"
+              id="formProducts"
+              enctype="multipart/form-data">
+            @csrf
+            <div class="card-header mt-6">
+                <div class="card-title flex-column">
+                    <h2 class="mb-1"> Product item with Locations</h2>
+                </div>
+                <div class="card-toolbar">
+                    <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
+                           id="btn-submit">
+                    <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
+                           id="btn-draft">
+                </div>
             </div>
-            <div class="card-toolbar">
-                <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
-                       id="btn-submit">
-                <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
-                       id="btn-draft">
-            </div>
-        </div>
-        <div class="card-body p-9 pt-4">
-            <div class="row px-3">
-                <div class="col-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Lot number"> Barcode </label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
-                </div>
-                <div class="col-1 mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
-                </div>
-                <div class="col-md-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
-                </div>
-
-            </div>
-            <div data-repeater-products-list>
-                @if(count($warehouseItems) == 0)
-                    <div class="row px-3" data-repeater-products-item>
-                        <div class="col-2 mb-2 search-wrapper">
-                            <input type="text" name="products[]"
-                                   class="form-control form-control-solid-bg form-control-sm searchInput"
-                                   autocomplete="off" placeholder="search...">
-                            <div class="suggestions list-group"></div>
-                        </div>
-                        <div class="col mb-2">
-                            <input class="form-control form-control-solid-bg form-control-sm codes"
-                                   placeholder="Barcode" type="text" name="barcodes[]"/>
-                        </div>
-                        <div class="col mb-2">
-                            <input class="form-control form-control-solid-bg form-control-sm codes"
-                                   placeholder="BN" type="text" name="batch_numbers[]"/>
-                        </div>
-                        <div class="col mb-2">
-                            <select name="unit_measures[]"
-                                    data-control="select2"
-                                    class="form-select form-select-solid-bg form-select-sm mb-2 unit_measures"
-                                    data-placeholder="UoM ">
-                                <option></option>
-                                @foreach($payload->unitMeasures as $unitMeasure)
-                                    <option value="{{ $unitMeasure->id }}">
-                                        {{ $unitMeasure->name}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-1 mb-2">
-                            <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
-                                   name="quantities[]"
-                                   aria-describedby="capacities" placeholder="Qty"/>
-                        </div>
-                        <div class="col-md-2 mb-2">
-                            <select name="locations[]"
-                                    class="form-select form-select-solid-bg form-select-sm mb-2 locations"
-                                    data-control="select2"
-                                    data-placeholder="WH-H-L">
-                                <option></option>
-                                @foreach($payload->locations as $location)
-                                    <option
-                                        value="{{ Illuminate\Support\Arr::first($location) }}"> {{ Illuminate\Support\Arr::last($location)}} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col mb-2">
-                            <input type="text" class="form-control form-control-sm" name="levels[]"
-                                   placeholder="Level"/>
-                        </div>
-                        <div class="col mb-2">
-                            <input type="text" class="form-control form-control-sm" name="pallets[]"
-                                   placeholder="Pallet"/>
-                        </div>
-                        <div class="col mb-2">
-                            <button type="button" data-repeater-products-delete
-                                    class="btn btn-icon btn-light-danger btn-sm">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
+            <div class="card-body p-9 pt-4">
+                <div class="row px-3">
+                    <div class="col-2 mb-3">
+                        <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
                     </div>
-                @else
-                    <div class="row px-3" data-repeater-products-item>
-                        <input type="hidden" name="items_id[]" value="{{$warehouseItems->id}}"/>
-                        <div class="col-2 mb-2 search-wrapper">
-                            <input type="text" name="products[]"
-                                   class="form-control form-control-solid-bg form-control-sm searchInput"
-                                   autocomplete="off" placeholder="search...">
-                            <div class="suggestions list-group"></div>
-                        </div>
-                        <div class="col mb-2">
-                            <input class="form-control form-control-solid-bg form-control-sm codes"
-                                   placeholder="Barcode" type="text" name="barcodes[]"/>
-                        </div>
-                        <div class="col mb-2">
-                            <input class="form-control form-control-solid-bg form-control-sm codes"
-                                   placeholder="BN" type="text" name="batch_numbers[]"/>
-                        </div>
-                        <div class="col mb-2">
-                            <select name="unit_measures[]"
-                                    data-control="select2"
-                                    class="form-select form-select-solid-bg form-select-sm mb-2 unit_measures"
-                                    data-placeholder="UoM ">
-                                <option></option>
-                                @foreach($payload->unitMeasures as $unitMeasure)
-                                    <option value="{{ $unitMeasure->id }}">
-                                        {{ $unitMeasure->name}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-1 mb-2">
-                            <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
-                                   name="quantities[]"
-                                   aria-describedby="capacities" placeholder="Qty"/>
-                        </div>
-                        <div class="col-md-2 mb-2">
-                            <select name="locations[]"
-                                    class="form-select form-select-solid-bg form-select-sm mb-2 locations"
-                                    data-control="select2"
-                                    data-placeholder="WH-H-L">
-                                <option></option>
-                                @foreach($payload->locations as $location)
-                                    <option
-                                        value="{{ Illuminate\Support\Arr::first($location) }}"> {{ Illuminate\Support\Arr::last($location)}} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col mb-2">
-                            <input type="text" class="form-control form-control-sm" name="levels[]"
-                                   placeholder="Level"/>
-                        </div>
-                        <div class="col mb-2">
-                            <input type="text" class="form-control form-control-sm" name="pallets[]"
-                                   placeholder="Pallet"/>
-                        </div>
-                        <div class="col mb-2">
-                            <button type="button" data-repeater-products-delete
-                                    class="btn btn-icon btn-light-danger btn-sm">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2 required" title="Lot number"> Barcode </label>
                     </div>
-                @endif
-            </div>
-            <div class="form-group mt-3 text-end px-3">
-                <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-plus fs-2"></i>
-                    Add Line
-                </button>
-            </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
+                    </div>
+                    <div class="col-1 mb-3">
+                        <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
+                    </div>
+                    <div class="col mb-3">
+                        <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
+                    </div>
 
-        </div>
-    </form>
-</div>
+                </div>
+                @include('pages.apps.operation-management.enter-requests.sections.products_items')
+                <div class="form-group mt-3 text-end px-3">
+                    <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
+                        <i class="ki-duotone ki-plus fs-2"></i>
+                        Add Line
+                    </button>
+                </div>
 
+            </div>
+        </form>
+    </div>
 @push('scripts')
     <script>
         function initSelect2() {
             $('.unit_measures,.categories,.locations').select2();
+        }
+
+        function sumQuantities() {
+            let sum = 0;
+            document.querySelectorAll('input[name="quantities[]"]').forEach(input => {
+                sum += parseFloat(input.value) || 0; // Convert value to number or default to 0
+            });
+            return sum;
         }
 
         function checkVariantDetectability() {
@@ -279,8 +158,6 @@
                 $wrapper.find('.searchInput').val(text);
                 $wrapper.find('.suggestions').empty();
             });
-
-
             $("[data-repeater-products-create]").click(function () {
                 let repeaterList = $("[data-repeater-products-list]");
                 let newItem = repeaterList.find("[data-repeater-products-item]:first").clone();
@@ -296,75 +173,74 @@
                 initSelect2();
                 checkVariantDetectability();
             });
-
             let clickedButton = null;
-
             $('input[type="submit"]').click(function () {
                 clickedButton = $(this).attr('id');
             });
-
             $(document).on("click", "[data-repeater-products-delete]", function () {
                 if ($('[data-repeater-products-item]').length > 1) {
                     $(this).closest("[data-repeater-products-item]").remove();
                 }
                 checkVariantDetectability();
             });
-
             initSelect2()
-
             $('#formProducts').submit(function (e) {
                 e.preventDefault();
                 $(".span_error").each(function () {
                     $(this).remove()
                 });
                 $("#btn-submit").prop("disabled", false)
-                var form = $(this);
-                let formData = new FormData(this);
-                if (clickedButton) {
-                    formData.append('button_clicked', clickedButton);
-                }
-                var url = form.attr('action');
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: formData,
-                    dataType: "json",
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function (data) {
-                        if (data.status === 422) {
-                            $("#btn-submit").prop("disabled", false)
-                            $.each(data.errors, function (index, value) {
-                                var error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                let repeaterList = $("[data-repeater-products-list]");
-                                if (index.split('.').length > 1) {
-                                    const parts = index.split('.');
-                                    let line = parts[1];
-                                    let name = parts[0] + '[]';
-                                    repeaterList.children().eq(line).find('[name="' + name + '"]').parent().last().append(error)
-                                } else {
-                                    let input = $('[name="' + index + '"]').parent().last()
-                                    if (input.length > 0) {
-                                        input.append(error)
-                                    } else {
-                                        $('#error').append(error)
-                                    }
-                                }
-                            });
-                            toastr.error('Oops,there were an errors...');
-                        } else {
-                            toastr.success(data.message);
-                            location.reload(true);
-                            //$('#div_cars').empty().append(data.html)
-                            $('#btn-submit').addClass('d-none')
-                        }
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        $("#btn-submit").prop("disabled", false)
-                        toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
+                if (sumQuantities() !== {{$enterRequest->quantity_packages}}) {
+                    toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
+                } else {
+                    let form = $(this);
+                    let formData = new FormData(this);
+                    if (clickedButton) {
+                        formData.append('button_clicked', clickedButton);
                     }
-                });
+                    let url = form.attr('action');
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: formData,
+                        dataType: "json",
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data.status === 422) {
+                                $("#btn-submit").prop("disabled", false)
+                                $.each(data.errors, function (index, value) {
+                                    let error = '<span class="text-danger span_error"> ' + value + '</span>'
+                                    let repeaterList = $("[data-repeater-products-list]");
+                                    if (index.split('.').length > 1) {
+                                        const parts = index.split('.');
+                                        let line = parts[1];
+                                        let name = parts[0] + '[]';
+                                        repeaterList.children().eq(line).find('[name="' + name + '"]').parent().last().append(error)
+                                    } else {
+                                        let input = $('[name="' + index + '"]').parent().last()
+                                        if (input.length > 0) {
+                                            input.append(error)
+                                        } else {
+                                            $('#error').append(error)
+                                        }
+                                    }
+                                });
+                                toastr.error('Oops,there were an errors...');
+                            } else {
+                                $('#product_items').empty().append(data.html)
+                                toastr.success(data.message);
+                            }
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            $("#btn-submit").prop("disabled", false)
+                            toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
+                        }
+                    });
+                }
+
 
             });
         });

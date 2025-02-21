@@ -60,23 +60,16 @@ class EnterRequestController extends Controller
 
     public function show(EnterRequest $enterRequest)
     {
-        $locations = [];
-
-        $locationLines = LocationLine::with('location', 'location.warehouse')->get();
-        foreach ($locationLines as $key => $locationLine) {
-            $locations [$key]['id'] = $locationLine->id;
-            $locations [$key]['code'] = $locationLine?->location?->warehouse?->code . '-' . $locationLine?->location?->code . '-' . $locationLine?->code;
-        }
-
         $payload = (object)[
             'title' => 'Enter Request',
             'resource' => $this->resource,
             'unitMeasures' => UnitMeasure::all(['id', 'name']),
-            'locations' => $locations,
-            //'categories' => Category::where('type', 'service')->get(['id', 'name_en as name']),
+            'locations' => (object)$this->getLocations(),
         ];
 
-        return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'payload'));
+        $warehouseItems = $enterRequest->WarehouseItems;
+
+        return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'warehouseItems', 'payload'));
     }
 
     public function create()
@@ -227,14 +220,18 @@ class EnterRequestController extends Controller
     {
         $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
 
+        $delete_items_ids = [];
+        $items_ids = $enterRequest->WarehouseItems->pluck('id')->toArray();
+        if (count($items_ids) > 0)
+            $delete_items_ids = array_diff($items_ids, $request->items_id);
+
         foreach ($request->products as $index => $product) {
             $product = Product::firstOrCreate([
                 'name' => trim($product),
                 'barcode' => trim(Arr::get($request->barcodes, $index)),
                 'unit_measure_id' => trim(Arr::get($request->unit_measures, $index)),
             ]);
-
-            WarehouseItems::create([
+            $item = [
                 'quantity' => trim(Arr::get($request->quantities, $index)),
                 'location_line_id' => trim(Arr::get($request->locations, $index)),
                 'level' => trim(Arr::get($request->levels, $index)),
@@ -242,16 +239,33 @@ class EnterRequestController extends Controller
                 'product_id' => $product->id,
                 'enter_request_id' => $enterRequest->id,
                 'batch_number' => trim(Arr::get($request->batch_numbers, $index)),
-            ]);
+            ];
+
+            $items_id = Arr::get($request->all(), 'items_id.' . $index);
+
+            if ($items_id) {
+                WarehouseItems::where('id', $items_id)->update($item);
+            } else {
+                WarehouseItems::create($item);
+            }
+            if (count($delete_items_ids) > 0) {
+                WarehouseItems::whereIn('id', $delete_items_ids)->delete();
+            }
         }
+
+        $payload = (object)[
+            'unitMeasures' => UnitMeasure::all(['id', 'name']),
+            'locations' => (object)$this->getLocations(),
+        ];
 
         if ($request->button_clicked == 'btn-submit') {
             $enterRequest->update(['status_id' => EnterRequestStatus::AUTHORIZATION]);
         }
 
-        $warehouseItems = $enterRequest->WarehouseItems();
+        $warehouseItems = WarehouseItems::where('enter_request_id', $enterRequest->id)->get();
 
-        $packages_list = view('pages.apps.operation-management.enter-requests.sections.packages', compact('warehouseItems', 'enterRequest'))->render();
+        $packages_list = view('pages.apps.operation-management.enter-requests.sections.products_items',
+            compact('warehouseItems', 'payload'))->render();
 
         return response()->json(['message' => 'Added Cars Successfully', 'html' => $packages_list, 'status' => 200]);
     }
@@ -286,6 +300,20 @@ class EnterRequestController extends Controller
     {
         $enterRequest = EnterRequest::firstWhere('id', $id);
         return view('pages.pdf_model.receiving_customs_declaration', compact('enterRequest'));
+    }
+
+    public function getLocations()
+    {
+        $locations = [];
+        $locationLines = LocationLine::with('location', 'location.warehouse')->get();
+        foreach ($locationLines as $locationLine) {
+            $location = [];
+            $location['id'] = $locationLine->id;
+            $location['code'] = $locationLine?->location?->warehouse?->code . '-' . $locationLine?->location?->code . '-' . $locationLine?->code;
+            $locations[] = (object)$location;
+        }
+
+        return $locations;
     }
 
 }

@@ -135,7 +135,6 @@ use Illuminate\Support\Arr;
             } else {
                 LocationLine::create($location);
             }
-
         }
 
         if (count($delete_line_ids) > 0) {
