@@ -26,7 +26,8 @@
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link text-active-primary pb-4 @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) active @endif"
+                    <a class="nav-link text-active-primary pb-4 @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) active @endif
+                    @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION) disabled @endif"
                        data-kt-countup-tabs="true" data-bs-toggle="tab"
                        href="#product_security_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                        tabindex="-1">
@@ -34,6 +35,17 @@
                         <strong>({{number_format($enterRequest->quantity_packages)}})</strong> Packages
                     </a>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link text-active-primary pb-4 @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION) active @endif"
+                       data-kt-countup-tabs="true" data-bs-toggle="tab"
+                       href="#product_authorization" data-kt-initialized="1" aria-selected="false" role="tab"
+                       tabindex="-1">
+                        <i class="fa-sharp-duotone fa-ballot-check fa-lg"></i>
+                        <strong>({{number_format($enterRequest->quantity_packages)}})</strong>  Manifest Authorization
+                    </a>
+                </li>
+
+
                 {{--   <li class="nav-item ms-auto">
                        <a href="#" class="btn btn-primary ps-7" data-kt-menu-trigger="click" data-kt-menu-attach="parent"
                           data-kt-menu-placement="bottom-end">
