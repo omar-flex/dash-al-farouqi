@@ -262,12 +262,7 @@ class EnterRequestController extends Controller
             $enterRequest->update(['status_id' => EnterRequestStatus::AUTHORIZATION]);
         }
 
-        $warehouseItems = WarehouseItems::where('enter_request_id', $enterRequest->id)->get();
-
-        $packages_list = view('pages.apps.operation-management.enter-requests.sections.products_items',
-            compact('warehouseItems', 'payload'))->render();
-
-        return response()->json(['message' => 'Added Cars Successfully', 'html' => $packages_list, 'status' => 200]);
+        return response()->json(['message' => 'Added Product item Successfully', 'status' => 200]);
     }
 
     public function filesCreate($enterRequest)

@@ -10,64 +10,64 @@
         font-size: 10px;
     }
 </style>
-    <div class="card card-flush mb-6 mb-xl-9">
-        <form action="{{ route('operation-management.enter_requests.products.store',$enterRequest->id) }}" method="POST"
-              id="formProducts"
-              enctype="multipart/form-data">
-            @csrf
-            <div class="card-header mt-6">
-                <div class="card-title flex-column">
-                    <h2 class="mb-1"> Product item with Locations</h2>
-                </div>
-                <div class="card-toolbar">
-                    <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
-                           id="btn-submit">
-                    <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
-                           id="btn-draft">
-                </div>
+<div class="card card-flush mb-6 mb-xl-9">
+    <form action="{{ route('operation-management.enter_requests.products.store',$enterRequest->id) }}" method="POST"
+          id="formProducts"
+          enctype="multipart/form-data">
+        @csrf
+        <div class="card-header mt-6">
+            <div class="card-title flex-column">
+                <h2 class="mb-1"> Product item with Locations</h2>
             </div>
-            <div class="card-body p-9 pt-4">
-                <div class="row px-3">
-                    <div class="col-2 mb-3">
-                        <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2 required" title="Lot number"> Barcode </label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
-                    </div>
-                    <div class="col-1 mb-3">
-                        <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
-                    </div>
-
+            <div class="card-toolbar">
+                <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
+                       id="btn-submit">
+                <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
+                       id="btn-draft">
+            </div>
+        </div>
+        <div class="card-body p-9 pt-4">
+            <div class="row px-3">
+                <div class="col-2 mb-3">
+                    <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
                 </div>
-                @include('pages.apps.operation-management.enter-requests.sections.products_items')
-                <div class="form-group mt-3 text-end px-3">
-                    <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
-                        <i class="ki-duotone ki-plus fs-2"></i>
-                        Add Line
-                    </button>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Lot number"> Barcode </label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
+                </div>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
                 </div>
 
             </div>
-        </form>
-    </div>
+            @include('pages.apps.operation-management.enter-requests.sections.products_items')
+            <div class="form-group mt-3 text-end px-3">
+                <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
+                    <i class="ki-duotone ki-plus fs-2"></i>
+                    Add Line
+                </button>
+            </div>
+
+        </div>
+    </form>
+</div>
 @push('scripts')
     <script>
         function initSelect2() {
@@ -190,7 +190,7 @@
                     $(this).remove()
                 });
                 $("#btn-submit").prop("disabled", false)
-                if (sumQuantities() !== {{$enterRequest->quantity_packages}}) {
+                if (clickedButton !== 'btn-draft' && sumQuantities() !== {{$enterRequest->quantity_packages}}) {
                     toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
                 } else {
                     let form = $(this);
@@ -198,6 +198,7 @@
                     if (clickedButton) {
                         formData.append('button_clicked', clickedButton);
                     }
+
                     let url = form.attr('action');
 
                     $.ajax({
@@ -230,8 +231,10 @@
                                 });
                                 toastr.error('Oops,there were an errors...');
                             } else {
-                                $('#product_items').empty().append(data.html)
+                                //$('#product_items').empty().append(data.html)
                                 toastr.success(data.message);
+                                location.reload(true);
+
                             }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
