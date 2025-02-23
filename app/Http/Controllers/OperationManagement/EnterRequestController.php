@@ -53,6 +53,8 @@ class EnterRequestController extends Controller
             'tableId' => 'enter_requests_table',
             'formId' => $this->formId,
             'resource' => $this->resource,
+            'statuses' => EnterRequestStatus::get(['id', 'name']),
+            'customers' => Customer::get(['id', 'name']),
         ];
 
         return $dataTable->render('pages.apps.operation-management.enter-requests.list', compact('payload'));

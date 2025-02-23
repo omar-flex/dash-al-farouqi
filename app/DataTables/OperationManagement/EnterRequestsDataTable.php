@@ -55,7 +55,12 @@ class EnterRequestsDataTable extends DataTable
         return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name', 'customers.name as customer_name')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'enter_requests.status_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
-            ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
+            ->when(request('customer_id'), function ($q) {
+                return $q->where('customer_id', request('customer_id'));
+            })
+            ->when(request('status_id'), function ($q) {
+                return $q->where('status_id', request('status_id'));
+            })->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
             })->newQuery();
     }
@@ -90,7 +95,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::computed('action')
-                ->addClass('text-end text-nowrap')
+                ->addClass('text-center text-nowrap')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
