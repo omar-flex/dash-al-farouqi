@@ -36,7 +36,7 @@ class CustomersDataTable extends DataTable
      */
     public function query(Customer $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->withCount('Inbounds')->withCount('Outbounds')->newQuery();
     }
 
     /**
@@ -66,6 +66,8 @@ class CustomersDataTable extends DataTable
             Column::make('national_number')->addClass('text-center'),
             Column::make('tax_number')->addClass('text-center'),
             Column::make('company_name')->addClass('text-center'),
+            Column::make('inbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Inbounds'),
+            Column::make('outbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Outbounds'),
             Column::computed('action')
                 ->addClass('text-center text-nowrap')
                 ->exportable(false)
