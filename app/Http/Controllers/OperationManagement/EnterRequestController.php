@@ -136,7 +136,11 @@ class EnterRequestController extends Controller
             'tableId' => 'enter_requests_table',
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name']),
-            'warehouses' => Warehouse::all(['id', 'code'])
+            'warehouses' => Warehouse::all(['id', 'code']),
+            'files' => ManifestFile::where([
+                'manifest_id' => $enterRequest->id,
+                'type' => ManifestType::INBOUND
+            ])->get()
         ];
 
         return view('pages.apps.operation-management.enter-requests.create', compact('payload', 'enterRequest'));

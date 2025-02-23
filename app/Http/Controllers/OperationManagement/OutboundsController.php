@@ -129,7 +129,11 @@ use Illuminate\Support\Str;
             'tableId' => $this->tableId,
             'bound_numbers' => EnterRequest::get(['id', 'bound_number as name']),
             'countries' => Country::all(['id', 'name']),
-            'warehouses' => Warehouse::all(['id', 'code'])
+            'warehouses' => Warehouse::all(['id', 'code']),
+            'files' => ManifestFile::where([
+                'manifest_id' => $outbound->id,
+                'type' => ManifestType::OUTBOUND
+            ])->get()
         ];
 
         return view('pages.apps.operation-management.outbounds.create', compact('payload', 'outbound'));
