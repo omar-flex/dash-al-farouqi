@@ -41,7 +41,7 @@ Breadcrumbs::for('operation-management.index', function (BreadcrumbTrail $trail)
 
 Breadcrumbs::for('operation-management.enter_requests.index', function (BreadcrumbTrail $trail) {
     $trail->parent('operation-management.index');
-    $trail->push('Enter Requests', route('operation-management.enter_requests.index'));
+    $trail->push('Inbound', route('operation-management.enter_requests.index'));
 });
 
 Breadcrumbs::for('operation-management.enter_requests.create', function (BreadcrumbTrail $trail) {

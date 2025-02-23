@@ -35,7 +35,7 @@
                              <span class="menu-icon">
                                     <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
                              </span>
-                                    <span class="menu-title fs-7">Enter Requests</span>
+                                    <span class="menu-title fs-7">Inbound</span>
                                 </a>
                             </div>
                         @endcanany

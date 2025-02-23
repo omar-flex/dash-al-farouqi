@@ -20,10 +20,12 @@
                 <h2 class="mb-1"> Product item with Locations</h2>
             </div>
             <div class="card-toolbar">
-                <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
-                       id="btn-submit">
-                <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
-                       id="btn-draft">
+                @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
+                    <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
+                           id="btn-submit">
+                    <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
+                           id="btn-draft">
+                @endif
             </div>
         </div>
         <div class="card-body p-9 pt-4">
@@ -58,12 +60,14 @@
 
             </div>
             @include('pages.apps.operation-management.enter-requests.sections.products_items')
-            <div class="form-group mt-3 text-end px-3">
-                <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-plus fs-2"></i>
-                    Add Line
-                </button>
-            </div>
+            @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
+                <div class="form-group mt-3 text-end px-3">
+                    <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
+                        <i class="ki-duotone ki-plus fs-2"></i>
+                        Add Line
+                    </button>
+                </div>
+            @endif
 
         </div>
     </form>
@@ -91,6 +95,11 @@
         }
 
         $(document).ready(function () {
+            @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION)
+            $("input,select,button").each(function () {
+                $(this).prop("disabled", true)
+            });
+            @endif
             $(document).on('input', '.searchInput', function (e) {
                 let query = $(this).val().trim();
                 let $wrapper = $(this).closest('.search-wrapper');

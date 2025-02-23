@@ -48,8 +48,8 @@ class EnterRequestController extends Controller
             abort(403);
 
         $payload = (object)[
-            'title' => 'Enter Requests',
-            'sub_title' => 'Enter Request',
+            'title' => 'Inbounds',
+            'sub_title' => 'Inbound',
             'tableId' => 'enter_requests_table',
             'formId' => $this->formId,
             'resource' => $this->resource,
@@ -61,7 +61,7 @@ class EnterRequestController extends Controller
     public function show(EnterRequest $enterRequest)
     {
         $payload = (object)[
-            'title' => 'Enter Request',
+            'title' => 'Inbound',
             'resource' => $this->resource,
             'unitMeasures' => UnitMeasure::all(['id', 'name']),
             'locations' => (object)$this->getLocations(),
@@ -78,7 +78,7 @@ class EnterRequestController extends Controller
             abort(403);
 
         $payload = (object)[
-            'title' => 'Enter Request Create',
+            'title' => 'Inbound Create',
             'formId' => $this->formId,
             'tableId' => 'enter_requests_table',
             'resource' => $this->resource,
@@ -130,7 +130,7 @@ class EnterRequestController extends Controller
             abort(403);
 
         $payload = (object)[
-            'title' => 'Enter Request Edit',
+            'title' => 'Inbound Edit',
             'formId' => $this->formId,
             'resource' => $this->resource,
             'tableId' => 'enter_requests_table',
