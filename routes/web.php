@@ -5,14 +5,11 @@ use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\GuidesController;
-use App\Http\Controllers\HotelController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
 use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\RestaurantController;
-use App\Http\Controllers\TransportationController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use Illuminate\Support\Facades\Route;
@@ -35,7 +32,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('customers', CustomerController::class);
-    Route::resource('products', CustomerController::class);
 
     Route::get('products-search', [ProductController::class, 'search'])->name('products.search');
     Route::resource('products', ProductController::class);

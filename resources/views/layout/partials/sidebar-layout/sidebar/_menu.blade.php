@@ -16,6 +16,18 @@
                     <span class="menu-title fs-7">Dashboards</span>
                 </a>
             </div>
+
+            @canany(['list_products'])
+                <div class="menu-item {{ request()->routeIs('products.*') ? 'here show' : '' }}">
+                    <a class="menu-link" href="{{ route('products.index') }}">
+                    <span class="menu-icon">
+                          <i class="fa-sharp-duotone fa-solid fa-boxes-stacked fa-lg"></i>
+                    </span>
+                        <span class="menu-title fs-7">Products</span>
+                    </a>
+                </div>
+            @endcanany
+
             @hasrole('administrator')
             <div class="menu-item {{ request()->routeIs('customers.*') ? 'here show' : '' }}">
                 <a class="menu-link" href="{{ route('customers.index') }}">

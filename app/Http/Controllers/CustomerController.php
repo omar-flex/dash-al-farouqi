@@ -91,7 +91,12 @@ class CustomerController extends Controller
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
 
-        $customer->delete();
+        if (($customer->Inbounds->count() + $customer->Outbounds->count()) > 0)
+            return response()->json([
+                'exception' => 'Cannot Delete This Customer'
+            ], 500);
+        else
+            $customer->delete();
     }
 
 }

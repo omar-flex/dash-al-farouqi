@@ -170,7 +170,6 @@ function remove(removeClass, url, table_id, csrf_token, table_type = false) {
                             window.LaravelDataTables[table_id].ajax.reload();
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $("#btn-submit").prop("disabled", false)
                         toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
                     }
                 });
