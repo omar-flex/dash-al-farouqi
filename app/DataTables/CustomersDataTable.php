@@ -20,9 +20,15 @@ class CustomersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['user', 'role', 'last_login_at'])
+            ->rawColumns(['name', 'inbounds_count', 'outbounds_count'])
             ->editColumn('name', function (Customer $customer) {
                 return view('pages.apps.customers._customer', compact('customer'));
+            })
+            ->editColumn('inbounds_count', content: function (Customer $model) {
+                return '<div class="badge badge-light-secondary fw-bold">' . $model->inbounds_count . '</div>';
+            })
+            ->editColumn('outbounds_count', content: function (Customer $model) {
+                return '<div class="badge badge-light-secondary fw-bold">' . $model->outbounds_count . '</div>';
             })
             ->addColumn('action', function (Customer $model) {
                 $resource = 'customers';

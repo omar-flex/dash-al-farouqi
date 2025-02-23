@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('customers', CustomerController::class);
+    Route::resource('products', CustomerController::class);
+
     Route::get('products-search', [ProductController::class, 'search'])->name('products.search');
     Route::resource('products', ProductController::class);
 

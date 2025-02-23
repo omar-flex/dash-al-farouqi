@@ -3,7 +3,7 @@
 @section('content')
 
     <!--begin::App-->
-    <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+    <div class="d-flex flex-column flex-root app-root " id="kt_app_root">
         <!--begin::Wrapper-->
         <div class="d-flex flex-column flex-lg-row flex-column-fluid">
             <!--begin::Body-->
