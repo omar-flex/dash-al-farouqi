@@ -112,7 +112,10 @@
                 $.ajax({
                     url: '/products-search',
                     method: 'GET',
-                    data: {q: query},
+                    data: {
+                        q: query,
+                        'enter_request_id': '{{$enterRequest->id}}'
+                    },
                     dataType: 'json',
                     success: function (data) {
                         $suggestions.empty();

@@ -6,6 +6,7 @@ use App\DataTables\ProductsDataTable;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Models\UnitMeasure;
+use App\Models\WarehouseItems;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -21,7 +22,13 @@ class ProductController extends Controller
     {
         $q = $request->input('q');
 
+
         $results = Product::where('name', 'like', '%' . $q . '%')
+            ->when(request('enter_request_id'), function ($query) {
+                $product_ids = WarehouseItems::where('enter_request_id', request('enter_request_id'))
+                    ->pluck('product_id');
+                $query->whereIntegerInRaw('id', $product_ids);
+            })
             ->limit(10)
             ->get();
 
