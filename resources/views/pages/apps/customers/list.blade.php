@@ -4,7 +4,7 @@
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('warehouse-management.'.$payload->resource.'.index') }}
+        {{ Breadcrumbs::render($payload->resource.'.index') }}
     @endsection
 
     <div class="card">
@@ -42,13 +42,13 @@
         {{ $dataTable->scripts() }}
         <script>
             @can('add_'.$payload->resource)
-            addModal('add', '{{ route('warehouse-management.'.$payload->resource.'.create')}}', 'Add {{$payload->title}}', '{{$payload->formId}}', '{{$payload->tableId}}');
+            addModal('add', '{{ route($payload->resource.'.create')}}', 'Add {{$payload->title}}', '{{$payload->formId}}', '{{$payload->tableId}}');
             @endcan
             @can('edit_'.$payload->resource)
-            editModal('edit_btn', 'warehouse-management/{{$payload->resource}}', 'Edit {{$payload->title}}', '{{$payload->formId}}', '{{$payload->tableId}}')
+            editModal('edit_btn', '{{$payload->resource}}', 'Edit {{$payload->title}}', '{{$payload->formId}}', '{{$payload->tableId}}')
             @endcan
             @can('delete_'.$payload->resource)
-            remove('remove_btn', 'warehouse-management/{{$payload->resource}}', '{{$payload->tableId}}', '{{ csrf_token() }}')
+            remove('remove_btn', '{{$payload->resource}}', '{{$payload->tableId}}', '{{ csrf_token() }}')
             @endcan
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
                 window.LaravelDataTables['{{$payload->tableId}}'].search(this.value).draw();

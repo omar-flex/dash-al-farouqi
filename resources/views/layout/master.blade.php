@@ -24,6 +24,12 @@
     @foreach(getGlobalAssets('css') as $path)
         {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
     @endforeach
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css">
+    <style>
+        .iti{
+            width: 100%;
+        }
+    </style>
     <!--end::Global Stylesheets Bundle-->
 
     <!--begin::Vendor Stylesheets(used by this page)-->
@@ -39,14 +45,14 @@
     <!--end::Custom Stylesheets-->
 
     <link rel="stylesheet" href="{{asset('assets/plugins/custom/font-awesome/css/all.min.css')}}">
-    @include('layout.modal')
-    @include('layout.customer_modal')
     @livewireStyles
 </head>
 <!--end::Head-->
 
 <!--begin::Body-->
 <body {!! printHtmlClasses('body') !!} {!! printHtmlAttributes('body') !!}>
+@include('layout.modal')
+@include('layout.customer_modal')
 
 @include('partials/theme-mode/_init')
 
@@ -69,6 +75,7 @@
 @foreach(getCustomJs() as $path)
     {!! sprintf('<script src="%s"></script>', asset($path)) !!}
 @endforeach
+<script src="{{asset('intl-tel-input/intlTelInput.min.js')}}"></script>
 <!--end::Custom Javascript-->
 @stack('scripts')
 <!--end::Javascript-->

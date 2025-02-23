@@ -202,25 +202,31 @@
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest)
+                                {{ $enterRequest->general_description_goods }}
+                            @endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> Notes</label>
                         <textarea class="form-control form-control-solid-bg mb-2"
                                   name="notes" style="min-height: 30px"
-                                  placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
+                                  placeholder="Notes">@isset($enterRequest)
+                                {{ $enterRequest->notes }}
+                            @endisset</textarea>
                     </div>
 
                     <div class="col-md-8 mb-7">
                         <label class="fw-semibold fs-6 mb-2 required">Attached</label>
                         @if(isset($enterRequest))
                             @foreach($payload->files as $file)
-                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2" id="file_{{$file->id}}">
+                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2"
+                                     id="file_{{$file->id}}">
                                     <div class="symbol symbol-30px me-5">
                                         <img alt="Icon" src="{{$file->getIcon()}}">
                                     </div>
                                     <div class="fw-semibold">
-                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename" target="_blank"
+                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename"
+                                           target="_blank"
                                            href="{{$file->getUrl()}}" id="filename_{{$file->id}}"
                                            title="{{$file->filename}}">{{\Illuminate\Support\Str::limit($file->filename,20)}}</a>
                                     </div>
@@ -362,7 +368,7 @@
             @can('add_customers')
             $('#add_customer').on('click', function () {
                 $.ajax({
-                    url: '{{route('customers.create')}}',
+                    url: '{{route('customers.create',['enter_request' => true])}}',
                     method: 'get',
                     success: function (data) {
                         $('#customer-modal-body').html(data);
@@ -411,7 +417,6 @@
                                         });
                                         $('#customer-modal').modal('hide');
                                         $('#customer-modal-body').empty()
-
                                     }
                                 },
                                 error: function (xhr, ajaxOptions, thrownError) {

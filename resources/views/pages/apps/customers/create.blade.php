@@ -9,6 +9,7 @@
                   enctype="multipart/form-data">
                 @endif
                 @csrf
+                <input type="hidden" name="enter_request" value="{{ $payload->enter_request ?? 0 }}">
                 <div class="row">
                     <div class="col-md-4 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Customer name</label>
@@ -24,12 +25,13 @@
                                placeholder="Email"
                                @isset($customer) value="{{ $customer->email }}" @endisset>
                     </div>
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-4 mb-2">
                         <label class="required fw-semibold fs-6 mb-2">Phone</label>
-                        <input type="text" name="phone" class="form-control form-control-solid-bg mb-2"
+                        <input type="hidden" name="phone" @isset($customer) value="{{ $customer->phone }}" @endisset>
+                        <input type="tel" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Phone"
-                               @isset($customer) value="{{ $customer->phone }}" @endisset>
+                               id="phone" @isset($customer) value="{{ $customer->phone }}" @endisset>
                     </div>
                     <div class="col-md-4 mb-7">
                         <label class="fw-semibold fs-6 mb-2">Company name</label>
@@ -39,7 +41,7 @@
                                @isset($customer) value="{{ $customer->company_name }}" @endisset>
                     </div>
                     <div class="col-md-4 mb-7">
-                        <label class=" fw-semibold fs-6 mb-2">  National CR number</label>
+                        <label class=" fw-semibold fs-6 mb-2"> National CR number</label>
                         <input type="text" name="national_number" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="National CR number"
@@ -47,7 +49,7 @@
                     </div>
 
                     <div class="col-md-4 mb-7">
-                        <label class=" fw-semibold fs-6 mb-2">  Tax Number </label>
+                        <label class=" fw-semibold fs-6 mb-2"> Tax Number </label>
                         <input type="text" name="tax_number" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Tax Number"
@@ -67,8 +69,39 @@
 
     <script>
         $(document).ready(function () {
-            $('#statuses').select2({
-                dropdownParent: $('#modal'),
+            const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"]
+            let phone = document.querySelector("#phone")
+            let iti = window.intlTelInput(phone, {
+                separateDialCode: true,
+                autoFormat: true,
+                nationalMode: true,
+                initialCountry: 'auto',
+                geoIpLookup: callback => {
+                    fetch("https://ipapi.co/json")
+                        .then(res => res.json())
+                        .then(data => callback(data.country_code))
+                        .catch(() => callback("us"));
+                },
+                loadUtilsOnInit: "{{asset('intl-tel-input/utils.js')}}",
+            });
+
+            phone.addEventListener('change', () => {
+                $(".iti_error").each(function () {
+                    $(this).remove()
+                });
+                if (iti.isValidNumber()) {
+                    $(".iti_error").remove()
+                    $('[name="phone"]').val(iti.getNumber(intlTelInput.utils.numberFormat.E164))
+                } else {
+                    const errorCode = iti.getValidationError();
+                    const msg = errorMap[errorCode] || "Invalid number";
+                    const error = '<span class="text-danger iti_error"> ' + msg + '</span>'
+                    $('#phone').parent().parent().last().append(error)
+                }
+            });
+
+            phone.addEventListener('countrychange', () => {
+                $('[name="phone"],#phone').val('')
             });
         });
     </script>

@@ -16,6 +16,16 @@
                     <span class="menu-title fs-7">Dashboards</span>
                 </a>
             </div>
+            @hasrole('administrator')
+            <div class="menu-item {{ request()->routeIs('customers.*') ? 'here show' : '' }}">
+                <a class="menu-link" href="{{ route('customers.index') }}">
+                    <span class="menu-icon">
+                        <i class="fa-sharp-duotone fa-light fa-users-rays fa-lg"></i>
+                    </span>
+                    <span class="menu-title fs-7">Customers</span>
+                </a>
+            </div>
+            @endhasrole
 
             @canany(['list_enter_requests','list_outbounds'])
                 <div data-kt-menu-trigger="click"
@@ -56,7 +66,6 @@
 
                 </div>
             @endcan
-
             @canany(['list_warehouses','list_locations'])
                 <div data-kt-menu-trigger="click"
                      class="menu-item menu-accordion {{ request()->routeIs('warehouse-management.*') ? 'here show' : '' }}">

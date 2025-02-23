@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\CustomersDataTable;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
 
@@ -14,20 +15,20 @@ class CustomerController extends Controller
         $this->resource = 'customers';
     }
 
-    public function index(WarehousesDataTable $dataTable)
+    public function index(CustomersDataTable $dataTable)
     {
         if (!auth()->user()->can('list_' . $this->resource))
             abort(403);
 
         $payload = (object)[
-            'title' => 'Warehouses',
-            'sub_title' => 'Warehouse',
-            'tableId' => 'warehouses-table',
+            'title' => 'Customers',
+            'sub_title' => 'Customer',
+            'tableId' => 'customers-table',
             'formId' => $this->formId,
             'resource' => $this->resource,
         ];
 
-        return $dataTable->render('pages.apps.warehouse-management.warehouse.list', compact('payload'));
+        return $dataTable->render('pages.apps.customers.list', compact('payload'));
     }
 
     public function create()
@@ -35,9 +36,12 @@ class CustomerController extends Controller
         if (!auth()->user()->can('add_' . $this->resource))
             abort(403);
 
-        $payload = (object)['formId' => $this->formId];
+        $payload = (object)[
+            'formId' => $this->formId,
+            'enter_request' => request('enter_request', 0),
+        ];
 
-        return view('pages.apps.customer.create', compact('payload'));
+        return view('pages.apps.customers.create', compact('payload'));
     }
 
     public function store(CustomerRequest $request)
@@ -51,40 +55,43 @@ class CustomerController extends Controller
 
         Customer::create($data);
 
-        return Customer::get(['id', 'name']);
+        if (request('enter_request'))
+            return Customer::get(['id', 'name']);
+
+        return response()->json(['message' => 'Stored Successfully', 'status' => 200]);
 
     }
 
-    public function edit(Warehouse $warehouse)
+    public function edit(Customer $customer)
     {
         if (!auth()->user()->can('edit_' . $this->resource))
             abort(403);
 
         $payload = (object)['formId' => $this->formId];
 
-        return view('pages.apps.warehouse-management.warehouse.create', compact('payload', 'warehouse'));
+        return view('pages.apps.customers.create', compact('payload', 'customer'));
     }
 
-    public function update(WarehouseRequest $request, Warehouse $warehouse)
+    public function update(CustomerRequest $request, Customer $customer)
     {
         if (!auth()->user()->can('edit_' . $this->resource))
             abort(403);
 
-        $data['name'] = $request->warehouse_name;
-        $data['code'] = $request->code;
-        $data['is_active'] = $request->is_active ? 1 : 0;
+        $data = $request->only('email', 'company_name', 'phone', 'national_number', 'tax_number');
 
-        $warehouse->update($data);
+        $data['name'] = $request->customer_name;
 
-        return response()->json(['message' => 'Update Successfully', 'status' => 200]);
+        $customer->update($data);
+
+        return response()->json(['message' => 'Updated Successfully', 'status' => 200]);
     }
 
-    public function destroy(Warehouse $warehouse)
+    public function destroy(Customer $customer)
     {
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
 
-        $warehouse->delete();
+        $customer->delete();
     }
 
 }

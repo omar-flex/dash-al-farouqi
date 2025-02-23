@@ -161,7 +161,7 @@
                            <!--begin::Menu item-->
                            <div class="menu-item px-5">
                                <a href="#" class="menu-link text-danger px-5">
-                                   Delete customer
+                                   Delete customers
                                </a>
                            </div>
                            <!--end::Menu item-->

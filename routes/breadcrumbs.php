@@ -59,6 +59,10 @@ Breadcrumbs::for('operation-management.outbounds.index', function (BreadcrumbTra
     $trail->push('Outbounds', route('operation-management.outbounds.index'));
 });
 
+Breadcrumbs::for('customers.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Customers', route('customers.index'));
+});
 
 
 // Home > Dashboard > User Management
