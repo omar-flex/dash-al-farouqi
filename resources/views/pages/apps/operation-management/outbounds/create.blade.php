@@ -132,7 +132,7 @@
                             <input type="number" step="any" name="cpm" min="0"
                                    class="form-control form-control-solid-bg mb-2"
                                    placeholder="CPM"
-                                   @isset($outbound) value="{{ $outbound->EnterRequest->cpm }}" @endisset disabled>
+                                   @isset($outbound) value="{{ $outbound?->EnterRequest?->cpm }}" @endisset disabled>
                         </div>
                         <div class="col-md-3 mb-7">
                             <label class="fw-semibold fs-6 mb-2">Cpm Result</label>
