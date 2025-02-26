@@ -18,6 +18,7 @@ class EnterRequestStatusesSeeder extends Seeder
             ['name' => 'Manifest office Draft'],
             ['name' => 'Car Check'],
             ['name' => 'WH Enter Product'],
+            ['name' => 'Manifest Validation'],
             ['name' => 'Manifest Authorization'],
         ];
 

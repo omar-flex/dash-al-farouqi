@@ -18,8 +18,6 @@ class WarehouseSeeder extends Seeder
      */
     public function run(): void
     {
-
-
         Schema::disableForeignKeyConstraints();
         DB::table('warehouses')->truncate();
         DB::table('location_lines')->truncate();
