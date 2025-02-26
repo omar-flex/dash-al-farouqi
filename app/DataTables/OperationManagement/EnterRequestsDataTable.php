@@ -4,6 +4,7 @@ namespace App\DataTables\OperationManagement;
 
 
 use App\Actions\GetThemeType;
+use App\Models\Customer;
 use App\Models\EnterRequest;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
@@ -23,7 +24,7 @@ class EnterRequestsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number'])
+            ->rawColumns(['status_name', 'bound_number','outbounds_count'])
             ->editColumn('created_at', function (EnterRequest $model) {
                 return $model->created_at->format('d M Y, h:i a');
             })
@@ -35,6 +36,9 @@ class EnterRequestsDataTable extends DataTable
             })
             ->editColumn('bound_number', content: function (EnterRequest $model) {
                 return '<a href="' . route('operation-management.enter_requests.show', $model->id) . '">' . $model->bound_number . '</a>';
+            })
+            ->editColumn('outbounds_count', content: function (EnterRequest $model) {
+                return '<div class="badge badge-light-secondary fw-bold">' . $model->outbounds_count . '</div>';
             })
             ->editColumn('status_name', content: function (EnterRequest $model) {
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
@@ -55,6 +59,7 @@ class EnterRequestsDataTable extends DataTable
         return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name', 'customers.name as customer_name')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'enter_requests.status_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
+            ->withCount('Outbounds')
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));
             })
@@ -94,6 +99,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('outbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Outbounds'),
             Column::computed('action')
                 ->addClass('text-center text-nowrap')
                 ->exportable(false)
