@@ -1,3 +1,4 @@
+
 <div id="product_items">
     <div data-repeater-products-list>
         @if(count($warehouseItems) == 0)
@@ -69,25 +70,25 @@
                         <input type="text" name="products[]"
                                class="form-control form-control-solid-bg form-control-sm searchInput"
                                autocomplete="off" placeholder="search..."
-                               value="{{$item?->product?->name}}">
+                               value="{{$item?->product?->name}}" {{$disabled}}>
                         <div class="suggestions list-group"></div>
                     </div>
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm codes"
                                placeholder="Barcode" type="text" name="barcodes[]"
-                               value="{{$item?->product?->barcode}}"/>
+                               value="{{$item?->product?->barcode}}" {{$disabled}}/>
                     </div>
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm codes"
                                placeholder="BN" type="text" name="batch_numbers[]"
-                               value="{{$item?->batch_number}}"
+                               value="{{$item?->batch_number}}" {{$disabled}}
                         />
                     </div>
                     <div class="col mb-2">
                         <select name="unit_measures[]"
                                 data-control="select2"
                                 class="form-select form-select-solid-bg form-select-sm mb-2 unit_measures"
-                                data-placeholder="UoM ">
+                                data-placeholder="UoM " {{$disabled}}>
                             <option></option>
                             @foreach($payload->unitMeasures as $unitMeasure)
                                 <option value="{{ $unitMeasure->id }}"
@@ -102,13 +103,13 @@
                                class="form-control form-control-sm form-control-solid-bg"
                                name="quantities[]" id="quantities"
                                aria-describedby="capacities" placeholder="Qty"
-                               value="{{$item?->quantity}}"/>
+                               value="{{$item?->quantity}}" {{$disabled}}/>
                     </div>
                     <div class="col-md-2 mb-2">
                         <select name="locations[]"
                                 class="form-select form-select-solid-bg form-select-sm mb-2 locations"
                                 data-control="select2"
-                                data-placeholder="WH-H-L">
+                                data-placeholder="WH-H-L" {{$disabled}}>
                             <option></option>
                             @foreach($payload->locations as $location)
                                 <option @if($item->location_line_id == $location->id) selected @endif
@@ -119,18 +120,20 @@
                     </div>
                     <div class="col mb-2">
                         <input type="text" class="form-control form-control-sm" name="levels[]"
-                               placeholder="Level" value="{{$item?->level}}"/>
+                               placeholder="Level" value="{{$item?->level}}" {{$disabled}}/>
                     </div>
                     <div class="col mb-2">
                         <input type="text" class="form-control form-control-sm" name="pallets[]"
-                               placeholder="Pallet" value="{{$item?->pallet}}"/>
+                               placeholder="Pallet" value="{{$item?->pallet}}" {{$disabled}}/>
                     </div>
-                    <div class="col mb-2">
-                        <button type="button" data-repeater-products-delete
-                                class="btn btn-icon btn-light-danger btn-sm">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>
+                    @if(!$disabled)
+                        <div class="col mb-2">
+                            <button type="button" data-repeater-products-delete
+                                    class="btn btn-icon btn-light-danger btn-sm">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         @endif

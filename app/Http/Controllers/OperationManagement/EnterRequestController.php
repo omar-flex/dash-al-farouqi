@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
 use App\Http\Requests\OperationManagement\ProductsRequest;
+use App\Http\Requests\OperationManagement\ValidationsRequest;
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\Customer;
@@ -191,13 +192,12 @@ class EnterRequestController extends Controller
     {
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
-       $count = $enterRequest->Outbounds->count();
+        $count = $enterRequest->Outbounds->count();
         if ($enterRequest->Outbounds->count() > 0)
             return response()->json([
-                'exception' => "Cannot Delete This Inbound Because It Has Outbound ($count)"  ,
+                'exception' => "Cannot Delete This Inbound Because It Has Outbound ($count)",
             ], 403);
-        else
-        {
+        else {
             $files = ManifestFile::where('manifest_id', $enterRequest->id)->where('type', 4)->get();
             foreach ($files as $file) {
                 Storage::delete($file->path);
@@ -275,7 +275,29 @@ class EnterRequestController extends Controller
             $enterRequest->update(['status_id' => EnterRequestStatus::VALIDATION]);
         }
 
-        return response()->json(['message' => 'Added Product item Successfully', 'status' => 200]);
+        return response()->json(['message' => 'Added or Update Product item Successfully', 'status' => 200]);
+    }
+
+    public function validations($enter_request_id, ValidationsRequest $request)
+    {
+
+        $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
+
+        foreach ($request->fixed_costs as $index => $fixed_cost) {
+            $item = [
+                'fixed_cost' => $fixed_cost,
+                'gross_weight' => Arr::get($request->gross_weights, $index),
+                'net_weight' => trim(Arr::get($request->net_weights, $index)),
+            ];
+            $items_id = Arr::get($request->all(), 'items_id.' . $index);
+            WarehouseItems::where('id', $items_id)->update($item);
+        }
+
+        if ($request->button_clicked == 'btn-submit') {
+            $enterRequest->update(['status_id' => EnterRequestStatus::AUTHORIZATION]);
+        }
+
+        return response()->json(['message' => 'Added or Update Validations item Successfully', 'status' => 200]);
     }
 
     public function filesCreate($enterRequest)

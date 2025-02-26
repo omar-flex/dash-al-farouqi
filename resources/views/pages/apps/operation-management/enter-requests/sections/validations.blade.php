@@ -10,23 +10,17 @@
         font-size: 10px;
     }
 </style>
-@php
-    if($enterRequest->status_id == \App\Models\EnterRequestStatus::VALIDATION || $enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION)
-        $disabled  = 'disabled';
-    else
-        $disabled  = null;
-@endphp
 <div class="card card-flush mb-6 mb-xl-9">
-    <form action="{{ route('operation-management.enter_requests.products.store',$enterRequest->id) }}" method="POST"
-          id="formProducts"
+    <form action="{{ route('operation-management.enter_requests.validations.store',$enterRequest->id) }}" method="POST"
+          id="formValidations"
           enctype="multipart/form-data">
         @csrf
         <div class="card-header mt-6">
             <div class="card-title flex-column">
-                <h2 class="mb-1"> Product item with Locations</h2>
+                <h2 class="mb-1"> Validation Product Item</h2>
             </div>
             <div class="card-toolbar">
-                @if(!$disabled)
+                @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
                     <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
                            id="btn-submit">
                     <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
@@ -37,170 +31,47 @@
         <div class="card-body p-9 pt-4">
             <div class="row px-3">
                 <div class="col-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-3 required" title="Product"> Product </label>
+                    <label class="fw-semibold fs-7 mb-3" title="Product"> Product </label>
                 </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Lot number"> Barcode </label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
-                </div>
-                <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Unit of Measure"> UoM </label>
+                <div class="col-2 mb-3">
+                    <label class="fw-semibold fs-7 mb-2 " title="Lot number"> Barcode </label>
                 </div>
                 <div class="col-1 mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Quantity">Quantity</label>
+                    <label class="fw-semibold fs-7 mb-2" title="Batch Number"> BN </label>
                 </div>
-                <div class="col-md-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Location">WH-H-L</label>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Unit of Measure"> UoM </label>
+                </div>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Quantity">Quantity</label>
+                </div>
+
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Fixed Cost">Fixed Cost</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
+                    <label class="fw-semibold fs-7 mb-2 required" title="Gross Weight">Gross Weight</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Pallet">Pallet</label>
+                    <label class="fw-semibold fs-7 mb-2 required" title="Net Weight">Net Weight</label>
                 </div>
-                @if(!$disabled)
-                    <div class="col mb-3">
-                        <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
-                    </div>
-                @endif
 
             </div>
-            @include('pages.apps.operation-management.enter-requests.sections.products_items')
-            @if(!$disabled)
-                <div class="form-group mt-3 text-end px-3">
-                    <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
-                        <i class="ki-duotone ki-plus fs-2"></i>
-                        Add Line
-                    </button>
-                </div>
-            @endif
+            @include('pages.apps.operation-management.enter-requests.sections.validation_items')
         </div>
     </form>
 </div>
 @push('scripts')
     <script>
-        function initSelect2() {
-            $('.unit_measures,.categories,.locations').select2();
-        }
-
-        function sumQuantities() {
-            let sum = 0;
-            document.querySelectorAll('input[name="quantities[]"]').forEach(input => {
-                sum += parseFloat(input.value) || 0; // Convert value to number or default to 0
-            });
-            return sum;
-        }
-
-        function checkVariantDetectability() {
-            if ($('[data-repeater-products-item]').length == 1) {
-                $('[data-repeater-products-delete]').prop('disabled', true).addClass('disabled');
-            } else {
-                $('[data-repeater-products-delete]').prop('disabled', false).removeClass('disabled');
-            }
-        }
-
         $(document).ready(function () {
 
-            $(document).on('input', '.searchInput', function (e) {
-                let query = $(this).val().trim();
-                let $wrapper = $(this).closest('.search-wrapper');
-                let $suggestions = $wrapper.find('.suggestions');
-
-                if (query.length < 2) {
-                    $suggestions.empty();
-                    return;
-                }
-
-                $.ajax({
-                    url: '/products-search',
-                    method: 'GET',
-                    data: {
-                        q: query,
-                        'enter_request_id': '{{$enterRequest->id}}'
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        $suggestions.empty();
-                        if (data.length > 0) {
-                            $.each(data, function (index, item) {
-                                $suggestions.append(
-                                    `<a href="#" class="list-group-item list-group-item-action suggestion-item" data-id="${item.id}">${item.name}</a>`
-                                );
-                            });
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                    }
-                });
-            });
-            $(document).on('keydown', '.searchInput', function (e) {
-                let $wrapper = $(this).closest('.search-wrapper');
-                let $suggestions = $wrapper.find('.suggestions');
-                let $items = $suggestions.find('.suggestion-item');
-
-                if ($items.length === 0) return;
-
-                let currentIndex = $items.index($suggestions.find('.active'));
-
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    currentIndex++;
-                    if (currentIndex >= $items.length) currentIndex = 0;
-                    $items.removeClass('active');
-                    $items.eq(currentIndex).addClass('active');
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    currentIndex--;
-                    if (currentIndex < 0) currentIndex = $items.length - 1;
-                    $items.removeClass('active');
-                    $items.eq(currentIndex).addClass('active');
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (currentIndex >= 0) {
-                        let text = $items.eq(currentIndex).text();
-                        $(this).val(text);
-                        $suggestions.empty();
-                    }
-                }
-            });
-            $(document).on('click', '.suggestion-item', function (e) {
-                e.preventDefault();
-                let text = $(this).text();
-                let $wrapper = $(this).closest('.search-wrapper');
-                $wrapper.find('.searchInput').val(text);
-                $wrapper.find('.suggestions').empty();
-            });
-            $("[data-repeater-products-create]").click(function () {
-                let repeaterList = $("[data-repeater-products-list]");
-                let newItem = repeaterList.find("[data-repeater-products-item]:first").clone();
-
-                newItem.find("input").val("");
-                newItem.find("select").prop("selectedIndex", 0);
-                newItem.find('.select2-container').remove();
-                newItem.find('.suggestions').empty();
-                newItem.find('.span_error').each(function () {
-                    $(this).remove()
-                });
-                repeaterList.append(newItem);
-                initSelect2();
-                checkVariantDetectability();
-            });
             let clickedButton = null;
 
             $('input[type="submit"]').click(function () {
                 clickedButton = $(this).attr('id');
             });
-            $(document).on("click", "[data-repeater-products-delete]", function () {
-                if ($('[data-repeater-products-item]').length > 1) {
-                    $(this).closest("[data-repeater-products-item]").remove();
-                }
-                checkVariantDetectability();
-            });
-            initSelect2()
-            $('#formProducts').submit(function (e) {
+
+            $('#formValidations').submit(function (e) {
                 e.preventDefault();
                 $(".span_error").each(function () {
                     $(this).remove()
@@ -209,7 +80,7 @@
                 if (clickedButton === 'btn-submit') {
                     Swal.fire({
                         title: 'Are you sure?',
-                        html: "<span> You won't be able to <span class='text-danger'> Manifest Validation! </span> </span>",
+                        html: "<span> You won't be able to <span class='text-danger'> Manifest Authorization! </span> </span>",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -222,7 +93,7 @@
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 return false;
                             } --}}
-                            let form = $("#formProducts");
+                            let form = $("#formValidations");
                             let formData = new FormData(form[0]);
                             if (clickedButton) {
                                 formData.append('button_clicked', clickedButton);
@@ -241,7 +112,7 @@
                                         $("#btn-submit,#btn-draft").prop("disabled", false)
                                         $.each(data.errors, function (index, value) {
                                             let error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                            let repeaterList = $("[data-repeater-products-list]");
+                                            let repeaterList = $("[data-repeater-validations-list]");
                                             if (index.split('.').length > 1) {
                                                 const parts = index.split('.');
                                                 let line = parts[1];
@@ -258,7 +129,6 @@
                                         });
                                         toastr.error('Oops,there were an errors...');
                                     } else {
-                                        //$('#product_items').empty().append(data.html)
                                         toastr.success(data.message);
                                         location.reload(true);
 
@@ -294,7 +164,7 @@
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 $.each(data.errors, function (index, value) {
                                     let error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                    let repeaterList = $("[data-repeater-products-list]");
+                                    let repeaterList = $("[data-repeater-validations-list]");
                                     if (index.split('.').length > 1) {
                                         const parts = index.split('.');
                                         let line = parts[1];
@@ -311,7 +181,6 @@
                                 });
                                 toastr.error('Oops,there were an errors...');
                             } else {
-                                //$('#product_items').empty().append(data.html)
                                 toastr.success(data.message);
                                 location.reload(true);
 

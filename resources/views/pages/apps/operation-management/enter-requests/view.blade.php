@@ -26,14 +26,26 @@
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link text-active-primary pb-4 @if(in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT,\App\Models\EnterRequestStatus::AUTHORIZATION]) ) active @endif"
+                    <a class="nav-link text-active-primary pb-4 @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT ) active @endif"
                        data-kt-countup-tabs="true" data-bs-toggle="tab"
-                       href="#product_security_tab" data-kt-initialized="1" aria-selected="false" role="tab"
+                       href="#product_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                        tabindex="-1">
                         <i class="fa-sharp-duotone fa-solid fa-container-storage fa-lg"></i>
                         <strong>({{number_format($enterRequest->quantity_packages)}})</strong> Packages
                     </a>
                 </li>
+                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION]))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link text-active-primary pb-4 @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION])) active @endif"
+                           data-kt-countup-tabs="true" data-bs-toggle="tab"
+                           href="#validation_tab" data-kt-initialized="1" aria-selected="false" role="tab"
+                           tabindex="-1">
+                            <i class="fa-sharp-duotone fa-solid fa-ballot-check fa-lg"></i>
+                            <strong>( {{number_format($enterRequest?->WarehouseItems?->count() )}} )</strong> Manifest
+                            Validation
+                        </a>
+                    </li>
+                @endif
             </ul>
 
 
@@ -44,10 +56,17 @@
                     @include('pages.apps.operation-management.enter-requests.sections.cares')
                 </div>
                 <div
-                    class="tab-pane fade @if(in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT,\App\Models\EnterRequestStatus::AUTHORIZATION]) ) active show @endif"
-                    id="product_security_tab" role="tabpanel">
+                    class="tab-pane fade @if($enterRequest->status_id == \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT ) active show @endif"
+                    id="product_tab" role="tabpanel">
                     @include('pages.apps.operation-management.enter-requests.sections.packages')
                 </div>
+                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION]) )
+                    <div
+                        class="tab-pane fade @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION])) active show @endif "
+                        id="validation_tab" role="tabpanel">
+                        @include('pages.apps.operation-management.enter-requests.sections.validations')
+                    </div>
+                @endif
             </div>
 
         </div>
