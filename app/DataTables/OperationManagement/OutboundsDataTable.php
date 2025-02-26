@@ -31,7 +31,7 @@ class OutboundsDataTable extends DataTable
                 return number_format($model->net_weight, '2');
             })
             ->editColumn('bound_number', content: function (Outbound $model) {
-                return '<a href="' . route('operation-management.enter_requests.show', $model->enter_request_id) . '">' . $model->bound_number . '</a>';
+                return '<a href="">' . $model->bound_number . '</a>';
             })
             ->editColumn('status_name', content: function (Outbound $model) {
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
