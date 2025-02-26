@@ -43,4 +43,9 @@ class EnterRequest extends Model
         return $this->hasMany(WarehouseItems::class, 'enter_request_id');
     }
 
+    public function Outbounds()
+    {
+        return $this->hasMany(Outbound::class, 'enter_request_id');
+    }
+
 }

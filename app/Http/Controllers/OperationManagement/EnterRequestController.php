@@ -191,13 +191,21 @@ class EnterRequestController extends Controller
     {
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
-
-        $files = ManifestFile::where('manifest_id', $enterRequest->id)->where('type', 4)->get();
-        foreach ($files as $file) {
-            Storage::delete($file->path);
-            $file->delete();
+       $count = $enterRequest->Outbounds->count();
+        if ($enterRequest->Outbounds->count() > 0)
+            return response()->json([
+                'exception' => "Cannot Delete This Inbound Because It Has Outbound ($count)"  ,
+            ], 403);
+        else
+        {
+            $files = ManifestFile::where('manifest_id', $enterRequest->id)->where('type', 4)->get();
+            foreach ($files as $file) {
+                Storage::delete($file->path);
+                $file->delete();
+            }
+            $enterRequest->delete();
         }
-        $enterRequest->delete();
+
     }
 
     public function cars($enter_request_id, CarsRequest $request)
