@@ -17,14 +17,14 @@
                                placeholder="Product name"
                                @isset($product) value="{{ $product->name }}" @endisset>
                     </div>
-                    <div class="col-md-4 mb-7">
+                    <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Barcode</label>
                         <input type="text" name="barcode" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
                                placeholder="Barcode"
                                @isset($product) value="{{ $product->barcode }}" @endisset>
                     </div>
-                    <div class="col-md-2 mb-7">
+                    <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Unit Measures</label>
                         <select name="unit_measure_id" class="form-select form-select-solid mb-2" id="unit_measures"
                                 data-control="select2" data-placeholder="Select an Unit Measures">

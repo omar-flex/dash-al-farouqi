@@ -17,7 +17,7 @@ function addModal(id, route, title = 'Add', form_id, table_id, table_type = fals
                         $(this).remove()
                     });
                     $('#error').empty()
-                    $("#btn-submit").prop("disabled", true)
+                    $("#btn-submit,#btn-draft").prop("disabled", true)
                     var form = $(this);
                     var url = form.attr('action');
                     $.ajax({
@@ -30,7 +30,7 @@ function addModal(id, route, title = 'Add', form_id, table_id, table_type = fals
                         processData: false,
                         success: function (data) {
                             if (data.status === 422) {
-                                $("#btn-submit").prop("disabled", false)
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
                                 $.each(data.errors, function (index, value) {
                                     var error = '<span class="text-danger span_error"> ' + value + '</span>'
                                     if (index.split('.').length > 1) {
@@ -57,7 +57,7 @@ function addModal(id, route, title = 'Add', form_id, table_id, table_type = fals
                             }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            $("#btn-submit").prop("disabled", false)
+                            $("#btn-submit,#btn-draft").prop("disabled", false)
                             toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
                         }
                     });
@@ -87,7 +87,7 @@ function editModal(editClass, route, title = 'Edit', form_id, table_id, paramete
                         $(this).remove()
                     });
                     e.preventDefault();
-                    $("#btn-submit").prop("disabled", false)
+                    $("#btn-submit,#btn-draft").prop("disabled", false)
                     var form = $(this);
                     var url = form.attr('action');
                     $.ajax({
@@ -100,7 +100,7 @@ function editModal(editClass, route, title = 'Edit', form_id, table_id, paramete
                         processData: false,
                         success: function (data) {
                             if (data.status === 422) {
-                                $("#btn-submit").prop("disabled", false)
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
                                 $.each(data.errors, function (index, value) {
                                     var error = '<span class="text-danger span_error"> ' + value + '</span>'
                                     $('[name="' + index + '"]').parent().last().append(error)
@@ -115,7 +115,7 @@ function editModal(editClass, route, title = 'Edit', form_id, table_id, paramete
                             }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            $("#btn-submit").prop("disabled", false)
+                            $("#btn-submit,#btn-draft").prop("disabled", false)
                             toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
                         }
                     });
