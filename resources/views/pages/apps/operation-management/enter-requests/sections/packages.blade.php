@@ -20,7 +20,7 @@
                 <h2 class="mb-1"> Product item with Locations</h2>
             </div>
             <div class="card-toolbar">
-                @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
+                @if($enterRequest->status_id != \App\Models\EnterRequestStatus::VALIDATION)
                     <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
                            id="btn-submit">
                     <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
@@ -60,7 +60,7 @@
 
             </div>
             @include('pages.apps.operation-management.enter-requests.sections.products_items')
-            @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
+            @if($enterRequest->status_id != \App\Models\EnterRequestStatus::VALIDATION)
                 <div class="form-group mt-3 text-end px-3">
                     <button type="button" data-repeater-products-create class="btn btn-sm btn-light-primary">
                         <i class="ki-duotone ki-plus fs-2"></i>
@@ -94,7 +94,7 @@
         }
 
         $(document).ready(function () {
-            @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION)
+            @if($enterRequest->status_id == \App\Models\EnterRequestStatus::VALIDATION)
             $("input,select,button").each(function () {
                 $(this).prop("disabled", true)
             });
