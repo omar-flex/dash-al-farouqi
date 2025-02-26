@@ -5,12 +5,6 @@
             <div class="col-2 mb-2">
                 <input class="form-control form-control-solid-bg form-control-sm codes" disabled type="text" value="{{$item?->product->name}}"/>
             </div>
-            <div class="col-2 mb-2">
-                <input class="form-control form-control-solid-bg form-control-sm codes" disabled type="text" value="{{$item?->product?->barcode}}"/>
-            </div>
-            <div class="col-1 mb-2">
-                <input class="form-control form-control-solid-bg form-control-sm codes" disabled placeholder="BN" value="{{$item?->batch_number}}"/>
-            </div>
             <div class="col-1 mb-2">
                 <input class="form-control form-control-solid-bg form-control-sm codes" disabled type="text" value="{{$item?->product?->UnitMeasure?->name}}"/>
             </div>

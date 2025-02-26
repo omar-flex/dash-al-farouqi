@@ -33,12 +33,6 @@
                 <div class="col-2 mb-3">
                     <label class="fw-semibold fs-7 mb-3" title="Product"> Product </label>
                 </div>
-                <div class="col-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-2 " title="Lot number"> Barcode </label>
-                </div>
-                <div class="col-1 mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Batch Number"> BN </label>
-                </div>
                 <div class="col-1 mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Unit of Measure"> UoM </label>
                 </div>
