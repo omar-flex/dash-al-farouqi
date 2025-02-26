@@ -154,7 +154,8 @@ function remove(removeClass, url, table_id, csrf_token, table_type = false) {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
-        }).then(function (result) {
+        }).
+        then(function (result) {
             if (result.value) {
                 $.ajax({
                     headers: {

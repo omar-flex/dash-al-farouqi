@@ -272,7 +272,7 @@ class EnterRequestController extends Controller
         ];
 
         if ($request->button_clicked == 'btn-submit') {
-            $enterRequest->update(['status_id' => EnterRequestStatus::AUTHORIZATION]);
+            $enterRequest->update(['status_id' => EnterRequestStatus::VALIDATION]);
         }
 
         return response()->json(['message' => 'Added Product item Successfully', 'status' => 200]);

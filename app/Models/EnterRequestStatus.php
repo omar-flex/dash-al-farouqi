@@ -10,5 +10,6 @@ class EnterRequestStatus extends Model
     const DRAFT = 1;
     const CAR_CHECK = 2;
     const WH_ENTER_PRODUCT = 3;
-    const AUTHORIZATION = 4;
+    const VALIDATION = 4;
+    const AUTHORIZATION = 5;
 }

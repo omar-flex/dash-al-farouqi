@@ -185,6 +185,7 @@
                 checkVariantDetectability();
             });
             let clickedButton = null;
+
             $('input[type="submit"]').click(function () {
                 clickedButton = $(this).attr('id');
             });
@@ -200,16 +201,80 @@
                 $(".span_error").each(function () {
                     $(this).remove()
                 });
-                $("#btn-submit").prop("disabled", false)
-                if (clickedButton !== 'btn-draft' && sumQuantities() !== {{$enterRequest->quantity_packages}}) {
-                    toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
+                $("#btn-submit,#btn-draft").prop("disabled", true)
+                if (clickedButton === 'btn-submit') {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        html: "<span> You won't be able to <span class='text-danger'> Manifest Validation! </span> </span>",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, change it!'
+                    }).then(function (result) {
+                        if (result.value) {
+                            {{-- if (sumQuantities() !== {{$enterRequest->quantity_packages}}){
+                                toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
+                                return false;
+                            } --}}
+                            let form = $("#formProducts");
+                            let formData = new FormData(form[0]);
+                            if (clickedButton) {
+                                formData.append('button_clicked', clickedButton);
+                            }
+                            let url = form.attr('action');
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: formData,
+                                dataType: "json",
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function (data) {
+                                    if (data.status === 422) {
+                                        $("#btn-submit,#btn-draft").prop("disabled", false)
+                                        $.each(data.errors, function (index, value) {
+                                            let error = '<span class="text-danger span_error"> ' + value + '</span>'
+                                            let repeaterList = $("[data-repeater-products-list]");
+                                            if (index.split('.').length > 1) {
+                                                const parts = index.split('.');
+                                                let line = parts[1];
+                                                let name = parts[0] + '[]';
+                                                repeaterList.children().eq(line).find('[name="' + name + '"]').parent().last().append(error)
+                                            } else {
+                                                let input = $('[name="' + index + '"]').parent().last()
+                                                if (input.length > 0) {
+                                                    input.append(error)
+                                                } else {
+                                                    $('#error').append(error)
+                                                }
+                                            }
+                                        });
+                                        toastr.error('Oops,there were an errors...');
+                                    } else {
+                                        //$('#product_items').empty().append(data.html)
+                                        toastr.success(data.message);
+                                        location.reload(true);
+
+                                    }
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    $("#btn-submit,#btn-draft").prop("disabled", false)
+                                    toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
+                                }
+                            });
+                        } else {
+                            $("#btn-submit,#btn-draft").prop("disabled", false)
+                        }
+                    });
                 } else {
                     let form = $(this);
                     let formData = new FormData(this);
                     if (clickedButton) {
                         formData.append('button_clicked', clickedButton);
                     }
-
                     let url = form.attr('action');
 
                     $.ajax({
@@ -222,7 +287,7 @@
                         processData: false,
                         success: function (data) {
                             if (data.status === 422) {
-                                $("#btn-submit").prop("disabled", false)
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
                                 $.each(data.errors, function (index, value) {
                                     let error = '<span class="text-danger span_error"> ' + value + '</span>'
                                     let repeaterList = $("[data-repeater-products-list]");
@@ -249,7 +314,7 @@
                             }
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            $("#btn-submit").prop("disabled", false)
+                            $("#btn-submit,#btn-draft").prop("disabled", false)
                             toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
                         }
                     });

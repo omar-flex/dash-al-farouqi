@@ -73,13 +73,6 @@
                                placeholder="Manifest Date"
                                @isset($enterRequest) value="{{ $enterRequest->manifest_date }}" @endisset>
                     </div>
-                    {{--   <div class="col-md-4 mb-7">
-                           <label class="required fw-semibold fs-6 mb-2">Organize Center</label>
-                           <input type="text" name="organize_center"
-                                  class="form-control form-control-solid-bg mb-2"
-                                  placeholder="Organize Center"
-                                  @isset($enterRequest) value="{{ $enterRequest->organize_center }}" @endisset>
-                       </div>--}}
                     <div class="col-md-3 mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Quantity of Car</label>
                         <input type="number" step="any" min="0"
@@ -200,19 +193,11 @@
                     @endisset
                     <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
-                        <textarea class="form-control form-control-solid-bg mb-2"
-                                  name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest)
-                                {{ $enterRequest->general_description_goods }}
-                            @endisset</textarea>
+                        <textarea class="form-control form-control-solid-bg mb-2" name="general_description_goods" style="min-height: 30px" placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> Notes</label>
-                        <textarea class="form-control form-control-solid-bg mb-2"
-                                  name="notes" style="min-height: 30px"
-                                  placeholder="Notes">@isset($enterRequest)
-                                {{ $enterRequest->notes }}
-                            @endisset</textarea>
+                        <textarea class="form-control form-control-solid-bg mb-2" name="notes" style="min-height: 30px" placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
                     </div>
 
                     <div class="col-md-8 mb-7">
