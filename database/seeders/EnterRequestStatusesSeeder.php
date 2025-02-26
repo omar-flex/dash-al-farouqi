@@ -25,6 +25,5 @@ class EnterRequestStatusesSeeder extends Seeder
         foreach ($statuses as $status) {
             EnterRequestStatus::updateOrCreate($status);
         }
-
     }
 }

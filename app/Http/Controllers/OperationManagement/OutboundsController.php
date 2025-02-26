@@ -156,10 +156,12 @@ use Illuminate\Support\Str;
             }
         }
 
-        $data['cpm_result'] = ceil(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);;
-
         $data = Arr::except($data, 'files');
         $outbound->update($data);
+
+        $cpm_result = ceil(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);
+
+        $outbound->update(['cpm_result' => $cpm_result]);
 
         if ($request->hasFile('files')) {
             $this->filesCreate($outbound);
