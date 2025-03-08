@@ -39,9 +39,11 @@
                 <div class="col-1 mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Quantity">Quantity</label>
                 </div>
-
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Fixed Cost">Fixed Cost</label>
+                    <label class="fw-semibold fs-7 mb-2 required" title="Customs Tariff Code">Customs Tariff Code</label>
+                </div>
+                <div class="col mb-3">
+                    <label class="fw-semibold fs-7 mb-2 required" title="Customs Value">Customs Value</label>
                 </div>
                 <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2 required" title="Gross Weight">Gross Weight</label>

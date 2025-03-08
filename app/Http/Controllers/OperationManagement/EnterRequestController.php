@@ -14,6 +14,7 @@ use App\Models\Country;
 use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestCar;
+use App\Models\EnterRequestFile;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
 use App\Models\ManifestFile;
@@ -111,7 +112,6 @@ class EnterRequestController extends Controller
         }
 
         $data['cpm_result'] = ceil($request->cpm);
-
         $cpm_calculated = $this->cpmCalculate($request->gross_weight);
         $data['cpm_calculated'] = $cpm_calculated;
         if ($cpm_calculated > $request->cpm) {
@@ -119,6 +119,10 @@ class EnterRequestController extends Controller
         }
 
         $enterRequest = EnterRequest::create(Arr::except($data, 'files'));
+
+        $data['cpm_weight_ration'] = $enterRequest->cpm / $enterRequest->gross_weight;
+        $data['cpm_weight_ration_wh'] = $enterRequest->cpm_result / $enterRequest->gross_weight;
+        $enterRequest->update($data);
 
         if ($request->hasFile('files')) {
             $this->filesCreate($enterRequest);
@@ -140,10 +144,6 @@ class EnterRequestController extends Controller
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name']),
             'warehouses' => Warehouse::all(['id', 'code']),
-            'files' => ManifestFile::where([
-                'manifest_id' => $enterRequest->id,
-                'type' => ManifestType::INBOUND
-            ])->get()
         ];
 
         return view('pages.apps.operation-management.enter-requests.create', compact('payload', 'enterRequest'));
@@ -181,6 +181,10 @@ class EnterRequestController extends Controller
         $data = Arr::except($data, 'files');
         $enterRequest->update($data);
 
+        $data['cpm_weight_ration'] = $enterRequest->cpm / $enterRequest->gross_weight;
+        $data['cpm_weight_ration_wh'] = $enterRequest->cpm_result / $enterRequest->gross_weight;
+        $enterRequest->update($data);
+
         if ($request->hasFile('files')) {
             $this->filesCreate($enterRequest);
         }
@@ -198,9 +202,11 @@ class EnterRequestController extends Controller
                 'exception' => "Cannot Delete This Inbound Because It Has Outbound ($count)",
             ], 403);
         else {
-            $files = ManifestFile::where('manifest_id', $enterRequest->id)->where('type', 4)->get();
+            $files = EnterRequestFile::where('enter_request_id', $enterRequest->id)->get();
             foreach ($files as $file) {
-                Storage::delete($file->path);
+                if (Storage::path($file->path)) {
+                    Storage::delete($file->path);
+                }
                 $file->delete();
             }
             $enterRequest->delete();
@@ -280,14 +286,17 @@ class EnterRequestController extends Controller
 
     public function validations($enter_request_id, ValidationsRequest $request)
     {
-
         $enterRequest = EnterRequest::firstWhere('id', $enter_request_id);
 
-        foreach ($request->fixed_costs as $index => $fixed_cost) {
+        foreach ($request->custom_values as $index => $custom_value) {
+            $gross_weight = Arr::get($request->gross_weights, $index);
             $item = [
-                'fixed_cost' => $fixed_cost,
-                'gross_weight' => Arr::get($request->gross_weights, $index),
+                'custom_value' => $custom_value,
+                'gross_weight' => $gross_weight,
                 'net_weight' => trim(Arr::get($request->net_weights, $index)),
+                'custom_tariff_code' => trim(Arr::get($request->custom_tariff_codes, $index)),
+                'cpm'=> $gross_weight * $enterRequest->cpm_weight_ration,
+                'cpm_capacity'=> $gross_weight * $enterRequest->cpm_weight_ration_wh
             ];
             $items_id = Arr::get($request->all(), 'items_id.' . $index);
             WarehouseItems::where('id', $items_id)->update($item);
@@ -304,22 +313,20 @@ class EnterRequestController extends Controller
     {
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
-            $fileNameToStore = uniqid('') . '.' . $extension;
-            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
-            ManifestFile::create([
-                'filename' => $fileNameToStore,
+            $path = Storage::putFileAs('Inbounds', $file, trim($file->getClientOriginalName()));
+            EnterRequestFile::create([
+                'filename' => Str::replace('/', '-', $enterRequest->bound_number),
                 'path' => $path,
                 'extension' => $extension,
-                'manifest_id' => $enterRequest->id,
+                'enter_request_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
-                'type' => ManifestType::INBOUND,
             ]);
         }
     }
 
     public function fileDelete($file_id)
     {
-        $file = ManifestFile::where('id', $file_id)->where('type', ManifestType::INBOUND)->first();
+        $file = EnterRequestFile::where('id', $file_id)->first();
         if (Storage::path($file->path)) {
             Storage::delete($file->path);
         }

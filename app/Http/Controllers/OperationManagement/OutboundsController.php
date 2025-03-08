@@ -14,6 +14,7 @@ use App\Models\LocationLine;
 use App\Models\ManifestFile;
 use App\Models\ManifestType;
 use App\Models\Outbound;
+use App\Models\OutboundFile;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
@@ -123,17 +124,12 @@ use Illuminate\Support\Str;
             abort(403);
 
         $payload = (object)[
-            'title' => 'Enter Request Edit',
             'formId' => $this->formId,
             'resource' => $this->resource,
             'tableId' => $this->tableId,
             'bound_numbers' => EnterRequest::get(['id', 'bound_number as name']),
             'countries' => Country::all(['id', 'name']),
             'warehouses' => Warehouse::all(['id', 'code']),
-            'files' => ManifestFile::where([
-                'manifest_id' => $outbound->id,
-                'type' => ManifestType::OUTBOUND
-            ])->get()
         ];
 
         return view('pages.apps.operation-management.outbounds.create', compact('payload', 'outbound'));
@@ -175,36 +171,34 @@ use Illuminate\Support\Str;
         if (!auth()->user()->can('delete_' . $this->resource))
             abort(403);
 
-        $files = ManifestFile::where('manifest_id', $outbound->id)
-            ->where('type', ManifestType::OUTBOUND)
-            ->get();
+        $files = OutboundFile::where('outbound_id', $outbound->id)->get();
         foreach ($files as $file) {
-            Storage::delete($file->path);
+            if (Storage::path($file->path)) {
+                Storage::delete($file->path);
+            }
             $file->delete();
         }
         $outbound->delete();
     }
 
-    public function filesCreate($enterRequest)
+    public function filesCreate($outbound)
     {
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
-            $fileNameToStore = uniqid('') . '.' . $extension;
-            $path = Storage::putFileAs(Str::replace('/', '-', $enterRequest->bound_number), $file, $fileNameToStore);
-            ManifestFile::create([
-                'filename' => $fileNameToStore,
+            $path = Storage::putFileAs('Outbounds', $file, trim($file->getClientOriginalName()));
+            OutboundFile::create([
+                'filename' => Str::replace('/', '-', $outbound->outbound_number),
                 'path' => $path,
                 'extension' => $extension,
-                'manifest_id' => $enterRequest->id,
+                'outbound_id' => $outbound->id,
                 'user_id' => Auth::id(),
-                'type' => ManifestType::OUTBOUND
             ]);
         }
     }
 
     public function fileDelete($file_id)
     {
-        $file = ManifestFile::where('id', $file_id)->where('type', 4)->first();
+        $file = OutboundFile::where('id', $file_id)->first();
         if (Storage::path($file->path)) {
             Storage::delete($file->path);
         }

@@ -203,7 +203,7 @@
                     <div class="col-md-8 mb-7">
                         <label class="fw-semibold fs-6 mb-2 required">Attached</label>
                         @if(isset($enterRequest))
-                            @foreach($payload->files as $file)
+                            @foreach($enterRequest->files as $file)
                                 <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2"
                                      id="file_{{$file->id}}">
                                     <div class="symbol symbol-30px me-5">

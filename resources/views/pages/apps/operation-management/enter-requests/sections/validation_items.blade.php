@@ -11,10 +11,13 @@
             <div class="col-1 mb-2">
                 <input  class="form-control form-control-sm form-control-solid-bg" disabled value="{{$item?->quantity}}"/>
             </div>
-
             <div class="col mb-2">
-                <input type="number" step="any" min="0" class="form-control form-control-sm" name="fixed_costs[]"
-                       placeholder="Fixed Cost" value="{{$item?->fixed_cost}}"  @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION) disabled @endif/>
+                <input type="number" step="any" min="0" class="form-control form-control-sm" name="custom_tariff_codes[]"
+                       placeholder="Customs Tariff Code" value="{{$item?->custom_tariff_code}}"  @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION) disabled @endif/>
+            </div>
+            <div class="col mb-2">
+                <input type="number" step="any" min="0" class="form-control form-control-sm" name="custom_values[]"
+                       placeholder="Fixed Cost" value="{{$item?->custom_value}}"  @if($enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION) disabled @endif/>
             </div>
             <div class="col mb-2">
                 <input type="number" step="any" min="0" class="form-control form-control-sm" name="gross_weights[]"

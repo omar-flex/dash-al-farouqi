@@ -35,7 +35,7 @@ class EnterRequest extends Model
 
     public function Files()
     {
-        return $this->hasMany(ManifestFile::class, 'manifest_id')->where('type', ManifestType::INBOUND);
+        return $this->hasMany(EnterRequestFile::class);
     }
 
     public function WarehouseItems()

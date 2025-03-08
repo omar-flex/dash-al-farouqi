@@ -13,14 +13,19 @@ class ValidationsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fixed_costs' => 'required|array|min:1',
-            'fixed_costs.*' => 'required|numeric|max:255',
+            'custom_values' => 'required|array|min:1',
+            'custom_values.*' => 'required|numeric|max:255',
 
             'gross_weights' => 'required|array|min:1',
             'gross_weights.*' => 'required|numeric',
 
             'net_weights' => 'required|array|min:1',
             'net_weights.*' => 'required|numeric',
+
+            'custom_tariff_codes' => 'required|array|min:1',
+            'custom_tariff_codes.*' => 'required|string',
+
+
         ];
 
     }
@@ -28,9 +33,10 @@ class ValidationsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'fixed_costs.*.required' => 'field is required.',
+            'custom_values.*.required' => 'field is required.',
             'gross_weights.*.required' => 'field is required.',
             'net_weights.*.required' => 'field is required.',
+            'custom_tariff_codes.*.required' => 'field is required.',
         ];
     }
 }

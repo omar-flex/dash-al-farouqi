@@ -30,7 +30,7 @@ class Outbound extends Model
 
     public function Files()
     {
-        return $this->hasMany(ManifestFile::class, 'manifest_id')->where('type', ManifestType::OUTBOUND);
+        return $this->hasMany(OutboundFile::class);
     }
 
     public function Customer()
