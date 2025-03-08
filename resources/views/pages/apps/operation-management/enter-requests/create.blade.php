@@ -200,28 +200,31 @@
                         <textarea class="form-control form-control-solid-bg mb-2" name="notes" style="min-height: 30px" placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
                     </div>
 
-                    <div class="col-md-8 mb-7">
+                    <div class="col-md-12 mb-7">
                         <label class="fw-semibold fs-6 mb-2 required">Attached</label>
                         @if(isset($enterRequest))
-                            @foreach($enterRequest->files as $file)
-                                <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2"
-                                     id="file_{{$file->id}}">
-                                    <div class="symbol symbol-30px me-5">
-                                        <img alt="Icon" src="{{$file->getIcon()}}">
-                                    </div>
-                                    <div class="fw-semibold">
-                                        <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename"
-                                           target="_blank"
-                                           href="{{$file->getUrl()}}" id="filename_{{$file->id}}"
-                                           title="{{$file->filename}}">{{\Illuminate\Support\Str::limit($file->filename,20)}}</a>
-                                    </div>
+                            <div class="row">
+                                @foreach($enterRequest->files as $file)
+                                    <div class="d-flex align-items-center col-md-4 mb-7 border-1 border-dashed p-2 mx-2"
+                                         id="file_{{$file->id}}">
+                                        <div class="symbol symbol-30px me-5">
+                                            <img alt="Icon" src="{{$file->getIcon()}}">
+                                        </div>
+                                        <div class="fw-semibold">
+                                            <a class="fs-6 fw-bold text-gray-900 text-hover-primary filename"
+                                               target="_blank"
+                                               href="{{$file->getUrl()}}" id="filename_{{$file->id}}"
+                                               title="{{$file->filename}}">{{\Illuminate\Support\Str::limit($file->filename,30)}}</a>
+                                        </div>
 
-                                    <a class="btn btn-clean btn-sm btn-icon btn-icon-danger btn-active-light-danger ms-auto file_remove_btn"
-                                       id="{{$file->id}}" title="File Delete">
-                                        <i class="fas fa-trash-alt fa-xl"></i>
-                                    </a>
-                                </div>
-                            @endforeach
+                                        <a class="btn btn-clean btn-sm btn-icon btn-icon-danger btn-active-light-danger ms-auto file_remove_btn"
+                                           id="{{$file->id}}" title="File Delete">
+                                            <i class="fas fa-trash-alt fa-xl"></i>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+
                         @endif
                         <div class="fv-row mb-2">
                             <input type="hidden" name="files">
