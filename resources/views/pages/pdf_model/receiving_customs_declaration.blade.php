@@ -19,8 +19,9 @@
                  style="max-width: 180px; max-height: 75px;">
         </div>
         <div class="col-4 text-center">
-            <img src="{{asset('assets/media/logos/1536153489395.jpg')}}" alt="Left Logo" class="img-fluid"
-                 style="max-width: 180px; max-height: 75px;">
+            <div class="text-center mb-2">
+                <h3 class="mt-2">دائرة الجمارك الأردنية</h3>
+            </div>
         </div>
         <div class="col-4 text-start" style="margin: auto">
             <img src="{{asset('assets/media/logos/default-dark.png')}}" alt="Right Logo" class="img-fluid"
@@ -29,7 +30,6 @@
     </div>
 
     <div class="text-center mb-2">
-        <h2 class="mt-2">دائرة الجمارك الأردنية</h2>
         <h3>مركز جمرك عمان / قسم المستودعات العامة</h3>
         <h4>بوندد الشرقية - رقم البوندد (618)</h4>
         <h5 class="fw-bold">نموذج ايداع بيان جمركي</h5>
