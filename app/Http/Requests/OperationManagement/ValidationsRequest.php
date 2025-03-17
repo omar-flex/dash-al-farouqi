@@ -14,7 +14,7 @@ class ValidationsRequest extends FormRequest
     {
         return [
             'custom_values' => 'required|array|min:1',
-            'custom_values.*' => 'required|numeric|max:255',
+            'custom_values.*' => 'required|numeric',
 
             'gross_weights' => 'required|array|min:1',
             'gross_weights.*' => 'required|numeric',
