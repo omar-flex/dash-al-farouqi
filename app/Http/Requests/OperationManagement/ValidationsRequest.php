@@ -24,8 +24,6 @@ class ValidationsRequest extends FormRequest
 
             'custom_tariff_codes' => 'required|array|min:1',
             'custom_tariff_codes.*' => 'required|string',
-
-
         ];
 
     }

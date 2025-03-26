@@ -118,10 +118,12 @@ class EnterRequestController extends Controller
             $data['cpm_result'] = $cpm_calculated;
         }
 
-        $enterRequest = EnterRequest::create(Arr::except($data, 'files'));
+        $data = Arr::except($data, 'files');
+        $enterRequest = EnterRequest::create($data);
 
         $data['cpm_weight_ration'] = $enterRequest->cpm / $enterRequest->gross_weight;
         $data['cpm_weight_ration_wh'] = $enterRequest->cpm_result / $enterRequest->gross_weight;
+
         $enterRequest->update($data);
 
         if ($request->hasFile('files')) {
