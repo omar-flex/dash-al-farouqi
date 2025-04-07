@@ -38,6 +38,7 @@ class EnterCreateRequest extends FormRequest
             'files' => 'required|max:10240',
             'notes' => 'nullable|string',
             'warehouse_id' => 'required|exists:warehouses,id',
+            'clearance_company_id' => 'nullable|exists:clearance_companies,id',
         ];
 
         if ($this->routeIs('operation-management.enter_requests.update')) {

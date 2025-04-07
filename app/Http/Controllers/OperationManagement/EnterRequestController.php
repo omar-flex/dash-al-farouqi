@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\OperationManagement;
 
 
+use AllowDynamicProperties;
 use App\DataTables\OperationManagement\EnterRequestsDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
 use App\Http\Requests\OperationManagement\ProductsRequest;
 use App\Http\Requests\OperationManagement\ValidationsRequest;
-use App\Models\Category;
+use App\Models\ClearanceCompany;
 use App\Models\Country;
 use App\Models\Customer;
 use App\Models\EnterRequest;
@@ -17,8 +18,6 @@ use App\Models\EnterRequestCar;
 use App\Models\EnterRequestFile;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
-use App\Models\ManifestFile;
-use App\Models\ManifestType;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
@@ -27,10 +26,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 
-class EnterRequestController extends Controller
+#[AllowDynamicProperties] class EnterRequestController extends Controller
 {
 
     public function __construct()
@@ -87,6 +85,7 @@ class EnterRequestController extends Controller
             'tableId' => 'enter_requests_table',
             'resource' => $this->resource,
             'customers' => Customer::get(['id', 'name']),
+            'companies' => ClearanceCompany::get(['id', 'name']),
             'countries' => Country::all(['id', 'name']),
             'warehouses' => Warehouse::all(['id', 'code'])
         ];
@@ -146,6 +145,7 @@ class EnterRequestController extends Controller
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name']),
             'warehouses' => Warehouse::all(['id', 'code']),
+            'companies' => ClearanceCompany::get(['id', 'name']),
         ];
 
         return view('pages.apps.operation-management.enter-requests.create', compact('payload', 'enterRequest'));

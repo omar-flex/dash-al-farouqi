@@ -24,7 +24,14 @@ class EnterRequestsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number','outbounds_count'])
+            ->rawColumns(['status_name', 'bound_number','outbounds_count','customer_name'])
+            ->editColumn('customer_name', content: function (EnterRequest $model) {
+                return '<div class="d-flex align-items-center justify-content-center">
+                    <div class="d-flex flex-column">
+                     <span class="text-muted">' . $model->customer_name . '</span>
+                     <span class="text-muted">' . $model->company_name . '</span>
+                   </div> </div>';
+            })
             ->editColumn('created_at', function (EnterRequest $model) {
                 return $model->created_at->format('d M Y, h:i a');
             })
@@ -56,9 +63,11 @@ class EnterRequestsDataTable extends DataTable
      */
     public function query(EnterRequest $model): QueryBuilder
     {
-        return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name', 'customers.name as customer_name')
+        return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name',
+            'customers.name as customer_name', 'clearance_companies.name as company_name')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'enter_requests.status_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
+            ->leftJoin('clearance_companies', 'clearance_companies.id', '=', 'enter_requests.clearance_company_id')
             ->withCount('Outbounds')
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));

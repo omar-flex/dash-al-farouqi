@@ -4,6 +4,7 @@ use App\Http\Controllers\Apps\PermissionManagementController;
 use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
@@ -32,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('customers', CustomerController::class);
+    Route::resource('companies', CompanyController::class);
+
 
     Route::get('products-search', [ProductController::class, 'search'])->name('products.search');
     Route::resource('products', ProductController::class);
