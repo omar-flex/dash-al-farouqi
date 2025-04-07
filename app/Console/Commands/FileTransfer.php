@@ -34,32 +34,33 @@ class FileTransfer extends Command
      */
     public function handle()
     {
-        ManifestFile::where(['type' => ManifestType::OUTBOUND])->get()
-            ->each(function ($manifestFile) {
-                $outbound = Outbound::where(['id' => $manifestFile->manifest_id])->first();
-                if ($outbound) {
-                    $outbound_number = Str::replace('/', '-', $outbound->outbound_number);
-                    $oldPath = $manifestFile->path;
-                    $newFileName = $outbound_number . '_' . uniqid() . '.' . pathinfo($oldPath, PATHINFO_EXTENSION);
-                    $newPath = 'Outbounds/' . $newFileName;
-                    $extension = pathinfo($oldPath, PATHINFO_EXTENSION);
-                    if (Storage::exists($oldPath)) {
-                        Storage::copy($oldPath, $newPath);
-                        OutboundFile::create([
-                            'filename' => $outbound_number,
-                            'path' => $newPath,
-                            'extension' => $extension,
-                            'outbound_id' => $outbound->id,
-                            'user_id' => $manifestFile->user_id,
-                        ]);
-                    }
-                }
+        /* ManifestFile::where(['type' => ManifestType::OUTBOUND])->get()
+             ->each(function ($manifestFile) {
+                 $outbound = Outbound::where(['id' => $manifestFile->manifest_id])->first();
+                 if ($outbound) {
+                     $outbound_number = Str::replace('/', '-', $outbound->outbound_number);
+                     $oldPath = $manifestFile->path;
+                     $newFileName = $outbound_number . '_' . uniqid() . '.' . pathinfo($oldPath, PATHINFO_EXTENSION);
+                     $newPath = 'Outbounds/' . $newFileName;
+                     $extension = pathinfo($oldPath, PATHINFO_EXTENSION);
+                     if (Storage::exists($oldPath)) {
+                         Storage::copy($oldPath, $newPath);
+                         OutboundFile::create([
+                             'filename' => $outbound_number,
+                             'path' => $newPath,
+                             'extension' => $extension,
+                             'outbound_id' => $outbound->id,
+                             'user_id' => $manifestFile->user_id,
+                         ]);
+                     }
+                 }
 
-            });
+             });*/
 
-        ManifestFile::where(['type' => ManifestType::INBOUND])->get()
+        ManifestFile::where(['type' => ManifestType::INBOUND, 'id' => 44])->get()
             ->each(function ($manifestFile) {
                 $enterRequest = EnterRequest::where(['id' => $manifestFile->manifest_id])->first();
+                dd($enterRequest);
                 if ($enterRequest) {
                     $bound_number = Str::replace('/', '-', $enterRequest->bound_number);
                     $oldPath = $manifestFile->path;

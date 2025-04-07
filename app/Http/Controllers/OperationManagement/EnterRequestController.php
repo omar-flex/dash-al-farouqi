@@ -315,7 +315,9 @@ class EnterRequestController extends Controller
     {
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
-            $path = Storage::putFileAs('Inbounds', $file, trim($file->getClientOriginalName()));
+            $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
+            $path = Storage::putFileAs('Inbounds', $file, $cleanName);
+            dd($path);
             EnterRequestFile::create([
                 'filename' => Str::replace('/', '-', $enterRequest->bound_number),
                 'path' => $path,
