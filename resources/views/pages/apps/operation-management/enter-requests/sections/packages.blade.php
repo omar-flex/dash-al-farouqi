@@ -11,7 +11,7 @@
     }
 </style>
 @php
-    if($enterRequest->status_id == \App\Models\EnterRequestStatus::VALIDATION || $enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION)
+    if(!auth()->user()->hasRole('administrator') && $enterRequest->status_id == \App\Models\EnterRequestStatus::VALIDATION || $enterRequest->status_id == \App\Models\EnterRequestStatus::AUTHORIZATION)
         $disabled  = 'disabled';
     else
         $disabled  = null;
