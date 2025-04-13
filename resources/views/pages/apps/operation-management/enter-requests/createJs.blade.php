@@ -259,5 +259,15 @@
             });
 
         });
+        @isset($enterRequest)
+        $(document).on("click", "#clearance_company_representative,#scanning_archiving,#customs_department_representative", function () {
+            let val = $(this).val()
+            if (val === '1') {
+                $(this).val(0)
+            } else {
+                $(this).val(1)
+            }
+        });
+        @endisset
     });
 </script>

@@ -185,6 +185,11 @@ use Illuminate\Support\Str;
 
         $data['cpm_weight_ration'] = $enterRequest->cpm / $enterRequest->gross_weight;
         $data['cpm_weight_ration_wh'] = $enterRequest->cpm_result / $enterRequest->gross_weight;
+
+        $data['clearance_company_representative'] = request('clearance_company_representative', 0);
+        $data['scanning_archiving'] = request('scanning_archiving', 0);
+        $data['customs_department_representative'] = request('customs_department_representative', 0);
+
         $enterRequest->update($data);
 
         if ($request->hasFile('files')) {
@@ -297,8 +302,8 @@ use Illuminate\Support\Str;
                 'gross_weight' => $gross_weight,
                 'net_weight' => trim(Arr::get($request->net_weights, $index)),
                 'custom_tariff_code' => trim(Arr::get($request->custom_tariff_codes, $index)),
-                'cpm'=> $gross_weight * $enterRequest->cpm_weight_ration,
-                'cpm_capacity'=> $gross_weight * $enterRequest->cpm_weight_ration_wh
+                'cpm' => $gross_weight * $enterRequest->cpm_weight_ration,
+                'cpm_capacity' => $gross_weight * $enterRequest->cpm_weight_ration_wh
             ];
             $items_id = Arr::get($request->all(), 'items_id.' . $index);
             WarehouseItems::where('id', $items_id)->update($item);
@@ -340,6 +345,12 @@ use Illuminate\Support\Str;
     {
         $enterRequest = EnterRequest::firstWhere('id', $id);
         return view('pages.pdf_model.receiving_customs_declaration', compact('enterRequest'));
+    }
+
+    public function pdfForm($id)
+    {
+        $enterRequest = EnterRequest::firstWhere('id', $id);
+        return view('pages.pdf_model.receipt_delivery_commitment_form', compact('enterRequest'));
     }
 
     public function getLocations()

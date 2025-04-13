@@ -48,7 +48,8 @@
                                 </a>
                             @endcanany
                         </div>
-                        <select name="clearance_company_id" class="form-select form-select-solid-bg mb-2 form-select-sm" id="companies"
+                        <select name="clearance_company_id" class="form-select form-select-solid-bg mb-2 form-select-sm"
+                                id="companies"
                                 data-control="select2" data-placeholder="Select an Clearance Company">
                             <option></option>
                             @foreach($payload->companies as $company )
@@ -217,17 +218,57 @@
                         <label class="required fw-semibold  mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg form-control-sm mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest)
-                                {{ $enterRequest->general_description_goods }}
-                            @endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="required fw-semibold  mb-2"> Notes</label>
                         <textarea class="form-control form-control-solid-bg form-control-sm mb-2" name="notes"
-                                  style="min-height: 30px" placeholder="Notes">@isset($enterRequest)
-                                {{ $enterRequest->notes }}
-                            @endisset</textarea>
+                                  style="min-height: 30px" placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
                     </div>
+
+                    @isset($enterRequest)
+                        <div class="d-flex justify-content-start">
+                            <label class="fw-semibold mb-2 me-2">Customs Manifest Status</label>
+                            <a class="cursor-pointer"
+                               href="{{route('operation-management.receipt-delivery-commitment-form.pdf',$enterRequest)}}" target="_blank">
+                                <i class="fa-sharp-duotone fa-solid fa-file-download fa-sm text-danger"></i>
+                                Receipt and Delivery Commitment Form
+                            </a>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->customs_department_representative}}"
+                                       @if($enterRequest->customs_department_representative) checked @endif
+                                       id="customs_department_representative"  name="customs_department_representative"/>
+                                <label class="form-check-label text-dark fw-bold"
+                                       for="customs_department_representative">
+                                    Customs Department Representative
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->scanning_archiving}}"
+                                       id="scanning_archiving" name="scanning_archiving" @if($enterRequest->scanning_archiving) checked @endif/>
+                                <label class="form-check-label text-dark fw-bold" for="scanning_archiving">
+                                    Scanning and Archiving
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->clearance_company_representative}}"
+                                       id="clearance_company_representative"   name="clearance_company_representative"
+                                       @if($enterRequest->clearance_company_representative) checked @endif/>
+                                <label class="form-check-label text-dark fw-bold"
+                                       for="clearance_company_representative">
+                                    Clearance Company Representative
+                                </label>
+                            </div>
+                        </div>
+                        <br>
+                    @endisset
 
                     <div class="col-md-12 mb-3">
                         <label class="fw-semibold  mb-2 required">Attached</label>
