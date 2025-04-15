@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {{ 'نموذج استلام بيان '.$enterRequest->bound_number  }}</title>
+    <title> {{ 'نموذج استلام بيان '.$outbound->outbound_number  }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -54,8 +54,8 @@
         <h5 class="fw-bold">نموذج استلام بيان</h5>
     </div>
     <p>
-        أقر أنا الموقع أدناه …………………………………… وأحمل الرقم الوطني  ……………… وتفويضًا عن   <span class="fw-bold">{{$enterRequest->company?->name}}</span>، أني قد استلمت البيان رقم
-        <span dir="ltr" class="fw-bold">{{$enterRequest->bound_number}}</span>.
+        أقر أنا الموقع أدناه …………………………………… وأحمل الرقم الوطني  ……………… وتفويضًا عن   <span class="fw-bold">{{$outbound->EnterRequest?->company?->name}}</span>، أني قد استلمت البيان رقم
+        <span dir="ltr" class="fw-bold">{{$outbound->outbound_number}}</span>.
     </p>
 
     <p>

@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
+use App\Http\Controllers\OperationManagement\ManifestAuthorizationController;
 use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductsController;
@@ -51,6 +52,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::name('operation-management.')
         ->prefix('operation-management/')
         ->group(function () {
+            Route::middleware('role:administrator')
+                ->group(function () {
+                    Route::resource('manifest_authorizations', ManifestAuthorizationController::class);
+                });
+
             //enter_requests
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
@@ -64,14 +70,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('outbounds', OutboundsController::class);
             Route::delete('outbounds/files/{id}', [OutboundsController::class, 'fileDelete'])->name('outbounds.files.delete');
             Route::get('outbounds/{id}/pdf', [OutboundsController::class, 'pdf'])->name('outbounds.pdf');
+            Route::get('outbounds/{id}/receipt-delivery-commitment-form/pdf', [OutboundsController::class, 'pdfForm'])->name('outbounds.receipt-delivery-commitment-form.pdf');
+
 
         });
 
-    Route::name('user-management.')->group(function () {
-        Route::resource('/user-management/users', UserManagementController::class);
-        Route::resource('/user-management/roles', RoleManagementController::class);
-        Route::resource('/user-management/permissions', PermissionManagementController::class);
-    });
+    Route::name('user-management.')
+        ->middleware('role:administrator')
+        ->group(function () {
+            Route::resource('/user-management/users', UserManagementController::class);
+            Route::resource('/user-management/roles', RoleManagementController::class);
+            Route::resource('/user-management/permissions', PermissionManagementController::class);
+        });
 });
 
 Route::get('/error', function () {

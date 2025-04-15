@@ -235,7 +235,6 @@
                                 Receipt and Delivery Commitment Form
                             </a>
                         </div>
-
                         <div class="col-md-4 mb-3">
                             <div class="form-check form-check-sm">
                                 <input class="form-check-input" type="checkbox" value="{{$enterRequest->customs_department_representative}}"

@@ -166,6 +166,49 @@
                                   placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
                     </div>
 
+                    @isset($outbound)
+                        <div class="d-flex justify-content-start">
+                            <label class="fw-semibold mb-2 me-2">Customs Manifest Status</label>
+                            <a class="cursor-pointer"
+                               href="{{route('operation-management.outbounds.receipt-delivery-commitment-form.pdf',$outbound)}}" target="_blank">
+                                <i class="fa-sharp-duotone fa-solid fa-file-download fa-sm text-danger"></i>
+                                Receipt and Delivery Commitment Form
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$outbound->customs_department_representative}}"
+                                       @if($outbound->customs_department_representative) checked @endif
+                                       id="customs_department_representative"  name="customs_department_representative"/>
+                                <label class="form-check-label text-dark fw-bold"
+                                       for="customs_department_representative">
+                                    Customs Department Representative
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$outbound->scanning_archiving}}"
+                                       id="scanning_archiving" name="scanning_archiving" @if($outbound->scanning_archiving) checked @endif/>
+                                <label class="form-check-label text-dark fw-bold" for="scanning_archiving">
+                                    Scanning and Archiving
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-check-sm">
+                                <input class="form-check-input" type="checkbox" value="{{$outbound->clearance_company_representative}}"
+                                       id="clearance_company_representative"   name="clearance_company_representative"
+                                       @if($outbound->clearance_company_representative) checked @endif/>
+                                <label class="form-check-label text-dark fw-bold"
+                                       for="clearance_company_representative">
+                                    Clearance Company Representative
+                                </label>
+                            </div>
+                        </div>
+                        <br>
+                    @endisset
+
                     <div class="col-md-8 mb-7">
                         <label class="fw-semibold fs-6 mb-2 required">Attached</label>
                         @if(isset($outbound))
@@ -244,6 +287,18 @@
 
     <script>
         $(document).ready(function () {
+
+            @isset($outbound)
+            $(document).on("change", "#clearance_company_representative,#scanning_archiving,#customs_department_representative", function () {
+                let val = $(this).val()
+                if (val === '1') {
+                    $(this).val(0)
+                } else {
+                    $(this).val(1)
+                }
+            });
+            @endisset
+
             let clickedButton = null;
 
             $('input[type="submit"]').click(function () {

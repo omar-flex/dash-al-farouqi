@@ -153,6 +153,11 @@ use Illuminate\Support\Str;
         }
 
         $data = Arr::except($data, 'files');
+
+        $data['clearance_company_representative'] = request('clearance_company_representative', 0);
+        $data['scanning_archiving'] = request('scanning_archiving', 0);
+        $data['customs_department_representative'] = request('customs_department_representative', 0);
+
         $outbound->update($data);
 
         $cpm_result = ceil(($outbound->EnterRequest->cpm / $outbound->EnterRequest->gross_weight) * $outbound->gross_weight);
@@ -183,16 +188,18 @@ use Illuminate\Support\Str;
 
     public function filesCreate($outbound)
     {
-        foreach (request('files') as $file) {
-            $extension = $file->getClientOriginalExtension();
-            $path = Storage::putFileAs('Outbounds', $file, trim($file->getClientOriginalName()));
-            OutboundFile::create([
-                'filename' => Str::replace('/', '-', $outbound->outbound_number),
-                'path' => $path,
-                'extension' => $extension,
-                'outbound_id' => $outbound->id,
-                'user_id' => Auth::id(),
-            ]);
+        if (request('files')) {
+            foreach (request('files') as $file) {
+                $extension = $file->getClientOriginalExtension();
+                $path = Storage::putFileAs('Outbounds', $file, trim($file->getClientOriginalName()));
+                OutboundFile::create([
+                    'filename' => Str::replace('/', '-', $outbound->outbound_number),
+                    'path' => $path,
+                    'extension' => $extension,
+                    'outbound_id' => $outbound->id,
+                    'user_id' => Auth::id(),
+                ]);
+            }
         }
     }
 
@@ -209,6 +216,12 @@ use Illuminate\Support\Str;
     {
         $outbound = Outbound::firstWhere('id', $id);
         return view('pages.pdf_model.outbounds', compact('outbound'));
+    }
+
+    public function pdfForm($id)
+    {
+        $outbound = Outbound::firstWhere('id', $id);
+        return view('pages.pdf_model.outbounds_receipt_delivery_commitment_form', compact('outbound'));
     }
 
 }
