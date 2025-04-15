@@ -195,7 +195,6 @@ use Illuminate\Support\Str;
 
         if ($request->hasFile('files')) {
             $this->filesCreate($enterRequest);
-            dd($request->all());
         }
 
         return response()->json(['message' => 'Update Successfully', 'enter_request_id' => $enterRequest->id, 'status' => 200]);
@@ -320,6 +319,7 @@ use Illuminate\Support\Str;
 
     public function filesCreate($enterRequest)
     {
+        dd(request('files'),$enterRequest);
         foreach (request('files') as $file) {
             $extension = $file->getClientOriginalExtension();
             $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
