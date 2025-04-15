@@ -157,6 +157,7 @@ use Illuminate\Support\Str;
             abort(403);
 
         $data = $request->validated();
+        dd($request->all());
 
         $data['bound_number'] = $request->manifest_year . '/' . $request->customs_entry_center . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
 
@@ -329,7 +330,6 @@ use Illuminate\Support\Str;
                 'enter_request_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
             ]);
-            dd($enterRequestFile);
         }
     }
 
