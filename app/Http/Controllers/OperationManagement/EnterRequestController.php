@@ -193,20 +193,8 @@ use Illuminate\Support\Str;
 
         $enterRequest->update($data);
 
-        if ($request->hasFile('files')) {
-            foreach (request('files') as $file) {
-                dd($file);
-                $extension = $file->getClientOriginalExtension();
-                $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
-                $path = Storage::putFileAs('Inbounds', $file, $cleanName);
-                EnterRequestFile::create([
-                    'filename' => Str::replace('/', '-', $enterRequest->bound_number),
-                    'path' => $path,
-                    'extension' => $extension,
-                    'enter_request_id' => $enterRequest->id,
-                    'user_id' => Auth::id(),
-                ]);
-            }
+        if ($request->has('files')) {
+            $this->filesCreate($enterRequest);
         }
 
         return response()->json(['message' => 'Update Successfully', 'enter_request_id' => $enterRequest->id, 'status' => 200]);
@@ -332,6 +320,7 @@ use Illuminate\Support\Str;
     public function filesCreate($enterRequest)
     {
         foreach (request('files') as $file) {
+            dd($file);
             $extension = $file->getClientOriginalExtension();
             $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
             $path = Storage::putFileAs('Inbounds', $file, $cleanName);
