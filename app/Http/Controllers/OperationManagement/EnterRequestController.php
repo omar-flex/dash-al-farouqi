@@ -125,7 +125,7 @@ use Illuminate\Support\Str;
 
         $enterRequest->update($data);
 
-        if ($request->hasFile('files')) {
+        if ($request->has('files')) {
             $this->filesCreate($enterRequest);
         }
 
@@ -320,7 +320,6 @@ use Illuminate\Support\Str;
     public function filesCreate($enterRequest)
     {
         foreach (request('files') as $file) {
-            dd($file);
             $extension = $file->getClientOriginalExtension();
             $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
             $path = Storage::putFileAs('Inbounds', $file, $cleanName);

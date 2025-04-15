@@ -111,7 +111,7 @@ use Illuminate\Support\Str;
 
         $outbound->update(['cpm_result' => $cpm_result]);
 
-        if ($request->hasFile('files')) {
+        if ($request->has('files')) {
             $this->filesCreate($outbound);
         }
 
@@ -159,7 +159,7 @@ use Illuminate\Support\Str;
 
         $outbound->update(['cpm_result' => $cpm_result]);
 
-        if ($request->hasFile('files')) {
+        if ($request->has('files')) {
             $this->filesCreate($outbound);
         }
 
