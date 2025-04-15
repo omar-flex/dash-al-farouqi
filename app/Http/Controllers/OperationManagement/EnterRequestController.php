@@ -322,13 +322,14 @@ use Illuminate\Support\Str;
             $extension = $file->getClientOriginalExtension();
             $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
             $path = Storage::putFileAs('Inbounds', $file, $cleanName);
-            EnterRequestFile::create([
+            $enterRequestFile = EnterRequestFile::create([
                 'filename' => Str::replace('/', '-', $enterRequest->bound_number),
                 'path' => $path,
                 'extension' => $extension,
                 'enter_request_id' => $enterRequest->id,
                 'user_id' => Auth::id(),
             ]);
+            dd($enterRequestFile);
         }
     }
 
