@@ -50,6 +50,18 @@
                     <span class="menu-arrow"></span>
                 </span>
                     <div class="menu-sub menu-sub-accordion">
+                        @hasrole('administrator')
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('operation-management.manifest_authorizations.*') ? 'active' : '' }}"
+                               href="{{ route('operation-management.manifest_authorizations.index') }}">
+                             <span class="menu-icon">
+                                    <i class="fa-sharp-duotone fa-solid fa-file-signature"></i>
+                             </span>
+                                <span class="menu-title fs-7">Manifest Authorization</span>
+                            </a>
+                        </div>
+                        @endhasrole
+
                         @can('list_enter_requests')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('operation-management.enter_requests.*') ? 'active' : '' }}"

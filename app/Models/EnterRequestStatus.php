@@ -12,4 +12,6 @@ class EnterRequestStatus extends Model
     const WH_ENTER_PRODUCT = 3;
     const VALIDATION = 4;
     const AUTHORIZATION = 5;
+    const NEED_REVISION = 6;
+    const APPROVED = 7;
 }

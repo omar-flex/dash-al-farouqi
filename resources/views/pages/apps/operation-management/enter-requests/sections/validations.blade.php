@@ -10,6 +10,11 @@
         font-size: 10px;
     }
 </style>
+@php
+    $disabled = false;
+    if(in_array($enterRequest->status_id,[\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::APPROVED]))
+        $disabled  = true;
+@endphp
 <div class="card card-flush mb-6 mb-xl-9">
     <form action="{{ route('operation-management.enter_requests.validations.store',$enterRequest->id) }}" method="POST"
           id="formValidations"
@@ -20,7 +25,7 @@
                 <h2 class="mb-1"> Validation Product Item</h2>
             </div>
             <div class="card-toolbar">
-                @if($enterRequest->status_id != \App\Models\EnterRequestStatus::AUTHORIZATION)
+                @if(!$disabled)
                     <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
                            id="btn-submit">
                     <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
@@ -40,16 +45,17 @@
                     <label class="fw-semibold fs-7 mb-2" title="Quantity">Quantity</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Customs Tariff Code">Customs Tariff Code</label>
+                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Customs Tariff Code">Customs Tariff
+                        Code</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Customs Value">Customs Value</label>
+                    <label class="fw-semibold fs-7 mb-2 @if(!$disabled) required @endif" title="Customs Value">Customs Value</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Gross Weight">Gross Weight</label>
+                    <label class="fw-semibold fs-7 mb-2 @if(!$disabled) required @endif" title="Gross Weight">Gross Weight</label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2 required" title="Net Weight">Net Weight</label>
+                    <label class="fw-semibold fs-7 mb-2 @if(!$disabled) required @endif" title="Net Weight">Net Weight</label>
                 </div>
 
             </div>

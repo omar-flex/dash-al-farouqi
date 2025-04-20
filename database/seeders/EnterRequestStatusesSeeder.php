@@ -20,6 +20,8 @@ class EnterRequestStatusesSeeder extends Seeder
             ['name' => 'WH Enter Product'],
             ['name' => 'Manifest Validation'],
             ['name' => 'Manifest Authorization'],
+            ['name' => 'Needs Revision'],
+            ['name' => 'Approved'],
         ];
 
         foreach ($statuses as $status) {

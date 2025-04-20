@@ -44,14 +44,21 @@ Breadcrumbs::for('operation-management.enter_requests.index', function (Breadcru
     $trail->push('Inbound', route('operation-management.enter_requests.index'));
 });
 
+
 Breadcrumbs::for('operation-management.enter_requests.create', function (BreadcrumbTrail $trail) {
     $trail->parent('operation-management.enter_requests.index');
     $trail->push('Create', route('operation-management.enter_requests.create'));
 });
 
+
 Breadcrumbs::for('operation-management.enter_requests.show', function (BreadcrumbTrail $trail, EnterRequest $enterRequest) {
     $trail->parent('operation-management.enter_requests.index');
     $trail->push($enterRequest->bound_number, route('operation-management.enter_requests.show', $enterRequest));
+});
+
+Breadcrumbs::for('operation-management.manifest_authorizations.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('operation-management.index');
+    $trail->push('Manifest Authorization', route('operation-management.manifest_authorizations.index'));
 });
 
 Breadcrumbs::for('operation-management.outbounds.index', function (BreadcrumbTrail $trail) {

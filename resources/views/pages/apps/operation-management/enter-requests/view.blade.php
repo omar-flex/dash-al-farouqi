@@ -34,9 +34,9 @@
                         <strong>({{number_format($enterRequest->quantity_packages)}})</strong> Packages
                     </a>
                 </li>
-                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION]))
+                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED]))
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link text-active-primary pb-4 @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION])) active @endif"
+                        <a class="nav-link text-active-primary pb-4 @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED])) active @endif"
                            data-kt-countup-tabs="true" data-bs-toggle="tab"
                            href="#validation_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                            tabindex="-1">
@@ -60,9 +60,9 @@
                     id="product_tab" role="tabpanel">
                     @include('pages.apps.operation-management.enter-requests.sections.packages')
                 </div>
-                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION]) )
+                @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED]) )
                     <div
-                        class="tab-pane fade @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION])) active show @endif "
+                        class="tab-pane fade @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED])) active show @endif "
                         id="validation_tab" role="tabpanel">
                         @include('pages.apps.operation-management.enter-requests.sections.validations')
                     </div>

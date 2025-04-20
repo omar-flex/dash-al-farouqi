@@ -29,24 +29,6 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="w-25">
-                        <select class="form-select form-select-solid form-select-sm mb-2 " id="status_filter"
-                                data-control="select2" data-placeholder="Select an Status" data-allow-clear="true">
-                            <option></option>
-                            @foreach($payload->statuses as $status)
-                                <option value="{{$status->id}}">{{$status->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    @can('add_'.$payload->resource)
-                        <div class="w-15">
-                            <a class="btn btn-light-primary btn-sm" id="add">
-                                {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                                Add {{$payload->sub_title}}
-                            </a>
-                        </div>
-                    @endcan
                 </div>
             </div>
 
@@ -63,21 +45,6 @@
     @push('scripts')
         {{ $dataTable->scripts() }}
         <script>
-
-            @can('add_'.$payload->resource)
-            $('#add').on('click', function () {
-                $.ajax({
-                    url: '{{ route('operation-management.'.$payload->resource.'.create')}}',
-                    method: 'get',
-                    success: function (data) {
-                        $('#modal-body').html(data);
-                        $('#modal-title').text('Add {{$payload->title}}');
-                        $('#modal').modal('show');
-                    }
-                });
-            });
-            @endcan
-
             @can('edit_'.$payload->resource)
             $(document).on('click', '.edit_btn', function () {
                 let id = $(this).attr('id');
@@ -87,28 +54,21 @@
                     method: 'get',
                     success: function (data) {
                         $('#modal-body').html(data);
-                        $('#modal-title').text('Edit {{$payload->title}}');
+                        $('#modal-title').html('{{$payload->title}}');
                         $('#modal').modal('show');
                     }
                 });
             });
             @endcan
 
-            @can('delete_'.$payload->resource)
-            remove('remove_btn', 'operation-management/{{$payload->resource}}', '{{$payload->tableId}}', '{{ csrf_token() }}')
-            @endcan
-
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
                 window.LaravelDataTables['{{$payload->tableId}}'].search(this.value).draw();
             });
 
-            $('#status_filter,#customer_filter').select2().on('change', function () {
+            $('#customer_filter').select2().on('change', function () {
                 let query = '?';
-                let status_id = $('#status_filter').val();
                 let customer_id = $('#customer_filter').val();
-                if (status_id)
-                    query += 'status_id=' + status_id;
-                if(customer_id)
+                if (customer_id)
                     query += '&customer_id=' + customer_id;
                 window.LaravelDataTables['{{$payload->tableId}}'].ajax.url(query).load();
             });
