@@ -320,11 +320,11 @@ use Illuminate\Support\Str;
     public function filesCreate($enterRequest)
     {
         if (request('files')) {
-            dd(request('files'));
             foreach (request('files') as $file) {
                 $extension = $file->getClientOriginalExtension();
                 $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
                 $path = Storage::putFileAs('Inbounds', $file, $cleanName);
+                dd($path,$file);
                 EnterRequestFile::create([
                     'filename' => Str::replace('/', '-', $enterRequest->bound_number),
                     'path' => $path,
