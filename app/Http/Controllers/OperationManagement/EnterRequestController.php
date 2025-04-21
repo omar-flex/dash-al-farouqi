@@ -26,6 +26,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
 
 
 #[AllowDynamicProperties] class EnterRequestController extends Controller
@@ -323,7 +324,8 @@ use Illuminate\Support\Str;
             foreach (request('files') as $file) {
                 $extension = $file->getClientOriginalExtension();
                 $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
-                $path = Storage::putFileAs('Inbounds', $file, $cleanName);
+                $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
+                $path = Storage::putFileAs('Inbounds', $file, $uniqueName);
                 EnterRequestFile::create([
                     'filename' => Str::replace('/', '-', $enterRequest->bound_number),
                     'path' => $path,
