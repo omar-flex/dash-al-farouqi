@@ -18,9 +18,11 @@ class OutboundStatusesSeeder extends Seeder
         $statuses = [
             ['name' => 'Manifest office Draft'],
             ['name' => 'Car Check'],
-            ['name' => 'WH Extract Products'],
+            ['name' => 'WH Release Products'],
             ['name' => 'Manifest Validation'],
             ['name' => 'Manifest Authorization'],
+            ['name' => 'Needs Revision'],
+            ['name' => 'Approved'],
         ];
 
         foreach ($statuses as $status) {

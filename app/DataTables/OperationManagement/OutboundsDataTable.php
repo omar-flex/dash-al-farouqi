@@ -23,7 +23,7 @@ class OutboundsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number'])
+            ->rawColumns(['status_name', 'bound_number','outbound_number'])
             ->editColumn('created_at', function (Outbound $model) {
                 return $model->created_at->format('d M Y, h:i a');
             })
@@ -31,7 +31,10 @@ class OutboundsDataTable extends DataTable
                 return number_format($model->net_weight, '2');
             })
             ->editColumn('bound_number', content: function (Outbound $model) {
-                return '<a href="">' . $model->bound_number . '</a>';
+                return '<a href="' . route('operation-management.enter_requests.show', $model->inbound_id) . '">' . $model->bound_number . '</a>';
+            })
+            ->editColumn('outbound_number', content: function (Outbound $model) {
+                return '<a href="' . route('operation-management.outbounds.show', $model->id) . '">' . $model->outbound_number . '</a>';
             })
             ->editColumn('status_name', content: function (Outbound $model) {
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
@@ -49,7 +52,7 @@ class OutboundsDataTable extends DataTable
      */
     public function query(Outbound $model): QueryBuilder
     {
-        return $model->select("outbounds.*", 'enter_requests.bound_number','enter_request_statuses.name as status_name', 'customers.name as customer_name')
+        return $model->select("outbounds.*", 'enter_requests.bound_number','enter_requests.id as inbound_id','enter_request_statuses.name as status_name', 'customers.name as customer_name')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'outbounds.status_id')
             ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')

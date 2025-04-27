@@ -12,7 +12,7 @@ class CarsRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'numbers' => 'required|array|min:1',
             'numbers.*' => 'required|string|max:255|distinct',
 
@@ -27,5 +27,27 @@ class CarsRequest extends FormRequest
 
         ];
 
+        if ($this->routeIs('operation-management.outbounds.cars.store')) {
+            $rules = [
+                'numbers' => 'required|array|min:1',
+                'numbers.*' => 'required|string|max:255|distinct',
+
+                'seal_numbers' => 'required|array|min:1',
+                'seal_numbers.*' => 'required|string|distinct',
+            ];
+        }
+
+        return $rules;
+
+    }
+
+    public function messages(): array
+    {
+        return [
+            'numbers.*.required' => 'field is required.',
+            'seal_numbers.*.required' => 'field is required.',
+            'statuses.*.required' => 'field is required.',
+            'tracking_devices.*.required' => 'required.',
+        ];
     }
 }

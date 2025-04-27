@@ -37,4 +37,9 @@ class Outbound extends Model
     {
         return $this->hasOneThrough(Customer::class,EnterRequest::class);
     }
+
+    public function Cars()
+    {
+        return $this->hasMany(OutboundCar::class,'outbound_id','id');
+    }
 }

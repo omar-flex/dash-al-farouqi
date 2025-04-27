@@ -6,6 +6,7 @@ namespace App\Http\Controllers\OperationManagement;
 use AllowDynamicProperties;
 use App\DataTables\OperationManagement\OutboundsDataTable;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\OutboundRequest;
 use App\Models\Country;
 use App\Models\EnterRequest;
@@ -14,7 +15,9 @@ use App\Models\LocationLine;
 use App\Models\ManifestFile;
 use App\Models\ManifestType;
 use App\Models\Outbound;
+use App\Models\OutboundCar;
 use App\Models\OutboundFile;
+use App\Models\OutboundStatus;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
@@ -50,9 +53,8 @@ use Illuminate\Support\Str;
         return $dataTable->render('pages.apps.operation-management.outbounds.list', compact('payload'));
     }
 
-    public function show(EnterRequest $enterRequest)
+    public function show(Outbound $outbound)
     {
-        return '';
         $locations = [];
 
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();
@@ -69,7 +71,7 @@ use Illuminate\Support\Str;
             'locations' => $locations,
         ];
 
-        return view('pages.apps.operation-management.outbounds.view', compact('enterRequest', 'payload'));
+        return view('pages.apps.operation-management.outbounds.view', compact('outbound', 'payload'));
     }
 
     public function create()
@@ -222,6 +224,27 @@ use Illuminate\Support\Str;
     {
         $outbound = Outbound::firstWhere('id', $id);
         return view('pages.pdf_model.outbounds_receipt_delivery_commitment_form', compact('outbound'));
+    }
+
+    public function cars($outbound_id, CarsRequest $request)
+    {
+
+        $outbound = Outbound::firstWhere('id', $outbound_id);
+
+
+        foreach ($request->numbers as $index => $number) {
+            OutboundCar::create([
+                'number' => $number,
+                'seal_number' => Arr::get($request->seal_numbers, $index),
+                'outbound_id' => $outbound_id,
+            ]);
+        }
+
+        $outbound->update(['status_id' => OutboundStatus::WH_RELEASE_PRODUCT]);
+
+        $cares_list = view('pages.apps.operation-management.outbounds.sections._cares-list', compact('outbound'))->render();
+
+        return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
     }
 
 }

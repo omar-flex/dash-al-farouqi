@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\EnterRequest;
+use App\Models\Outbound;
 use App\Models\User;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
@@ -64,6 +65,11 @@ Breadcrumbs::for('operation-management.manifest_authorizations.index', function 
 Breadcrumbs::for('operation-management.outbounds.index', function (BreadcrumbTrail $trail) {
     $trail->parent('operation-management.index');
     $trail->push('Outbounds', route('operation-management.outbounds.index'));
+});
+
+Breadcrumbs::for('operation-management.outbounds.show', function (BreadcrumbTrail $trail, Outbound $outbound) {
+    $trail->parent('operation-management.outbounds.index');
+    $trail->push($outbound->outbound_number, route('operation-management.outbounds.show', $outbound));
 });
 
 Breadcrumbs::for('products.index', function (BreadcrumbTrail $trail) {
