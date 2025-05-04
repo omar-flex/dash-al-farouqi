@@ -12,7 +12,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
  $disabled  = 'disabled';
 @endphp
 
-<div class="card card-flush mb-6 mb-xl-9">
+<div class="card card-flush mb-6 mb-xl-9" id="product_items">
     <form action="{{ route('operation-management.outbounds.products.store',$outbound->id) }}" method="POST"
           id="formProducts"
           enctype="multipart/form-data">
@@ -85,6 +85,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
+                    console.log(data)
                     parent.find('.warehouse_item_ids').val(data.id)
                     parent.find('.barcode').val(data.product.barcode)
                     parent.find('.unit_measure').val(data.product.unit_measure.name)
@@ -117,7 +118,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
         $(document).ready(function () {
 
             @isset($warehouseItems)
-            $('.products').each(function () {
+            $('#product_items .products').each(function () {
                 const selectedOption = $(this).find('option:selected[data-selected="true"]');
                 if (selectedOption.length > 0) {
                     getProductsInfo($(this));
