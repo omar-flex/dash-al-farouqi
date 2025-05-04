@@ -89,7 +89,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     parent.find('.barcode').val(data.product.barcode)
                     parent.find('.unit_measure').val(data.product.unit_measure.name)
                     parent.find('.batch_number').val(data.batch_number)
-                    if (!is_edit)
+                    if (is_edit)
                         parent.find('.quantities').attr('max', data.quantity).val(data.quantity)
 
                     parent.find('.location').val(data.location)
