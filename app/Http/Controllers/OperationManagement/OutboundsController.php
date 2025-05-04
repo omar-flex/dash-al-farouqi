@@ -274,7 +274,7 @@ use Illuminate\Support\Str;
             $item = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
                 ->with('product', 'product.UnitMeasure')
                 ->where('product_id', $product_id)
-                ->first(['id', 'batch_number', 'product_id', 'location_line_id', 'quantity', 'level', 'pallet']);
+                ->first(['id', 'batch_number', 'product_id', 'location_line_id', 'remaining_amount as quantity', 'level', 'pallet']);
             $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
             if ($item->level)
                 $item->location = $item->location . '-' . $item->level;
@@ -317,6 +317,7 @@ use Illuminate\Support\Str;
                     $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
                     if ($warehouse_item->quantity == $quantity)
                         $warehouse_item->update(['is_status' => 0]);
+                    $warehouse_item->update(['remaining_amount' => $warehouse_item->quantity - $quantity]);
                 }
                 $item = [
                     'quantity' => $quantity,
