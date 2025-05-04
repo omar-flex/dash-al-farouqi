@@ -78,13 +78,14 @@ use Illuminate\Support\Str;
 
         $product_ids = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
             ->where('is_status', 1)
-            ->pluck('product_id');
+            ->pluck('product_id')->unique();
+
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
-            ->join('unit_measures', 'products.unit_measure_id', '=', 'unit_measures.id')
-            ->join('warehouse_items', 'products.id', '=', 'warehouse_items.product_id')
+            ->leftJoin('unit_measures', 'products.unit_measure_id', '=', 'unit_measures.id')
+            ->leftJoin('warehouse_items', 'products.id', '=', 'warehouse_items.product_id')
             ->select('products.id', 'products.name', 'products.barcode', 'unit_measures.name as unit_measure_name')
-            ->limit(10)
+            ->distinct()
             ->get();
 
         $warehouseItems = $outbound->OutboundWarehouseItems;
@@ -287,11 +288,17 @@ use Illuminate\Support\Str;
     public function products($outbound_id, OutboundProductsRequest $request)
     {
         $outbound = Outbound::firstWhere('id', $outbound_id);
+        $check_quantity = false;
 
         $delete_items_ids = [];
         $items_ids = $outbound->OutboundWarehouseItems->pluck('id')->toArray();
         if (count($items_ids) > 0)
             $delete_items_ids = array_diff($items_ids, $request->items_id);
+
+        if ($request->button_clicked == 'btn-submit') {
+            $outbound->update(['status_id' => OutboundStatus::VALIDATION]);
+            $check_quantity = true;
+        }
 
         foreach ($request->products_id as $index => $product) {
             $item = WarehouseItems::where('product_id', $product)
@@ -305,16 +312,23 @@ use Illuminate\Support\Str;
                 $item_cpm_rate = $item->cpm / $item->quantity;
                 $item_cpm_capacity_rate = $item->cpm_capacity / $item->quantity;
                 $quantity = Arr::get($request->quantities, $index);
+                $warehouse_item_id = trim(Arr::get($request->warehouse_item_ids, $index));
+                if ($check_quantity) {
+                    $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
+                    if ($warehouse_item->quantity == $quantity)
+                        $warehouse_item->update(['is_status' => 0]);
+                }
                 $item = [
                     'quantity' => $quantity,
                     'location' => trim(Arr::get($request->locations, $index)),
-                    'warehouse_item_id' => trim(Arr::get($request->warehouse_item_ids, $index)),
+                    'warehouse_item_id' => $warehouse_item_id,
                     'outbound_id' => $outbound->id,
                     'custom_value' => $item_custom_value_rate * $quantity,
                     'gross_weight' => $item_gross_weight_rate * $quantity,
                     'net_weight' => $item_net_weight_rate * $quantity,
                     'cpm' => $item_cpm_rate * $quantity,
                     'cpm_capacity' => $item_cpm_capacity_rate * $quantity,
+                    'is_status' => $check_quantity
                 ];
             }
             $items_id = Arr::get($request->all(), 'items_id.' . $index);
@@ -327,10 +341,6 @@ use Illuminate\Support\Str;
             if (count($delete_items_ids) > 0) {
                 OutboundWarehouseItems::whereIn('id', $delete_items_ids)->delete();
             }
-        }
-
-        if ($request->button_clicked == 'btn-submit') {
-            $outbound->update(['status_id' => OutboundStatus::VALIDATION]);
         }
 
         return response()->json(['message' => 'Added or Update Release Product item Successfully', 'status' => 200]);
