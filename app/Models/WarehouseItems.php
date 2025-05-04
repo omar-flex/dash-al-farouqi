@@ -12,4 +12,9 @@ class WarehouseItems extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function LocationLine()
+    {
+        return $this->belongsTo(LocationLine::class);
+    }
 }

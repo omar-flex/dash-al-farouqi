@@ -69,10 +69,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             //outbound
             Route::resource('outbounds', OutboundsController::class);
             Route::post('/outbounds/{id}/cars/store', [OutboundsController::class, 'cars'])->name('outbounds.cars.store');
-
+            Route::get('/outbounds/{id}/products/{product_id}', [OutboundsController::class, 'product'])->name('outbounds.products.info');
+            Route::post('/outbounds/{id}/products/store', [OutboundsController::class, 'products'])->name('outbounds.products.store');
             Route::delete('outbounds/files/{id}', [OutboundsController::class, 'fileDelete'])->name('outbounds.files.delete');
             Route::get('outbounds/{id}/pdf', [OutboundsController::class, 'pdf'])->name('outbounds.pdf');
             Route::get('outbounds/{id}/receipt-delivery-commitment-form/pdf', [OutboundsController::class, 'pdfForm'])->name('outbounds.receipt-delivery-commitment-form.pdf');
+            Route::post('/outbounds/{id}/validations/store', [OutboundsController::class, 'validations'])->name('outbounds.validations.store');
 
 
         });

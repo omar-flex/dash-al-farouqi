@@ -9,7 +9,8 @@
             @endif
             <span class="fs-3 text-gray-800 fw-bold mb-3">{{$outbound->outbound_number}} </span>
             <span class="text-gray-600 mb-3 "> From Inbound </span>
-            <span class="fs-3 text-primary fw-bold mb-3">{{$outbound->enterRequest?->bound_number}} </span>
+            <a href="{{route('operation-management.enter_requests.show',$outbound->enterRequest?->id )}}" target="_blank"
+               class="fs-3 text-primary fw-bold mb-3">{{$outbound->enterRequest?->bound_number}} </a>
             <div class="mb-4">
                 @php
                     $class = app(GetThemeType::class)->handle('badge-light-?', $outbound->Status?->name);
@@ -37,24 +38,24 @@
                 </div>
 
                 <div class="mt-5">
-                      <span class="fw-bold">Manifest Type Number:</span>
-                      <span class="mx-1 text-gray-600">{{$outbound->manifest_type_number}}</span>
-                  </div>
+                    <span class="fw-bold">Manifest Type Number:</span>
+                    <span class="mx-1 text-gray-600">{{$outbound->manifest_type_number}}</span>
+                </div>
 
-                  <div class="mt-5">
-                      <span class="fw-bold">Custom Entry Center:</span>
-                      <span class="mx-1 text-gray-600">{{$outbound->customs_entry_center}}</span>
-                  </div>
+                <div class="mt-5">
+                    <span class="fw-bold">Custom Entry Center:</span>
+                    <span class="mx-1 text-gray-600">{{$outbound->customs_entry_center}}</span>
+                </div>
 
-                  <div class="mt-5">
-                      <span class="fw-bold">Manifest Year:</span>
-                      <span class="mx-1 text-gray-600">{{$outbound->manifest_year}}</span>
-                  </div>
+                <div class="mt-5">
+                    <span class="fw-bold">Manifest Year:</span>
+                    <span class="mx-1 text-gray-600">{{$outbound->manifest_year}}</span>
+                </div>
 
-                  <div class="mt-5">
-                      <span class="fw-bold">Manifest Date:</span>
-                      <span class="mx-1 text-gray-600">{{$outbound->manifest_date}}</span>
-                  </div>
+                <div class="mt-5">
+                    <span class="fw-bold">Manifest Date:</span>
+                    <span class="mx-1 text-gray-600">{{$outbound->manifest_date}}</span>
+                </div>
 
                 <div class="mt-5">
                     <span class="fw-bold"> Quantity of Car:</span>

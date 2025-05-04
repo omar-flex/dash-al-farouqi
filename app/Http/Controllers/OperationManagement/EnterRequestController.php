@@ -281,11 +281,6 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
             }
         }
 
-        $payload = (object)[
-            'unitMeasures' => UnitMeasure::all(['id', 'name']),
-            'locations' => (object)$this->getLocations(),
-        ];
-
         if ($request->button_clicked == 'btn-submit') {
             $enterRequest->update(['status_id' => EnterRequestStatus::VALIDATION]);
         }
