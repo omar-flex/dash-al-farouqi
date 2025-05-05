@@ -24,7 +24,7 @@ class OutboundsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->rawColumns(['status_name', 'bound_number', 'outbound_number'])
-            ->filterColumn('product_names', function($query, $keyword) {
+            ->filterColumn('product_names', function ($query, $keyword) {
                 $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
             })
             ->editColumn('product_name', function ($row) {
@@ -62,11 +62,10 @@ class OutboundsDataTable extends DataTable
         outbounds.*,
         enter_requests.bound_number,
         enter_requests.id as inbound_id,
-        enter_request_statuses.name as status_name,
+        outbound_statuses.name as status_name,
         customers.name as customer_name,
         GROUP_CONCAT(DISTINCT products.name SEPARATOR ", ") as product_names
-    ')
-            ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'outbounds.status_id')
+    ')->leftJoin('outbound_statuses', 'outbound_statuses.id', '=', 'outbounds.status_id')
             ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
             ->leftJoin('outbound_warehouse_items', 'outbound_warehouse_items.outbound_id', '=', 'outbounds.id')
@@ -75,8 +74,7 @@ class OutboundsDataTable extends DataTable
             ->groupBy('outbounds.id')
             ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
-            })
-            ->newQuery();
+            })->newQuery();
     }
 
     /**

@@ -25,7 +25,7 @@ class Outbound extends Model
 
     public function Status()
     {
-        return $this->belongsTo(EnterRequestStatus::class, 'status_id');
+        return $this->belongsTo(OutboundStatus::class, 'status_id');
     }
 
     public function Files()

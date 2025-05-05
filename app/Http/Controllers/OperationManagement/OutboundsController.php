@@ -279,7 +279,7 @@ use Illuminate\Support\Str;
                     'batch_number',
                     'product_id',
                     'location_line_id',
-                    DB::raw('IF(remaining_quantity IS NULL, quantity, remaining_quantity - quantity) AS quantity'),
+                    'remaining_quantity AS quantity',
                     'level', 'pallet']);
             $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
             if ($item->level)
