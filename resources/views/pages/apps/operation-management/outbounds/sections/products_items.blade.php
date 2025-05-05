@@ -77,7 +77,7 @@
                     <div class="col-1 mb-2">
                         <input type="number" min="1" class="form-control form-control-sm quantities"
                                name="quantities[]"
-                               aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}" max="{{ $item->WarehouseItem?->remaining_amount +  $item->quantity }}"/>
+                               aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}" max="{{ $item->WarehouseItem?->remaining_quantity +  $item->quantity }}"/>
                     </div>
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm barcode"

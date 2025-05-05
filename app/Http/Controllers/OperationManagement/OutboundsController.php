@@ -23,6 +23,7 @@ use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\Warehouse;
 use App\Models\WarehouseItems;
+use DB;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -274,7 +275,12 @@ use Illuminate\Support\Str;
             $item = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
                 ->with('product', 'product.UnitMeasure')
                 ->where('product_id', $product_id)
-                ->first(['id', 'batch_number', 'product_id', 'location_line_id', 'quantity', 'level', 'pallet']);
+                ->first(['id',
+                    'batch_number',
+                    'product_id',
+                    'location_line_id',
+                    DB::raw('IF(remaining_quantity IS NULL, quantity, remaining_quantity - quantity) AS quantity'),
+                    'level', 'pallet']);
             $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
             if ($item->level)
                 $item->location = $item->location . '-' . $item->level;
@@ -313,12 +319,12 @@ use Illuminate\Support\Str;
                 $item_cpm_capacity_rate = $item->cpm_capacity / $item->quantity;
                 $quantity = Arr::get($request->quantities, $index);
                 $warehouse_item_id = trim(Arr::get($request->warehouse_item_ids, $index));
+                $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
                 if ($check_quantity) {
-                    $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
                     if ($warehouse_item->quantity == $quantity)
                         $warehouse_item->update(['is_status' => 0]);
-                    $warehouse_item->update(['remaining_amount' => $warehouse_item->quantity - $quantity]);
                 }
+                $warehouse_item->update(['remaining_quantity' => $warehouse_item->quantity - $quantity]);
                 $item = [
                     'quantity' => $quantity,
                     'location' => trim(Arr::get($request->locations, $index)),
