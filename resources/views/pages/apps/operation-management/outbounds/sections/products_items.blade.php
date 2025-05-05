@@ -21,7 +21,7 @@
                            name="quantities[]"
                            aria-describedby="capacities" placeholder="Qty"/>
                 </div>
-                <div class="col-2 mb-2">
+                <div class="col mb-2">
                     <input class="form-control form-control-solid-bg form-control-sm barcode"
                            placeholder="Barcode" type="text" disabled/>
                 </div>
@@ -36,6 +36,16 @@
                 <div class="col-md-2 mb-2">
                     <input type="text" class="form-control form-control-sm form-control-solid-bg location" readonly
                            placeholder="WH-H-L" name="locations[]"/>
+                </div>
+                <div class="col-md-2 mb-2 ">
+                    <select name="cars_id[]" data-control="select2" class="form-select form-select-solid-bg form-select-sm mb-2 cars" data-placeholder="Car">
+                        <option></option>
+                        @foreach($cars as $car)
+                            <option value="{{ $car->id }}">
+                                {{ $car->number}}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col mb-2">
                     <button type="button" data-repeater-products-delete
@@ -69,7 +79,7 @@
                                name="quantities[]"
                                aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}" max="{{ $item->WarehouseItem?->remaining_amount +  $item->quantity }}"/>
                     </div>
-                    <div class="col-2 mb-2">
+                    <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm barcode"
                                placeholder="Barcode" type="text" disabled/>
                     </div>
@@ -84,6 +94,16 @@
                     <div class="col-md-2 mb-2">
                         <input type="text" class="form-control form-control-sm form-control-solid-bg location" readonly
                                placeholder="WH-H-L" name="locations[]"/>
+                    </div>
+                    <div class="col-md-2 mb-2 ">
+                        <select name="cars_id[]" data-control="select2" class="form-select form-select-solid-bg form-select-sm mb-2 cars" data-placeholder="Car">
+                            <option></option>
+                            @foreach($cars as $car)
+                                <option value="{{ $car->id }}" @if($item->outbound_car_id == $car->id) selected @endif>
+                                    {{ $car->number}}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col mb-2">
                         <button type="button" data-repeater-products-delete

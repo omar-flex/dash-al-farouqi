@@ -40,17 +40,20 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif"
                            title="Quantity">Quantity</label>
                 </div>
-                <div class="col-2 mb-3">
+                <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Lot number"> Barcode </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
+                    <label class="fw-semibold fs-7 mb-2" title="Batch Number"> BN </label>
                 </div>
                 <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Unit Measures"> UoM</label>
                 </div>
                 <div class="col-md-2 mb-3">
                     <label class="fw-semibold fs-7 mb-2 " title="Location">Location</label>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="fw-semibold fs-7 mb-2 " title="Car">Car</label>
                 </div>
                 @if(!$disabled)
                     <div class="col mb-3">
@@ -74,7 +77,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
 @push('scripts')
     <script>
         function initSelect2() {
-            $('.products').select2();
+            $('.products,.cars').select2();
         }
 
         function getProductsInfo(product) {

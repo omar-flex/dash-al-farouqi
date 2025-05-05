@@ -88,9 +88,11 @@ use Illuminate\Support\Str;
             ->distinct()
             ->get();
 
+        $cars = OutboundCar::where('outbound_id', $outbound->id)->get();
+
         $warehouseItems = $outbound->OutboundWarehouseItems;
 
-        return view('pages.apps.operation-management.outbounds.view', compact('outbound', 'payload', 'warehouseItems', 'products'));
+        return view('pages.apps.operation-management.outbounds.view', compact('outbound', 'payload', 'warehouseItems', 'products', 'cars'));
     }
 
     public function create()
@@ -323,13 +325,14 @@ use Illuminate\Support\Str;
                     'quantity' => $quantity,
                     'location' => trim(Arr::get($request->locations, $index)),
                     'warehouse_item_id' => $warehouse_item_id,
-                    'outbound_id' => $outbound->id,
                     'custom_value' => $item_custom_value_rate * $quantity,
                     'gross_weight' => $item_gross_weight_rate * $quantity,
                     'net_weight' => $item_net_weight_rate * $quantity,
                     'cpm' => $item_cpm_rate * $quantity,
                     'cpm_capacity' => $item_cpm_capacity_rate * $quantity,
-                    'is_status' => $check_quantity
+                    'is_status' => $check_quantity,
+                    'outbound_id' => $outbound->id,
+                    'outbound_car_id' => trim(Arr::get($request->cars_id, $index))
                 ];
             }
             $items_id = Arr::get($request->all(), 'items_id.' . $index);
