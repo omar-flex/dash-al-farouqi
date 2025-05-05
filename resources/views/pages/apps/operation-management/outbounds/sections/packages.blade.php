@@ -80,7 +80,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
             $('.products,.cars').select2();
         }
 
-        function getProductsInfo(product) {
+        function getProductsInfo(product, is_edit = true) {
             let product_id = product.val();
             let parent = product.parent().parent()
             $.ajax({
@@ -93,7 +93,9 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     parent.find('.barcode').val(data.product.barcode).attr('title', data.product.barcode)
                     parent.find('.unit_measure').val(data.product.unit_measure.name).attr('title', data.product.unit_measure.name)
                     parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
-                    parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
+                    if (is_edit) {
+                        parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
+                    }
                     parent.find('.location').val(data.location).attr('title', data.location)
                 },
                 error: function (xhr, status, error) {
@@ -124,7 +126,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
             $('#product_items .products').each(function () {
                 const selectedOption = $(this).find('option:selected[data-selected="true"]');
                 if (selectedOption.length > 0) {
-                    getProductsInfo($(this));
+                    getProductsInfo($(this), false);
                 }
             });
             @endisset
