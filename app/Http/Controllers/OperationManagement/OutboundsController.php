@@ -212,7 +212,7 @@ use Illuminate\Support\Str;
                 $extension = $file->getClientOriginalExtension();
                 $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
                 $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
-                $path = Storage::disk('s3')->putFileAs('Outbounds', $file, $uniqueName);
+                $path = Storage::putFileAs('Outbounds', $file, $uniqueName);
                 OutboundFile::create([
                     'filename' => Str::replace('/', '-', $outbound->outbound_number),
                     'path' => $path,
