@@ -92,9 +92,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     parent.find('.barcode').val(data.product.barcode).attr('title', data.product.barcode)
                     parent.find('.unit_measure').val(data.product.unit_measure.name).attr('title', data.product.unit_measure.name)
                     parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
-                    @if(!$warehouseItems)
-                        parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
-                    @endif
+                    parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
                     parent.find('.location').val(data.location).attr('title', data.location)
                 },
                 error: function (xhr, status, error) {
