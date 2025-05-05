@@ -319,6 +319,7 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
             foreach (request('files') as $file) {
                 $extension = $file->getClientOriginalExtension();
                 $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', $file->getClientOriginalName());
+                dd($cleanName);
                 $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
                 $path = Storage::disk('s3')->putFileAs('Inbounds', $file, $uniqueName);
                 EnterRequestFile::create([
