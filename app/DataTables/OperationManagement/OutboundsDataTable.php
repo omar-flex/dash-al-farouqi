@@ -23,7 +23,13 @@ class OutboundsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number','outbound_number'])
+            ->rawColumns(['status_name', 'bound_number', 'outbound_number'])
+            ->filterColumn('product_names', function($query, $keyword) {
+                $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
+            })
+            ->editColumn('product_name', function ($row) {
+                return $row->product_name ?? '—';
+            })
             ->editColumn('created_at', function (Outbound $model) {
                 return $model->created_at->format('d M Y, h:i a');
             })
@@ -52,13 +58,25 @@ class OutboundsDataTable extends DataTable
      */
     public function query(Outbound $model): QueryBuilder
     {
-        return $model->select("outbounds.*", 'enter_requests.bound_number','enter_requests.id as inbound_id','enter_request_statuses.name as status_name', 'customers.name as customer_name')
+        return $model->selectRaw('
+        outbounds.*,
+        enter_requests.bound_number,
+        enter_requests.id as inbound_id,
+        enter_request_statuses.name as status_name,
+        customers.name as customer_name,
+        GROUP_CONCAT(DISTINCT products.name SEPARATOR ", ") as product_names
+    ')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'outbounds.status_id')
             ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
+            ->leftJoin('outbound_warehouse_items', 'outbound_warehouse_items.outbound_id', '=', 'outbounds.id')
+            ->leftJoin('warehouse_items', 'warehouse_items.id', '=', 'outbound_warehouse_items.warehouse_item_id')
+            ->leftJoin('products', 'products.id', '=', 'warehouse_items.product_id')
+            ->groupBy('outbounds.id')
             ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
-            })->newQuery();
+            })
+            ->newQuery();
     }
 
     /**
@@ -90,6 +108,7 @@ class OutboundsDataTable extends DataTable
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

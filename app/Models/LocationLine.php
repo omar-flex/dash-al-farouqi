@@ -13,4 +13,9 @@ class LocationLine extends Model
         return $this->belongsTo(WarehouseLocation::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(WarehouseItems::class);
+    }
+
 }

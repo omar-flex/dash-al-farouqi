@@ -88,14 +88,14 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    parent.find('.warehouse_item_ids').val(data.id)
-                    parent.find('.barcode').val(data.product.barcode)
-                    parent.find('.unit_measure').val(data.product.unit_measure.name)
-                    parent.find('.batch_number').val(data.batch_number)
+                    parent.find('.warehouse_item_ids').val(data.id).attr('title', data.id)
+                    parent.find('.barcode').val(data.product.barcode).attr('title', data.product.barcode)
+                    parent.find('.unit_measure').val(data.product.unit_measure.name).attr('title', data.product.unit_measure.name)
+                    parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
                     @if(!$warehouseItems)
-                        parent.find('.quantities').attr('max', data.quantity).val(data.quantity)
+                        parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
                     @endif
-                    parent.find('.location').val(data.location)
+                    parent.find('.location').val(data.location).attr('title', data.location)
                 },
                 error: function (xhr, status, error) {
                     toastr.error(xhr.status + ' : ' + error);

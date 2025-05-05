@@ -25,6 +25,12 @@ class EnterRequestsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->rawColumns(['status_name', 'bound_number','outbounds_count','customer_name'])
+            ->filterColumn('product_names', function ($query, $keyword) {
+                $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
+            })
+            ->editColumn('product_names', function ($row) {
+                return $row->product_names ?? '—';
+            })
             ->editColumn('customer_name', content: function (EnterRequest $model) {
                 return '<div class="d-flex align-items-center justify-content-center">
                     <div class="d-flex flex-column">
@@ -63,11 +69,17 @@ class EnterRequestsDataTable extends DataTable
      */
     public function query(EnterRequest $model): QueryBuilder
     {
-        return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name',
-            'customers.name as customer_name', 'clearance_companies.name as company_name')
+        return $model->selectRaw('enter_requests.*,
+                                        enter_request_statuses.name as status_name,
+                                        customers.name as customer_name,
+                                        clearance_companies.name as company_name,
+                                        GROUP_CONCAT(DISTINCT products.name SEPARATOR ", ") as product_names')
             ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'enter_requests.status_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
             ->leftJoin('clearance_companies', 'clearance_companies.id', '=', 'enter_requests.clearance_company_id')
+            ->leftJoin('warehouse_items', 'warehouse_items.enter_request_id', '=', 'enter_requests.id')
+            ->leftJoin('products', 'products.id', '=', 'warehouse_items.product_id')
+            ->groupBy('enter_requests.id')
             ->withCount('Outbounds')
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));
@@ -108,6 +120,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::make('outbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Outbounds'),
             Column::computed('action')
                 ->addClass('text-center text-nowrap')
