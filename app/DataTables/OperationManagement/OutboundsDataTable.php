@@ -4,6 +4,7 @@ namespace App\DataTables\OperationManagement;
 
 
 use App\Actions\GetThemeType;
+use App\Models\EnterRequest;
 use App\Models\Outbound;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
@@ -23,9 +24,16 @@ class OutboundsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number', 'outbound_number'])
+            ->rawColumns(['status_name', 'bound_number', 'outbound_number','customer_name'])
             ->filterColumn('product_names', function ($query, $keyword) {
                 $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
+            })
+            ->editColumn('customer_name', content: function (Outbound $model) {
+                return '<div class="d-flex align-items-center justify-content-center">
+                    <div class="d-flex flex-column">
+                     <span class="text-muted">' . $model->customer_name . '</span>
+                     <span class="text-muted">' . $model->company_name . '</span>
+                   </div> </div>';
             })
             ->editColumn('product_name', function ($row) {
                 return $row->product_name ?? '—';
@@ -64,6 +72,7 @@ class OutboundsDataTable extends DataTable
         enter_requests.id as inbound_id,
         outbound_statuses.name as status_name,
         customers.name as customer_name,
+        clearance_companies.name as company_name,
         GROUP_CONCAT(DISTINCT products.name SEPARATOR ", ") as product_names
     ')->leftJoin('outbound_statuses', 'outbound_statuses.id', '=', 'outbounds.status_id')
             ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
@@ -71,9 +80,18 @@ class OutboundsDataTable extends DataTable
             ->leftJoin('outbound_warehouse_items', 'outbound_warehouse_items.outbound_id', '=', 'outbounds.id')
             ->leftJoin('warehouse_items', 'warehouse_items.id', '=', 'outbound_warehouse_items.warehouse_item_id')
             ->leftJoin('products', 'products.id', '=', 'warehouse_items.product_id')
+            ->leftJoin('clearance_companies', 'clearance_companies.id', '=', 'enter_requests.clearance_company_id')
             ->groupBy('outbounds.id')
             ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
+            })->when(request('customer_id'), function ($q) {
+                return $q->where('enter_requests.customer_id', request('customer_id'));
+            })
+            ->when(request('company_id'), function ($q) {
+                return $q->where('enter_requests.clearance_company_id', request('company_id'));
+            })
+            ->when(request('status_id'), function ($q) {
+                return $q->where('outbounds.status_id', request('status_id'));
             })->newQuery();
     }
 

@@ -24,7 +24,7 @@ class EnterRequestsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number','outbounds_count','customer_name'])
+            ->rawColumns(['status_name', 'bound_number', 'outbounds_count', 'customer_name'])
             ->filterColumn('product_names', function ($query, $keyword) {
                 $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
             })
@@ -83,6 +83,9 @@ class EnterRequestsDataTable extends DataTable
             ->withCount('Outbounds')
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));
+            })
+            ->when(request('company_id'), function ($q) {
+                return $q->where('clearance_company_id', request('company_id'));
             })
             ->when(request('status_id'), function ($q) {
                 return $q->where('status_id', request('status_id'));

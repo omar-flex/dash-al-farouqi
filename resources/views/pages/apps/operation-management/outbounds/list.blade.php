@@ -18,22 +18,45 @@
                            id="mySearchInput"/>
                 </div>
             </div>
-            <div class="card-toolbar">
-                <div class="d-flex justify-content-end gap-3" data-kt-user-table-toolbar="base">
+            <div class="card-toolbar min-w-900px">
+                <div class="d-flex justify-content-end gap-3 w-100" data-kt-user-table-toolbar="base">
+                    <div class="w-25">
+                        <select class="form-select form-select-solid form-select-sm mb-2 " id="company_filter"
+                                data-control="select2" data-placeholder="Select an Company" data-allow-clear="true">
+                            <option></option>
+                            @foreach($payload->companies as $company)
+                                <option value="{{$company->id}}">{{$company->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-25">
+                        <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
+                                data-control="select2" data-placeholder="Select an Customer" data-allow-clear="true">
+                            <option></option>
+                            @foreach($payload->customers as $customer)
+                                <option value="{{$customer->id}}">{{$customer->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-25">
+                        <select class="form-select form-select-solid form-select-sm mb-2 " id="status_filter"
+                                data-control="select2" data-placeholder="Select an Status" data-allow-clear="true">
+                            <option></option>
+                            @foreach($payload->statuses as $status)
+                                <option value="{{$status->id}}">{{$status->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     @can('add_'.$payload->resource)
-                        <a class="btn btn-light-primary btn-sm" id="add">
-                            {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                            Add {{$payload->sub_title}}
-                        </a>
+                        <div class="w-15">
+                            <a class="btn btn-light-primary btn-sm" id="add">
+                                {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                                Add {{$payload->sub_title}}
+                            </a>
+                        </div>
                     @endcan
 
-                    {{-- @can('add_'.$payload->resource)
-                         <a class="btn btn-light-primary btn-sm"
-                            href="{{route('operation-management.'.$payload->resource.'.create')}}">
-                             {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                             Add {{$payload->sub_title}}
-                         </a>
-                     @endcan--}}
                 </div>
             </div>
         </div>
@@ -49,6 +72,20 @@
     @push('scripts')
         {{ $dataTable->scripts() }}
         <script>
+
+            $('#status_filter,#customer_filter,#company_filter').select2().on('change', function () {
+                let query = '?';
+                let status_id = $('#status_filter').val();
+                let customer_id = $('#customer_filter').val();
+                let company_id = $('#company_filter').val();
+                if (status_id)
+                    query += 'status_id=' + status_id;
+                if (customer_id)
+                    query += '&customer_id=' + customer_id;
+                if (company_id)
+                    query += '&company_id=' + company_id;
+                window.LaravelDataTables['{{$payload->tableId}}'].ajax.url(query).load();
+            });
 
             @can('add_'.$payload->resource)
             $('#add').on('click', function () {

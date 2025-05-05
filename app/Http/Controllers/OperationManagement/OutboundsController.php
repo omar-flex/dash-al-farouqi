@@ -10,7 +10,9 @@ use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\OutboundProductsRequest;
 use App\Http\Requests\OperationManagement\OutboundRequest;
 use App\Http\Requests\OperationManagement\OutboundValidationsRequest;
+use App\Models\ClearanceCompany;
 use App\Models\Country;
+use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
@@ -51,6 +53,9 @@ use Illuminate\Support\Str;
             'tableId' => $this->tableId,
             'formId' => $this->formId,
             'resource' => $this->resource,
+            'statuses' => OutboundStatus::get(['id', 'name']),
+            'customers' => Customer::get(['id', 'name']),
+            'companies' => ClearanceCompany::orderBy('name')->get(['id', 'name']),
         ];
 
         return $dataTable->render('pages.apps.operation-management.outbounds.list', compact('payload'));

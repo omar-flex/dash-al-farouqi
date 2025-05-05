@@ -55,7 +55,8 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
             'formId' => $this->formId,
             'resource' => $this->resource,
             'statuses' => EnterRequestStatus::get(['id', 'name']),
-            'customers' => Customer::get(['id', 'name']),
+            'customers' => Customer::orderBy('name')->get(['id', 'name']),
+            'companies' => ClearanceCompany::orderBy('name')->get(['id', 'name']),
         ];
 
         return $dataTable->render('pages.apps.operation-management.enter-requests.list', compact('payload'));
