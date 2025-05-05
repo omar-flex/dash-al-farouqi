@@ -10,14 +10,10 @@ use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\OutboundProductsRequest;
 use App\Http\Requests\OperationManagement\OutboundRequest;
 use App\Http\Requests\OperationManagement\OutboundValidationsRequest;
-use App\Http\Requests\OperationManagement\ProductsRequest;
-use App\Http\Requests\OperationManagement\ValidationsRequest;
 use App\Models\Country;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestStatus;
 use App\Models\LocationLine;
-use App\Models\ManifestFile;
-use App\Models\ManifestType;
 use App\Models\Outbound;
 use App\Models\OutboundCar;
 use App\Models\OutboundFile;
@@ -214,7 +210,9 @@ use Illuminate\Support\Str;
         if (request('files')) {
             foreach (request('files') as $file) {
                 $extension = $file->getClientOriginalExtension();
-                $path = Storage::putFileAs('Outbounds', $file, trim($file->getClientOriginalName()));
+                $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+                $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
+                $path = Storage::disk('s3')->putFileAs('Outbounds', $file, $uniqueName);
                 OutboundFile::create([
                     'filename' => Str::replace('/', '-', $outbound->outbound_number),
                     'path' => $path,
