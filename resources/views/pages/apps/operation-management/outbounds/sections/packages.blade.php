@@ -88,6 +88,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
+                    console.log(data)
                     parent.find('.warehouse_item_ids').val(data.id).attr('title', data.id)
                     parent.find('.barcode').val(data.product.barcode).attr('title', data.product.barcode)
                     parent.find('.unit_measure').val(data.product.unit_measure.name).attr('title', data.product.unit_measure.name)
