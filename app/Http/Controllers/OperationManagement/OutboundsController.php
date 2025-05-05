@@ -79,8 +79,9 @@ use Illuminate\Support\Str;
         ];
 
         $product_ids = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
-            ->where('is_status', 1)
-            ->pluck('product_id')->unique();
+            ->when($outbound->status_id == OutboundStatus::WH_RELEASE_PRODUCT, function ($q) {
+                return $q->where('is_status', 1);
+            })->pluck('product_id')->unique();
 
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
