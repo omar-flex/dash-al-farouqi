@@ -122,7 +122,7 @@ class OutboundsDataTable extends DataTable
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
             Column::make('net_weight')->title('Net weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
-            Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
+            Column::make('status_name')->title('Stage')->name('outbound_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::computed('action')

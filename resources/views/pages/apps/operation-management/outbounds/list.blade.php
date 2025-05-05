@@ -14,7 +14,7 @@
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
                     <input type="text" data-kt-user-table-filter="search"
                            class="form-control form-control-solid w-250px ps-13"
-                           placeholder="Search {{$payload->sub_title}} | Or Products"
+                           placeholder="Search {{$payload->sub_title}} Or Products"
                            id="mySearchInput"/>
                 </div>
             </div>
