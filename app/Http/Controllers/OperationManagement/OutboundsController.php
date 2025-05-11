@@ -246,6 +246,22 @@ use Illuminate\Support\Str;
         return view('pages.pdf_model.outbounds', compact('outbound'));
     }
 
+    public function outputProducts($id)
+    {
+        $outbound = Outbound::firstWhere('id', $id);
+        return view('pages.apps.operation-management.outbounds.output-products', compact('outbound'));
+    }
+
+    public function pdfOutputProducts($id, $car_id)
+    {
+        $outbound = Outbound::firstWhere('id', $id);
+        $items = OutboundWarehouseItems::where([
+            'outbound_id' => $outbound->id,
+            'outbound_car_id' => $car_id,
+        ])->get();
+        return view('pages.pdf_model.output_products', compact('outbound', 'items', 'car_id'));
+    }
+
     public function pdfForm($id)
     {
         $outbound = Outbound::firstWhere('id', $id);

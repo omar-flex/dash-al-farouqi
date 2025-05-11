@@ -75,7 +75,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('outbounds/{id}/pdf', [OutboundsController::class, 'pdf'])->name('outbounds.pdf');
             Route::get('outbounds/{id}/receipt-delivery-commitment-form/pdf', [OutboundsController::class, 'pdfForm'])->name('outbounds.receipt-delivery-commitment-form.pdf');
             Route::post('/outbounds/{id}/validations/store', [OutboundsController::class, 'validations'])->name('outbounds.validations.store');
-
+            Route::get('outbounds/{id}/output-products', [OutboundsController::class, 'outputProducts'])->name('outputProducts');
+            Route::get('outbounds/{id}/output-products/pdf/{car_id}', [OutboundsController::class, 'pdfOutputProducts'])->name('pdfOutputProducts.pdf');
 
         });
 

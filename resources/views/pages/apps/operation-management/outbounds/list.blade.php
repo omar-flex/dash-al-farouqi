@@ -117,6 +117,22 @@
             });
             @endcan
 
+            @can('edit_'.$payload->resource)
+            $(document).on('click', '.output_products_pdf_btn', function () {
+                let id = $(this).attr('id');
+                let url = '/operation-management/{{$payload->resource}}/' + id + '/output-products'
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    success: function (data) {
+                        $('#modal-body').html(data);
+                        $('#modal-title').text('Edit {{$payload->sub_title}}');
+                        $('#modal').modal('show');
+                    }
+                });
+            });
+            @endcan
+
             @can('delete_'.$payload->resource)
             remove('remove_btn', 'operation-management/{{$payload->resource}}', '{{$payload->tableId}}', '{{ csrf_token() }}')
             @endcan
