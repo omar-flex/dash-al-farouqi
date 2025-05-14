@@ -14,7 +14,7 @@ class OutboundProductsRequest extends FormRequest
     {
         return [
             'products_id' => 'required|array|min:1',
-            'products_id.*' => 'required|string|max:255|distinct',
+            'products_id.*' => 'required|string|max:255',
 
             'quantities' => 'required|array|min:1',
             'quantities.*' => 'required|integer|min:1',
