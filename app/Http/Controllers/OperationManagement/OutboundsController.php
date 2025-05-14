@@ -275,11 +275,19 @@ use Illuminate\Support\Str;
 
 
         foreach ($request->numbers as $index => $number) {
-            OutboundCar::create([
-                'number' => $number,
-                'seal_number' => Arr::get($request->seal_numbers, $index),
-                'outbound_id' => $outbound_id,
-            ]);
+            $car_id = Arr::get($request->car_ids, $index);
+            if ($car_id) {
+                OutboundCar::where('id', $car_id)->update([
+                    'number' => $number,
+                    'seal_number' => Arr::get($request->seal_numbers, $index),
+                ]);
+            } else {
+                OutboundCar::create([
+                    'number' => $number,
+                    'seal_number' => Arr::get($request->seal_numbers, $index),
+                    'outbound_id' => $outbound_id,
+                ]);
+            }
         }
 
         $outbound->update(['status_id' => OutboundStatus::WH_RELEASE_PRODUCT]);

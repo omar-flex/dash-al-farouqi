@@ -1,6 +1,3 @@
-@php
-    $is_cars = $outbound->cars()->count() > 0
-@endphp
 <div class="card card-flush mb-6 mb-xl-9">
     <form action="{{ route('operation-management.outbounds.cars.store',$outbound->id) }}" method="POST"
           id="formCares"
@@ -11,19 +8,17 @@
                 <h2 class="mb-1"> Cares Plate Numbers</h2>
             </div>
             <div class="card-toolbar">
-                @if(!$is_cars)
                     <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
                            id="btn-submit">
-                @endif
             </div>
         </div>
         <div class="card-body p-9 pt-4">
             <div class="row px-3">
                 <div class="col-md-4 mb-3">
-                    <label class="fw-semibold fs-6 mb-2  @if(!$is_cars) required @endif">Numbers</label>
+                    <label class="fw-semibold fs-6 mb-2  required">Numbers</label>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="fw-semibold fs-6 mb-2 @if(!$is_cars) required @endif">Seal Numbers</label>
+                    <label class="fw-semibold fs-6 mb-2 ">Seal Numbers</label>
                 </div>
             </div>
 

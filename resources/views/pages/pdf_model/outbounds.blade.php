@@ -43,7 +43,7 @@
             <th>تاريخها</th>
             <th>من بيان ايداع</th>
             <th>منظمة في مركز جمركي</th>
-            <th>اسم المرسل </th>
+            <th>اسم المرسل</th>
         </tr>
         </thead>
         <tbody>
@@ -57,6 +57,26 @@
         </tbody>
     </table>
 
+    @if($outbound->manifest_type_number == 3 || $outbound->manifest_type_number == 8)
+        <h5 class="mt-4 fw-bold">كما هو مصرح بالبيان </h5>
+        <table class="table table-bordered mt-3 text-center">
+            <thead>
+            <tr>
+                <th>رصاص رقم</th>
+                <th>سيارات رقم</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($outbound->Cars as $car)
+                <tr>
+                    <td>{{ $car->seal_number }}</td>
+                    <td>{{ $car->number }}</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    @endif
+
     <div class="col-12 mt-2">
         <div>
             <span class="fw-bold"> ملاحظة :</span>
@@ -69,7 +89,6 @@
             <span class="fw-bold">  مطابق </span>
         </div>
     </div>
-
 
 
     <div class="row">
@@ -96,7 +115,8 @@
                     @if($outbound->EnterRequest->country_id)
                         <td class=" text-gray-600 border-0">{{$outbound->EnterRequest->Country->name}}</td>
                     @endif
-                    <td class=" text-gray-600 border-0"><span class="fw-bold mx-1"> ({{$outbound->quantity_packages}})</span>طرد
+                    <td class=" text-gray-600 border-0"><span
+                            class="fw-bold mx-1"> ({{$outbound->quantity_packages}})</span>طرد
                     </td>
                     <td class=" text-gray-600 border-0">
                         <span class="fw-bold mx-1"> ({{$outbound->gross_weight}})</span>
