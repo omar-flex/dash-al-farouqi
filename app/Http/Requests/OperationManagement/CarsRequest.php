@@ -16,15 +16,14 @@ class CarsRequest extends FormRequest
             'numbers' => 'required|array|min:1',
             'numbers.*' => 'required|string|max:255|distinct',
 
-            'seal_numbers' => 'required|array|min:1',
-            'seal_numbers.*' => 'required|string|distinct',
+            'seal_numbers' => 'nullable|array|min:1',
+            'seal_numbers.*' => 'nullable|string',
 
             'statuses' => 'required|nullable|array|min:1',
             'statuses.*' => 'required|nullable',
 
             'tracking_devices' => 'nullable|sometimes|array|min:1',
             'tracking_devices.*' => 'nullable|sometimes',
-
         ];
 
         if ($this->routeIs('operation-management.outbounds.cars.store')) {
@@ -33,7 +32,7 @@ class CarsRequest extends FormRequest
                 'numbers.*' => 'required|string|max:255|distinct',
 
                 'seal_numbers' => 'nullable|array|min:1',
-                'seal_numbers.*' => 'nullable|string|distinct',
+                'seal_numbers.*' => 'nullable|string',
             ];
         }
 
