@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Arr;
 use Illuminate\Database\Eloquent\Model;
 
 class EnterRequest extends Model
@@ -55,9 +56,9 @@ class EnterRequest extends Model
 
     public function LastOutbound()
     {
-        return $this->hasOne(Outbound::class, 'enter_request_id')
-            ->orderBy('outbounds.date', 'desc')
-            ->whereIn('outbounds.status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+        return Outbound::where('enter_request_id',Arr::get($this->attributes, 'id'))
+            ->orderBy('date', 'desc')
+            ->whereIn('status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
             ->first();
     }
 
