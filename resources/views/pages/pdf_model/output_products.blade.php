@@ -39,6 +39,7 @@
         <thead>
         <tr>
             <th>اسم الشركة المالكة للبضاعة (الجهة الخاصة)</th>
+            <th>رقم الايداع</th>
             <th>الرقم الضريبي</th>
             <th>رقم البيان الجمركي</th>
             <th>تاريخ البيان</th>
@@ -48,6 +49,7 @@
         <tbody>
         <tr>
             <td>{{ $outbound->EnterRequest?->Customer?->name }}</td>
+            <td>{{ $outbound->EnterRequest?->bound_number }}</td>
             <td>{{ $outbound->EnterRequest?->Customer?->tax_number }}</td>
             <td>{{ $outbound->outbound_number }}</td>
             <td>{{\Illuminate\Support\Carbon::parse($outbound->date)->format('Y/m/d')}}</td>
