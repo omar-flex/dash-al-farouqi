@@ -15,7 +15,7 @@ class EnterRequest extends Model
 
     public function company()
     {
-        return $this->belongsTo(ClearanceCompany::class,'clearance_company_id','id');
+        return $this->belongsTo(ClearanceCompany::class, 'clearance_company_id', 'id');
     }
 
     public function Warehouse()
@@ -52,5 +52,14 @@ class EnterRequest extends Model
     {
         return $this->hasMany(Outbound::class, 'enter_request_id');
     }
+
+    public function LastOutbound()
+    {
+        return $this->hasOne(Outbound::class, 'enter_request_id')
+            ->orderBy('outbounds.date', 'desc')
+            ->whereIn('outbounds.status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+            ->first();
+    }
+
 
 }

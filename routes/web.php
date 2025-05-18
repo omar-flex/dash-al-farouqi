@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('locations', LocationController::class);
             Route::get('/locations-line/{id}/edit', [LocationController::class, 'locationsLine'])->name('line-locations');
             Route::post('/locations-line/{id}/update', [LocationController::class, 'locationsLineUpdate'])->name('line-locations-update');
+            Route::get('/report-disclosure', [WarehouseController::class, 'report'])->name('report');
         });
 
     Route::name('operation-management.')

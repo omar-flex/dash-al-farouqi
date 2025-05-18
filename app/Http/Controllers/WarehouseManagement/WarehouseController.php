@@ -6,6 +6,9 @@ namespace App\Http\Controllers\WarehouseManagement;
 use App\DataTables\WarehouseManagement\WarehousesDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WarehouseManagement\WarehouseRequest;
+use App\Models\Customer;
+use App\Models\EnterRequest;
+use App\Models\EnterRequestStatus;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -34,6 +37,27 @@ class WarehouseController extends Controller
         ];
 
         return $dataTable->render('pages.apps.warehouse-management.warehouse.list', compact('payload'));
+    }
+
+    public function report()
+    {
+        if (!auth()->user()->can('add_' . $this->resource))
+            abort(403);
+
+        $customer_ids = EnterRequest::whereIn('manifest_type_number', [7, 4])
+            ->whereIn('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+            ->orderBy('date')
+            ->pluck('customer_id')
+            ->unique();
+
+        $customers = Customer::whereIntegerInRaw('id', $customer_ids)
+            ->orderByRaw('FIELD(id, ' . $customer_ids->implode(',') . ')')
+            ->get();
+
+        $fromDate = '2025-01-01';
+        $toDate = now()->format('Y-m-d');
+
+        return view('pages.reports.warehouse-disclosure', compact('customers', 'fromDate', 'toDate'));
     }
 
     public function create()
