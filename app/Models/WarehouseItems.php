@@ -30,7 +30,7 @@ class WarehouseItems extends Model
         if ($id) {
             return OutboundWarehouseItems::where('warehouse_item_id', $id)
                 ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
-                ->whereIn('status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->whereIn('outbounds.status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
                 ->sum('quantity');
         }
         return 0;
