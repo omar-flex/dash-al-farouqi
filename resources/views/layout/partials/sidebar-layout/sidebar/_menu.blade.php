@@ -124,9 +124,20 @@
                             </div>
                         @endcanany
                     </div>
-
                 </div>
             @endcan
+
+            @can('warehouses_report')
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('warehouses.report') ? 'active' : '' }}"
+                       href="{{ route('warehouses.report') }}">
+                             <span class="menu-icon">
+                                 <i class="fa-sharp-duotone fa-solid fa-file-chart-column fa-lg"></i>
+                             </span>
+                        <span class="menu-title fs-7">Warehouse Report</span>
+                    </a>
+                </div>
+            @endcanany
 
             @hasrole('administrator')
             <div data-kt-menu-trigger="click"

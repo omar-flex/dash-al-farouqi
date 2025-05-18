@@ -41,11 +41,23 @@ class WarehouseController extends Controller
 
     public function report()
     {
-        if (!auth()->user()->can('add_' . $this->resource))
+        if (!auth()->user()->can('warehouses_report'))
             abort(403);
+
+        return view('pages.reports.list');
+    }
+
+    public function reportDisclosure()
+    {
+        if (!auth()->user()->can('warehouses_report'))
+            abort(403);
+
+        $fromDate = request('from_date', now()->startOfYear()->format('Y-m-d'));
+        $toDate = request('to_date', now()->format('Y-m-d'));;
 
         $customer_ids = EnterRequest::whereIn('manifest_type_number', [7, 4])
             ->whereIn('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+            ->whereBetween('date', [$fromDate, $toDate])
             ->orderBy('date')
             ->pluck('customer_id')
             ->unique();
@@ -54,11 +66,9 @@ class WarehouseController extends Controller
             ->orderByRaw('FIELD(id, ' . $customer_ids->implode(',') . ')')
             ->get();
 
-        $fromDate = '2025-01-01';
-        $toDate = now()->format('Y-m-d');
-
         return view('pages.reports.warehouse-disclosure', compact('customers', 'fromDate', 'toDate'));
     }
+
 
     public function create()
     {

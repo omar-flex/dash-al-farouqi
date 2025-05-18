@@ -82,6 +82,10 @@ Breadcrumbs::for('customers.index', function (BreadcrumbTrail $trail) {
     $trail->push('Customers', route('customers.index'));
 });
 
+Breadcrumbs::for('warehouse.report', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Warehouse Report', route('warehouses.report'));
+});
 
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {

@@ -22,8 +22,12 @@ class Customer extends Model
     public function getInbounds()
     {
         $id = Arr::get($this->attributes, 'id');
+        $fromDate = request('from_date', now()->startOfYear()->format('Y-m-d'));
+        $toDate = request('to_date', now()->format('Y-m-d'));
+
         return EnterRequest::whereIntegerInRaw('manifest_type_number', [7, 4])
             ->where('customer_id', $id)
+            ->whereBetween('date', [$fromDate, $toDate])
             ->whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
             ->orderBy('date')
             ->get();

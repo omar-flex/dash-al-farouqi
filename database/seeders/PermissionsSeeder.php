@@ -34,5 +34,8 @@ class PermissionsSeeder extends Seeder
                 Role::findByName('administrator')->givePermissionTo($permission_new);
             }
         }
+
+        $permission_new = Permission::updateOrcreate(['name' => 'warehouses_report']);
+        Role::findByName('administrator')->givePermissionTo($permission_new);
     }
 }
