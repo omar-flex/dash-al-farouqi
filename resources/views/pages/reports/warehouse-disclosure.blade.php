@@ -88,7 +88,7 @@
                                 <td @if($loop) class="odd" @endif >{{$count}}</td>
                                 <td @if($loop) class="odd" @endif >{{ $item->EnterRequest->bound_number }}</td>
                                 <td @if($loop) class="odd" @endif style="font-size:10px" width="400px">
-                                    {{ $item->Product->name }} -  {{ $item->Product->barcode }}
+                                    {{ $item->Product->name }} -  {{ $item->Product->barcode }} -  {{ $item->batch_number }}
                                 </td>
                                 <td @if($loop) class="odd" @endif >{{ $item->quantity }}</td>
                                 <td @if($loop) class="odd" @endif >
