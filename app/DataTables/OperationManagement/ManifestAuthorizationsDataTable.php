@@ -66,9 +66,6 @@ class ManifestAuthorizationsDataTable extends DataTable
             ->where('status_id' , EnterRequestStatus::AUTHORIZATION)
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));
-            })
-            ->when(request('status_id'), function ($q) {
-                return $q->where('status_id', request('status_id'));
             })->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
             })->newQuery();
