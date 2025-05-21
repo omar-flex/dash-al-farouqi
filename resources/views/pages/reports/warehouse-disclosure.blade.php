@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {{ 'ﻛﺸﻒ ﺍﻟﻤﺴﺘﻮﺩﻉ'  }}</title>
+    <title> ﻛﺸﻒ ﺍﻟﻤﺴﺘﻮﺩﻉ {{isset($warehouse) ? $warehouse->code : ''}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -37,7 +37,8 @@
     <div class="text-center mb-2">
         <h3>مركز جمرك عمان / قسم المستودعات العامة</h3>
         <h4>بوندد الشرقية - رقم البوندد (618)</h4>
-        <h5 class="fw-bold">ﻛﺸﻒ ﺍﻟﻤﺴﺘﻮﺩﻉ</h5>
+        <h5 class="fw-bold"> ﻛﺸﻒ ﺍﻟﻤﺴﺘﻮﺩﻉ {{isset($warehouse) ? $warehouse->code : ''}}</h5>
+
     </div>
 
     <div style="text-align: center; margin-bottom: 20px;">

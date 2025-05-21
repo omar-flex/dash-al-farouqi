@@ -44,7 +44,16 @@ class WarehouseController extends Controller
         if (!auth()->user()->can('warehouses_report'))
             abort(403);
 
-        return view('pages.reports.list');
+        $customers = Customer::with(['Inbounds' => function ($query) {
+            $query->whereIntegerInRaw('status_id', [
+                EnterRequestStatus::AUTHORIZATION,
+                EnterRequestStatus::APPROVED
+            ])->whereIntegerInRaw('manifest_type_number', [7, 4]);
+        }])->get(['id', 'name']);
+
+        $warehouses = Warehouse::get(['id', 'code']);
+
+        return view('pages.reports.list', compact('customers', 'warehouses'));
     }
 
     public function reportDisclosure()
@@ -53,20 +62,28 @@ class WarehouseController extends Controller
             abort(403);
 
         $fromDate = request('from_date', now()->startOfYear()->format('Y-m-d'));
-        $toDate = request('to_date', now()->format('Y-m-d'));;
-
-        $customer_ids = EnterRequest::whereIn('manifest_type_number', [7, 4])
-            ->whereIn('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+        $toDate = request('to_date', now()->format('Y-m-d'));
+        $customer_ids = EnterRequest::whereIntegerInRaw('manifest_type_number', [7, 4])
+            ->whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
             ->whereBetween('date', [$fromDate, $toDate])
             ->orderBy('date')
+            ->when(request('customer_id'), function ($query) {
+                return $query->where('customer_id', request('customer_id'));
+            })
             ->pluck('customer_id')
             ->unique();
 
         $customers = Customer::whereIntegerInRaw('id', $customer_ids)
-            ->orderByRaw('FIELD(id, ' . $customer_ids->implode(',') . ')')
-            ->get();
+            ->when(count($customer_ids) > 1, function ($query) use ($customer_ids) {
+                return $query->orderByRaw('FIELD(id, ' . $customer_ids->implode(',') . ')');
+            })->get();
 
-        return view('pages.reports.warehouse-disclosure', compact('customers', 'fromDate', 'toDate'));
+        $warehouse = null;
+        if (request('warehouse_id'))
+            $warehouse = Warehouse::firstWhere('id', request('warehouse_id'));
+
+
+        return view('pages.reports.warehouse-disclosure', compact('customers', 'fromDate', 'toDate', 'warehouse'));
     }
 
 

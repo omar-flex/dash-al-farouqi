@@ -46,7 +46,12 @@ class EnterRequest extends Model
 
     public function WarehouseItems()
     {
-        return $this->hasMany(WarehouseItems::class, 'enter_request_id');
+        return $this->hasMany(WarehouseItems::class, 'enter_request_id')
+            ->when(request()->routeIs('warehouses.report.products') && request('warehouse_id'), function ($query) {
+                $query->whereHas('LocationLine.Location', function ($q) {
+                    $q->where('warehouse_id', request('warehouse_id'));
+                });
+            });
     }
 
     public function Outbounds()
@@ -56,7 +61,7 @@ class EnterRequest extends Model
 
     public function LastOutbound()
     {
-        return Outbound::where('enter_request_id',Arr::get($this->attributes, 'id'))
+        return Outbound::where('enter_request_id', Arr::get($this->attributes, 'id'))
             ->orderBy('date', 'desc')
             ->whereIn('status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
             ->first();

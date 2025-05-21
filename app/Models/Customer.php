@@ -29,6 +29,9 @@ class Customer extends Model
             ->where('customer_id', $id)
             ->whereBetween('date', [$fromDate, $toDate])
             ->whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+            ->when(request('customer_id'), function ($query) {
+                return $query->where('customer_id', request('customer_id'));
+            })
             ->orderBy('date')
             ->get();
     }
