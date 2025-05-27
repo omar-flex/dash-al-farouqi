@@ -1,4 +1,3 @@
-
 <div id="product_items">
     <div data-repeater-products-list>
         @if(count($warehouseItems) == 0)
@@ -34,6 +33,11 @@
                     <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
                            name="quantities[]"
                            aria-describedby="capacities" placeholder="Qty"/>
+                </div>
+                <div class="col-1 mb-2">
+                    <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
+                           name="other_quantities[]"
+                           aria-describedby="capacities" placeholder="PCS"/>
                 </div>
                 <div class="col-md-2 mb-2">
                     <select name="locations[]"
@@ -104,6 +108,12 @@
                                name="quantities[]" id="quantities"
                                aria-describedby="capacities" placeholder="Qty"
                                value="{{$item?->quantity}}" {{$disabled}}/>
+                    </div>
+                    <div class="col-1 mb-2">
+                        <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
+                               name="other_quantities[]"
+                               aria-describedby="capacities" placeholder="PCS"
+                               value="{{$item?->other_quantity}}" {{$disabled}}/>
                     </div>
                     <div class="col-md-2 mb-2">
                         <select name="locations[]"

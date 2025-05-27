@@ -44,6 +44,9 @@
                 <div class="col-1 mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Quantity">Quantity</label>
                 </div>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Other Quantity">Other Qty</label>
+                </div>
                 <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Customs Tariff Code">Customs Tariff
                         Code</label>

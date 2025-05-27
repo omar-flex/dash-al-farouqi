@@ -40,22 +40,29 @@ if($enterRequest->status_id == \App\Models\EnterRequestStatus::APPROVED)
         <div class="card-body p-9 pt-4">
             <div class="row px-3">
                 <div class="col-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-3  @if(!$disabled) required @endif" title="Product"> Product </label>
+                    <label class="fw-semibold fs-7 mb-3  @if(!$disabled) required @endif" title="Product">
+                        Product </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Lot number"> Barcode </label>
+                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Lot number">
+                        Barcode </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2" title="Barcode"> Batch Number </label>
+                    <label class="fw-semibold fs-7 mb-2" title="Batch Number"> BN </label>
                 </div>
                 <div class="col mb-3">
-                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Unit of Measure"> UoM </label>
+                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Unit of Measure">
+                        UoM </label>
                 </div>
                 <div class="col-1 mb-3">
-                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Quantity">Quantity</label>
+                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Quantity">Qty</label>
+                </div>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2" title="Other Quantity">Other Qty</label>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif" title="Location">WH-H-L</label>
+                    <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif"
+                           title="Location">WH-H-L</label>
                 </div>
                 <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Level">Level</label>
