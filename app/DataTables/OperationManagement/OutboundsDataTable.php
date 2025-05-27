@@ -31,7 +31,7 @@ class OutboundsDataTable extends DataTable
             ->editColumn('customer_name', content: function (Outbound $model) {
                 return '<div class="d-flex align-items-center justify-content-center">
                     <div class="d-flex flex-column">
-                     <span class="text-muted">' . $model->customer_name . '</span>
+                    <span class="fw-bold">' . $model->customer_name . '</span>
                      <span class="text-muted">' . $model->company_name . '</span>
                    </div> </div>';
             })

@@ -15,8 +15,6 @@
         $disabled  = 'disabled';
     else
         $disabled  = null;
-if($enterRequest->status_id == \App\Models\EnterRequestStatus::APPROVED)
- $disabled  = 'disabled';
 @endphp
 
 <div class="card card-flush mb-6 mb-xl-9">
