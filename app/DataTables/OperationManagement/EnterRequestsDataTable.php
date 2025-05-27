@@ -6,6 +6,7 @@ namespace App\DataTables\OperationManagement;
 use App\Actions\GetThemeType;
 use App\Models\Customer;
 use App\Models\EnterRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -38,8 +39,11 @@ class EnterRequestsDataTable extends DataTable
                      <span class="text-muted">' . $model->company_name . '</span>
                    </div> </div>';
             })
+            ->editColumn('invoicing_date', function (EnterRequest $model) {
+                return $model->invoicing_date ? Carbon::parse($model->invoicing_date)->format('d M Y') : '---';
+            })
             ->editColumn('created_at', function (EnterRequest $model) {
-                return $model->created_at->format('d M Y, h:i a');
+                return $model->created_at->format('d M Y');
             })
             ->editColumn('net_weight', content: function (EnterRequest $model) {
                 return number_format($model->net_weight, '2');
@@ -123,6 +127,7 @@ class EnterRequestsDataTable extends DataTable
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('invoicing_date')->title('Invoicing Date')->addClass('text-nowrap'),
             Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::make('outbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Outbounds'),
             Column::computed('action')

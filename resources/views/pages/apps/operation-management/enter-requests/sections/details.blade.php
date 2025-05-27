@@ -52,15 +52,24 @@
                 </div>
 
                 <div class="mt-5">
-                    <span class="fw-bold">Manifest Date:</span>
-                    <span class="mx-1 text-gray-600">{{$enterRequest->manifest_date}}</span>
+                    <span class="fw-bold">Manifest Year:</span>
+                    <span class="mx-1 text-gray-600">{{$enterRequest->manifest_year}}</span>
                 </div>
 
-                {{--<div class="mt-5">
-                    <span class="fw-bold">Organize Center:</span>
-                    <span
-                        class="mx-1 text-gray-600 text-capitalize">{{$enterRequest->organize_center}}</span>
-                </div>--}}
+                <div class="mt-5">
+                    <span class="fw-bold">Manifest Date:</span>
+                    <span class="mx-1 text-gray-600">
+                        {{$enterRequest->manifest_date ? \Illuminate\Support\Carbon::parse($enterRequest->manifest_date)->format('d M Y') : '----'}}
+                    </span>
+                </div>
+
+
+                <div class="mt-5">
+                    <span class="fw-bold">Invoicing Date:</span>
+                    <span class="mx-1 text-gray-600">
+                        {{$enterRequest->invoicing_date ? \Illuminate\Support\Carbon::parse($enterRequest->invoicing_date)->format('d M Y') : '----'}}
+                    </span>
+                </div>
 
                 <div class="mt-5">
                     <span class="fw-bold"> Quantity of Car:</span>
