@@ -63,13 +63,14 @@
                     </span>
                 </div>
 
-
-                <div class="mt-5">
-                    <span class="fw-bold">Invoicing Date:</span>
-                    <span class="mx-1 text-gray-600">
+                @if(auth()->user()->hasRole('administrator'))
+                    <div class="mt-5">
+                        <span class="fw-bold">Invoicing Date:</span>
+                        <span class="mx-1 text-gray-600">
                         {{$enterRequest->invoicing_date ? \Illuminate\Support\Carbon::parse($enterRequest->invoicing_date)->format('d M Y') : '----'}}
                     </span>
-                </div>
+                    </div>
+                @endif
 
                 <div class="mt-5">
                     <span class="fw-bold"> Quantity of Car:</span>

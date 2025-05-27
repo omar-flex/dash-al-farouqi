@@ -118,24 +118,123 @@ class EnterRequestsDataTable extends DataTable
      */
     public function getColumns(): array
     {
+        return array_merge(
+            $this->getBasicColumns(),
+            $this->getAdministratorColumns(),
+            $this->getHiddenColumns(),
+            $this->getActionColumn()
+        );
+    }
+
+    private function getBasicColumns(): array
+    {
         return [
-            Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
-            Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
-            Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
-            Column::make('net_weight')->title('Net weight')->addClass('text-center'),
-            Column::make('gross_weight')->title('Gross Weight')->addClass('text-center'),
-            Column::make('cpm_result')->title('CPM')->addClass('text-center'),
-            Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
-            Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
-            Column::make('invoicing_date')->title('Invoicing Date')->addClass('text-nowrap'),
-            Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
-            Column::make('outbounds_count')->searchable(false)->orderable(false)->addClass('text-center')->title('Outbounds'),
+            $this->configureColumn('DT_RowIndex', [
+                'name' => 'id',
+                'title' => '#',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('bound_number', [
+                'title' => 'Bound Number',
+                'class' => 'text-center text-dark'
+            ]),
+            $this->configureColumn('customer_name', [
+                'name' => 'customers.name',
+                'title' => 'Customer Name',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('net_weight', [
+                'title' => 'Net weight',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('gross_weight', [
+                'title' => 'Gross Weight',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('cpm_result', [
+                'title' => 'CPM',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('status_name', [
+                'name' => 'enter_request_statuses.name',
+                'title' => 'Stage',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('created_at', [
+                'title' => 'Created At',
+                'class' => 'text-nowrap'
+            ])
+        ];
+    }
+
+    private function getAdministratorColumns(): array
+    {
+        if (!auth()->user()->hasRole('administrator')) {
+            return [];
+        }
+
+        return [
+            $this->configureColumn('invoicing_date', [
+                'title' => 'Invoicing Date',
+                'class' => 'text-nowrap'
+            ])
+        ];
+    }
+
+    private function getHiddenColumns(): array
+    {
+        return [
+            $this->configureColumn('product_names', [
+                'name' => 'products.name',
+                'class' => 'text-nowrap',
+                'visible' => false
+            ]),
+            $this->configureColumn('outbounds_count', [
+                'title' => 'Outbounds',
+                'class' => 'text-center',
+                'searchable' => false,
+                'orderable' => false
+            ])
+        ];
+    }
+
+    private function getActionColumn(): array
+    {
+        $userCanManageRequests = Auth::user()->canany(['edit_enter_requests', 'delete_enter_requests']);
+
+        return [
             Column::computed('action')
                 ->addClass('text-center text-nowrap')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
-                ->visible(Auth::user()->canany(['edit_enter_requests', 'delete_enter_requests']))
+                ->visible($userCanManageRequests)
         ];
+    }
+
+    private function configureColumn(string $name, array $config): Column
+    {
+        $column = Column::make($name);
+
+        if (isset($config['name'])) {
+            $column->name($config['name']);
+        }
+        if (isset($config['title'])) {
+            $column->title($config['title']);
+        }
+        if (isset($config['class'])) {
+            $column->addClass($config['class']);
+        }
+        if (isset($config['visible'])) {
+            $column->visible($config['visible']);
+        }
+        if (isset($config['searchable'])) {
+            $column->searchable($config['searchable']);
+        }
+        if (isset($config['orderable'])) {
+            $column->orderable($config['orderable']);
+        }
+
+        return $column;
     }
 }
