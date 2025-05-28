@@ -36,7 +36,7 @@
     </div>
 
 
-    <table class="table table-bordered mt-3 text-center table-sm">
+    <table class="table table-bordered mt-2 text-center table-sm">
         <thead>
         <tr>
             <th>رقم البيان</th>
@@ -55,8 +55,8 @@
 
         </tbody>
     </table>
-    <h5 class="mt-4 fw-bold">كما هو مصرح بالبيان </h5>
-    <table class="table table-bordered mt-3 text-center table-sm">
+    <h5 class="mt-2 fw-bold">كما هو مصرح بالبيان </h5>
+    <table class="table table-bordered mt-2 text-center table-sm">
         <thead>
         <tr>
             <th>رصاص رقم</th>
@@ -76,13 +76,13 @@
     </table>
     <div class="row">
         <div class="col-12">
-            <div class="mt-3">
+            <div class="mt-2">
                 <span class="fw-bold">وصف البضاعة:</span>
                 <span class="mx-1 text-gray-600">{{$enterRequest->general_description_goods}}</span>
             </div>
         </div>
         <div class="col-12">
-            <table class="table border-0 mt-3 table-sm">
+            <table class="table border-0 mt-2 table-sm">
                 <thead>
                 <tr>
                     @if($enterRequest->country_id)
@@ -135,7 +135,7 @@
         </div>
         @if($enterRequest->notes)
             <div class="col-12">
-                <div class="mt-3">
+                <div class="mt-2">
                     <span class="fw-bold">ملاحظات اضافية:</span>
                     <span class="mx-1 text-gray-600">{{$enterRequest->notes}}</span>
                 </div>
