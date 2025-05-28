@@ -36,7 +36,7 @@
                 font-size: 11px !important;
                 border-collapse: collapse !important;
                 page-break-inside: avoid !important;
-                margin-bottom: 0 !important;
+                margin-bottom: 3 !important;
             }
 
             th, td {
@@ -67,8 +67,7 @@
             }
 
             hr {
-                margin: 4px 0 !important;
-                border-color: #ccc !important;
+                margin: 10px 0 !important;
             }
 
             img, h3, h4, h5 {
@@ -184,7 +183,7 @@
             <span class="fw-bold">وصف البضاعة:</span>
             <span class="mx-1 text-gray-600">{{$enterRequest->general_description_goods}}</span>
         </div>
-        <table class="table border-0 mt-2 table-sm" style="width: 350px;">
+        <table class="table border-0 mt-2 table-sm mb-4" style="width: 350px;">
             <thead>
             <tr>
                 @if($enterRequest->country_id)
@@ -212,6 +211,7 @@
             </tr>
             </tbody>
         </table>
+        <hr>
         <div class="mt-2">
             <span class="fw-bold"> ملاحظة :</span>
             <span class="mx-1 text-gray-600">عند ادخال المحتويات بتاريخ  </span>
