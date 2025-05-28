@@ -87,7 +87,6 @@
         @endphp
 
         <h5 class="mt-4 fw-bold">كما هو مصرح بالبيان </h5>
-        <h5 class="mt-2 fw-bold text-center">كما هو مصرح بالبيان</h5>
         <div class="row">
             @foreach($chunkedCars as $chunk)
                 <div class="col-{{$col}}">
