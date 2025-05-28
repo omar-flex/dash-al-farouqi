@@ -36,7 +36,7 @@
     </div>
 
 
-    <table class="table table-bordered mt-3 text-center">
+    <table class="table table-bordered mt-3 text-center table-sm">
         <thead>
         <tr>
             <th>رقم البيان</th>
@@ -56,7 +56,7 @@
         </tbody>
     </table>
     <h5 class="mt-4 fw-bold">كما هو مصرح بالبيان </h5>
-    <table class="table table-bordered mt-3 text-center">
+    <table class="table table-bordered mt-3 text-center table-sm">
         <thead>
         <tr>
             <th>رصاص رقم</th>
@@ -67,7 +67,7 @@
         <tbody>
         @foreach($enterRequest->Cars as $car)
             <tr>
-                <td>{{ $car->seal_number }}</td>
+                <td>{{ $car->seal_number ?? '---' }}</td>
                 <td>{{ $car->number }}</td>
                 <td>{{ $car->is_status ? 'سليم' : 'غير سليم'}}</td>
             </tr>
@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="col-12">
-            <table class="table border-0 mt-3 ">
+            <table class="table border-0 mt-3 table-sm">
                 <thead>
                 <tr>
                     @if($enterRequest->country_id)
