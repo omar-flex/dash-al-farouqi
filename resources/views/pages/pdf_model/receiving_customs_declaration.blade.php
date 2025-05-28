@@ -9,6 +9,77 @@
         body {
             font-family: Arial, sans-serif;
         }
+
+        @media print {
+            body, .container, .container-xxl, .card {
+                width: 100% !important;
+                max-width: 100% !important;
+                background: #fff !important;
+                color: #000 !important;
+            }
+
+            .row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+
+            .col-6, .col-4, .col-3 {
+                flex: 1 0 0% !important;
+                max-width: 100% !important;
+                padding: 0 2px !important;
+            }
+
+            table.table {
+                width: 100% !important;
+                font-size: 11px !important;
+                border-collapse: collapse !important;
+                page-break-inside: avoid !important;
+                margin-bottom: 0 !important;
+            }
+
+            th, td {
+                padding: 3px 2px !important;
+                border: 1px solid #aaa !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+                word-break: break-word !important;
+            }
+
+            thead th {
+                background: #f7f7f7 !important;
+                font-weight: bold;
+            }
+
+            h3, h4, h5 {
+                margin: 4px 0 4px 0 !important;
+            }
+
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .mt-2, .mb-4 {
+                margin-top: 4px !important;
+                margin-bottom: 4px !important;
+            }
+
+            hr {
+                margin: 4px 0 !important;
+                border-color: #ccc !important;
+            }
+
+            img, h3, h4, h5 {
+                page-break-inside: avoid !important;
+            }
+
+            .no-print, .btn, nav, .print-hide {
+                display: none !important;
+            }
+        }
+
     </style>
 </head>
 <body class="container container-xxl mt-2" style="max-width: 1860px">
@@ -57,23 +128,27 @@
     </table>
     <h5 class="mt-2 fw-bold">كما هو مصرح بالبيان </h5>
     @php
+        $cars = $enterRequest->Cars instanceof \Illuminate\Support\Collection
+            ? $enterRequest->Cars->values()
+            : collect($enterRequest->Cars)->values();
+
+        $carsCount = $cars->count();
         $col = 12;
-        $carsCount = count($enterRequest->Cars);
-        if($carsCount > 11 && $carsCount <= 22) {
+        $tables = 1;
+
+        if ($carsCount > 11 && $carsCount <= 22) {
             $col = 6;
-        } elseif($carsCount > 22 && $carsCount <= 33) {
+            $tables = 2;
+        } elseif ($carsCount > 22 && $carsCount <= 33) {
             $col = 4;
-        } elseif($carsCount > 33) {
+            $tables = 3;
+        } elseif ($carsCount > 33) {
             $col = 3;
+            $tables = 4;
         }
 
-      if($carsCount > 11 ) {
-        $cars = $enterRequest->Cars->toArray();
-        $chunkedCars = array_chunk($cars, ceil($carsCount / 2));
-    } else {
-        $chunkedCars = [ $enterRequest->Cars->toArray() ];
-    }
-
+        $chunkedCars = $cars->chunk(ceil($carsCount / $tables));
+        $rowNum = 1; // متغير عداد الصفوف
     @endphp
 
     <div class="row">
@@ -89,12 +164,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($chunk as $index => $car)
+                    @foreach($chunk as $car)
                         <tr>
-                            <td>{{ $loop->parent->index * ceil($carsCount / $col) + $index + 1 }}</td>
-                            <td>{{ $car['seal_number'] ?? '---' }}</td>
-                            <td>{{ $car['number'] }}</td>
-                            <td>{{ $car['is_status'] ? 'سليم' : 'غير سليم' }}</td>
+                            <td>{{ $rowNum++ }}</td>
+                            <td>{{ $car->seal_number ?? 'NONE' }}</td>
+                            <td>{{ $car->number }}</td>
+                            <td>{{ $car->is_status ? 'سليم' : 'غير سليم' }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -104,74 +179,61 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-12">
-            <div class="mt-2">
-                <span class="fw-bold">وصف البضاعة:</span>
-                <span class="mx-1 text-gray-600">{{$enterRequest->general_description_goods}}</span>
-            </div>
+    <div class="no-print-break">
+        <div class="mt-2">
+            <span class="fw-bold">وصف البضاعة:</span>
+            <span class="mx-1 text-gray-600">{{$enterRequest->general_description_goods}}</span>
         </div>
-        <div class="col-12">
-            <table class="table border-0 mt-2 table-sm">
-                <thead>
-                <tr>
-                    @if($enterRequest->country_id)
-                        <th class="border-0">المنشأ</th>
-                    @endif
-                    <th class="border-0">عدد الطرود</th>
-                    <th class="border-0">الوزن القائم</th>
-                    <th class="border-0">الوزن الصافي</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    @if($enterRequest->country_id)
-                        <td class=" text-gray-600 border-0">{{$enterRequest->Country->name}}</td>
-                    @endif
-                    <td class=" text-gray-600 border-0"><span class="fw-bold mx-1"> ({{$enterRequest->quantity_packages}})</span>طرد
-                    </td>
-                    <td class=" text-gray-600 border-0">
-                        <span class="fw-bold mx-1"> ({{$enterRequest->gross_weight}})</span>
-                        كغم
-                    </td>
-                    <td class=" text-gray-600 border-0">
-                        <span class="fw-bold mx-1"> ({{$enterRequest->net_weight}})</span>
-                        كغم
-                    </td>
-                </tr>
-
-                </tbody>
-            </table>
+        <table class="table border-0 mt-2 table-sm" style="width: 350px;">
+            <thead>
+            <tr>
+                @if($enterRequest->country_id)
+                    <th class="border-0">المنشأ</th>
+                @endif
+                <th class="border-0">عدد الطرود</th>
+                <th class="border-0">الوزن القائم</th>
+                <th class="border-0">الوزن الصافي</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                @if($enterRequest->country_id)
+                    <td class=" text-gray-600 border-0">{{$enterRequest->Country->name}}</td>
+                @endif
+                <td class=" text-gray-600 border-0"><span
+                        class="fw-bold mx-1"> ({{$enterRequest->quantity_packages}})</span>طرد
+                </td>
+                <td class=" text-gray-600 border-0">
+                    <span class="fw-bold mx-1"> ({{$enterRequest->gross_weight}})</span>كغم
+                </td>
+                <td class=" text-gray-600 border-0">
+                    <span class="fw-bold mx-1"> ({{$enterRequest->net_weight}})</span>كغم
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mt-2">
+            <span class="fw-bold"> ملاحظة :</span>
+            <span class="mx-1 text-gray-600">عند ادخال المحتويات بتاريخ  </span>
+            <span class="fw-bold">@isset($enterRequest->date)
+                    {{\Illuminate\Support\Carbon::parse($enterRequest->date)->format('Y/m/d')}}
+                @endisset</span>
+            <span>  تبين مايلي</span>
+            <span class="fw-bold">  مطابق </span>
         </div>
-        <hr class="mt-1">
-        <div class="col-12 mt-2">
-            <div>
-                <span class="fw-bold"> ملاحظة :</span>
-                <span class="mx-1 text-gray-600">عند ادخال المحتويات بتاريخ  </span>
-                <span
-                        class="fw-bold">@isset($enterRequest->date)
-                        {{\Illuminate\Support\Carbon::parse($enterRequest->date)->format('Y/m/d')}}
-                    @endisset</span>
-                <span>  تبين مايلي</span>
-                <span class="fw-bold">  مطابق </span>
-            </div>
-        </div>
-        <div class="col-12 mt-2">
-            <div>
-                <span class="fw-bold"> موقع التخزين :</span>
-                <span class="mx-1 text-gray-600">تم التنزيل في مستودع  </span>
-                <span class="fw-bold">({{$enterRequest->Warehouse?->code}})</span>
-            </div>
+        <div class="mt-2">
+            <span class="fw-bold"> موقع التخزين :</span>
+            <span class="mx-1 text-gray-600">تم التنزيل في مستودع  </span>
+            <span class="fw-bold">({{$enterRequest->Warehouse?->code}})</span>
         </div>
         @if($enterRequest->notes)
-            <div class="col-12">
-                <div class="mt-2">
-                    <span class="fw-bold">ملاحظات اضافية:</span>
-                    <span class="mx-1 text-gray-600">{{$enterRequest->notes}}</span>
-                </div>
+            <div class="mt-2">
+                <span class="fw-bold">ملاحظات اضافية:</span>
+                <span class="mx-1 text-gray-600">{{$enterRequest->notes}}</span>
             </div>
         @endif
     </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4"
          style="width: 500px; margin:auto; margin-top:50px ">
         <h3 class="fw-bold">م . دائرة الجمارك</h3>
