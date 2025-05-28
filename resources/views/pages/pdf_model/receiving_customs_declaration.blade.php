@@ -59,14 +59,16 @@
     <table class="table table-bordered mt-2 text-center table-sm">
         <thead>
         <tr>
+            <th>#</th>
             <th>رصاص رقم</th>
             <th>سيارات رقم</th>
             <th>سليم/غير سليم</th>
         </tr>
         </thead>
         <tbody>
-        @foreach($enterRequest->Cars as $car)
+        @foreach($enterRequest->Cars as $index => $car)
             <tr>
+                <td>{{ ++$index}}</td>
                 <td>{{ $car->seal_number ?? '---' }}</td>
                 <td>{{ $car->number }}</td>
                 <td>{{ $car->is_status ? 'سليم' : 'غير سليم'}}</td>
