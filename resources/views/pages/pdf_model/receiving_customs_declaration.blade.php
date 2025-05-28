@@ -56,26 +56,54 @@
         </tbody>
     </table>
     <h5 class="mt-2 fw-bold">كما هو مصرح بالبيان </h5>
-    <table class="table table-bordered mt-2 text-center table-sm">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>رصاص رقم</th>
-            <th>سيارات رقم</th>
-            <th>سليم/غير سليم</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach($enterRequest->Cars as $index => $car)
-            <tr>
-                <td>{{ ++$index}}</td>
-                <td>{{ $car->seal_number ?? '---' }}</td>
-                <td>{{ $car->number }}</td>
-                <td>{{ $car->is_status ? 'سليم' : 'غير سليم'}}</td>
-            </tr>
+    @php
+        $col = 12;
+        $carsCount = count($enterRequest->Cars);
+        if($carsCount > 11 && $carsCount <= 22) {
+            $col = 6;
+        } elseif($carsCount > 22 && $carsCount <= 33) {
+            $col = 4;
+        } elseif($carsCount > 33) {
+            $col = 3;
+        }
+
+      if($carsCount > 11 ) {
+        $cars = $enterRequest->Cars->toArray();
+        $chunkedCars = array_chunk($cars, ceil($carsCount / 2));
+    } else {
+        $chunkedCars = [ $enterRequest->Cars->toArray() ];
+    }
+
+    @endphp
+
+    <div class="row">
+        @foreach($chunkedCars as $chunk)
+            <div class="col-{{$col}}">
+                <table class="table table-bordered mt-2 text-center table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>رصاص رقم</th>
+                        <th>سيارات رقم</th>
+                        <th>سليم/غير سليم</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($chunk as $index => $car)
+                        <tr>
+                            <td>{{ $loop->parent->index * ceil($carsCount / $col) + $index + 1 }}</td>
+                            <td>{{ $car['seal_number'] ?? '---' }}</td>
+                            <td>{{ $car['number'] }}</td>
+                            <td>{{ $car['is_status'] ? 'سليم' : 'غير سليم' }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endforeach
-        </tbody>
-    </table>
+    </div>
+
+
     <div class="row">
         <div class="col-12">
             <div class="mt-2">
@@ -121,7 +149,7 @@
                 <span class="fw-bold"> ملاحظة :</span>
                 <span class="mx-1 text-gray-600">عند ادخال المحتويات بتاريخ  </span>
                 <span
-                    class="fw-bold">@isset($enterRequest->date)
+                        class="fw-bold">@isset($enterRequest->date)
                         {{\Illuminate\Support\Carbon::parse($enterRequest->date)->format('Y/m/d')}}
                     @endisset</span>
                 <span>  تبين مايلي</span>
