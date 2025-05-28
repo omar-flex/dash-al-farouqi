@@ -61,10 +61,6 @@
                 box-shadow: none !important;
             }
 
-            .mt-2, .mb-4 {
-                margin-top: 4px !important;
-                margin-bottom: 4px !important;
-            }
 
             hr {
                 margin: 10px 0 !important;
@@ -99,7 +95,7 @@
         </div>
     </div>
 
-    <div class="text-center mb-2">
+    <div class="text-center mb-5">
         <h3>مركز جمرك عمان / قسم المستودعات العامة</h3>
         <h4>بوندد الشرقية - رقم البوندد (618)</h4>
         <h5 class="fw-bold">نموذج ايداع بيان جمركي</h5>
