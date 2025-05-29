@@ -33,4 +33,26 @@ class OutboundProductsRequest extends FormRequest
             'locations.*.required' => 'field is required.',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $products = $this->input('products_id', []);
+            $cars = $this->input('cars_id', []);
+            $pairs = [];
+
+            $count = min(count($products), count($cars));
+            for ($i = 0; $i < $count; $i++) {
+                $pair = $products[$i] . '-' . $cars[$i];
+                if (in_array($pair, $pairs)) {
+                    $validator->errors()->add(
+                        'products_id.' . $i,
+                        'Duplicate product-car pairs are not allowed.'
+                    );
+                } else {
+                    $pairs[] = $pair;
+                }
+            }
+        });
+    }
 }
