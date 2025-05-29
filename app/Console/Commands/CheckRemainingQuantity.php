@@ -29,6 +29,8 @@ class CheckRemainingQuantity extends Command
         WarehouseItems::get()->each(function ($items) {
             $sum_remaining_quantity = $items->OutboundWarehouseItems->sum('quantity') - $items->quantity;
             $sum_remaining_quantity_other_quantity = $items->other_quantity - $items->OutboundWarehouseItems->sum('other_quantity');
+            if($items ->id == 594)
+                dd($sum_remaining_quantity);
             $items->update([
                 'remaining_quantity' => max($sum_remaining_quantity, 0),
                 'remaining_other_quantity' => max($sum_remaining_quantity_other_quantity, 0),
