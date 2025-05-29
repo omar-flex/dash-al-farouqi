@@ -35,4 +35,9 @@ class WarehouseItems extends Model
         }
         return 0;
     }
+
+    public function OutboundWarehouseItems()
+    {
+        return $this->hasMany(OutboundWarehouseItems::class ,'warehouse_item_id','id');
+    }
 }

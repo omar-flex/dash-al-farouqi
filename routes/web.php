@@ -11,7 +11,6 @@ use App\Http\Controllers\OperationManagement\EnterRequestController;
 use App\Http\Controllers\OperationManagement\ManifestAuthorizationController;
 use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use Illuminate\Support\Facades\Route;
