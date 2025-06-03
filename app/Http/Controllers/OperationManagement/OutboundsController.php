@@ -354,7 +354,7 @@ use Illuminate\Support\Str;
                 $quantity = Arr::get($request->quantities, $index);
                 $warehouse_item_id = trim(Arr::get($request->warehouse_item_ids, $index));
                 $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
-                $remaining_quantity = $warehouse_item->quantity - $quantity;
+                $remaining_quantity = $warehouse_item->remaining_quantity - $quantity;
                 if ($check_quantity) {
                     if ($remaining_quantity == 0)
                         $warehouse_item->update(['is_status' => 0]);
