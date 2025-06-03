@@ -360,7 +360,7 @@ use Illuminate\Support\Str;
                         $warehouse_item->update(['is_status' => 0]);
                 }
                 $warehouse_item->update([
-                    'remaining_quantity' => $warehouse_item->quantity - $quantity
+                    'remaining_quantity' => $remaining_quantity
                 ]);
                 $item = [
                     'quantity' => $quantity,
