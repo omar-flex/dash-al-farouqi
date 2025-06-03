@@ -11,7 +11,11 @@
                         <option></option>
                         @foreach($products as $product)
                             <option value="{{ $product->id }}">
-                                {{ $product->name}}
+                                @if($product->batch_number)
+                                    {{ $product->name .' - '. $product->batch_number}}
+                                @else
+                                    {{ $product->name}}
+                                @endif
                             </option>
                         @endforeach
                     </select>
@@ -38,7 +42,8 @@
                            placeholder="WH-H-L" name="locations[]"/>
                 </div>
                 <div class="col-md-2 mb-2 ">
-                    <select name="cars_id[]" data-control="select2" class="form-select form-select-solid-bg form-select-sm mb-2 cars" data-placeholder="Car">
+                    <select name="cars_id[]" data-control="select2"
+                            class="form-select form-select-solid-bg form-select-sm mb-2 cars" data-placeholder="Car">
                         <option></option>
                         @foreach($cars as $car)
                             <option value="{{ $car->id }}">
@@ -69,7 +74,11 @@
                                 <option value="{{ $product->id }}"
                                         @if($item->WarehouseItem?->product_id == $product->id) selected
                                         data-selected="true" @endif>
-                                    {{ $product->name}}
+                                    @if($product->batch_number)
+                                        {{ $product->name .' - '. $product->batch_number}}
+                                    @else
+                                        {{ $product->name}}
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
@@ -77,7 +86,8 @@
                     <div class="col-1 mb-2">
                         <input type="number" min="1" class="form-control form-control-sm quantities"
                                name="quantities[]"
-                               aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}" max="{{ $item->WarehouseItem?->remaining_quantity +  $item->quantity }}"/>
+                               aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}"
+                               max="{{ $item->quantity  + $item->WarehouseItem?->remaining_quantity }}"/>
                     </div>
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm barcode"
@@ -96,7 +106,9 @@
                                placeholder="WH-H-L" name="locations[]"/>
                     </div>
                     <div class="col-md-2 mb-2 ">
-                        <select name="cars_id[]" data-control="select2" class="form-select form-select-solid-bg form-select-sm mb-2 cars" data-placeholder="Car">
+                        <select name="cars_id[]" data-control="select2"
+                                class="form-select form-select-solid-bg form-select-sm mb-2 cars"
+                                data-placeholder="Car">
                             <option></option>
                             @foreach($cars as $car)
                                 <option value="{{ $car->id }}" @if($item->outbound_car_id == $car->id) selected @endif>

@@ -87,7 +87,11 @@ use Illuminate\Support\Str;
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
             ->leftJoin('unit_measures', 'products.unit_measure_id', '=', 'unit_measures.id')
             ->leftJoin('warehouse_items', 'products.id', '=', 'warehouse_items.product_id')
-            ->select('products.id', 'products.name', 'products.barcode', 'unit_measures.name as unit_measure_name')
+            ->select('products.id',
+                'products.name',
+                'products.barcode',
+                'unit_measures.name as unit_measure_name',
+                'warehouse_items.batch_number as batch_number')
             ->distinct()
             ->get();
 
