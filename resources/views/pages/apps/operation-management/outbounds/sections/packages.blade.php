@@ -40,6 +40,10 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     <label class="fw-semibold fs-7 mb-2  @if(!$disabled) required @endif"
                            title="Quantity">Quantity</label>
                 </div>
+                <div class="col-1 mb-3">
+                    <label class="fw-semibold fs-7 mb-2"
+                           title="Quantity">Other Qty</label>
+                </div>
                 <div class="col mb-3">
                     <label class="fw-semibold fs-7 mb-2" title="Lot number"> Barcode </label>
                 </div>
@@ -60,7 +64,6 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                         <label class="fw-semibold fs-7 mb-2" title="Remove">Remove</label>
                     </div>
                 @endif
-
             </div>
             @include('pages.apps.operation-management.outbounds.sections.products_items')
             @if(!$disabled)
@@ -94,6 +97,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
                     if (is_edit) {
                         parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
+                        parent.find('.other_quantities').attr('max', data.other_quantity ).val(data.other_quantity ).attr('title', data.other_quantity )
                     }
                     parent.find('.location').val(data.location).attr('title', data.location)
                 },

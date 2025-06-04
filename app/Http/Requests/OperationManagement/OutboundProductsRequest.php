@@ -21,6 +21,9 @@ class OutboundProductsRequest extends FormRequest
 
             'locations' => 'required|array|min:1',
             'locations.*' => 'required|min:1',
+
+            'cars_id' => 'required|array|min:1',
+            'cars_id.*' => 'required|string|max:255',
         ];
 
     }

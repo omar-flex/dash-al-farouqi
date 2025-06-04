@@ -277,7 +277,6 @@ use Illuminate\Support\Str;
 
         $outbound = Outbound::firstWhere('id', $outbound_id);
 
-
         foreach ($request->numbers as $index => $number) {
             $car_id = Arr::get($request->car_ids, $index);
             if ($car_id) {
@@ -313,7 +312,8 @@ use Illuminate\Support\Str;
                     'batch_number',
                     'product_id',
                     'location_line_id',
-                    'remaining_quantity AS quantity',
+                    'remaining_quantity as quantity',
+                    'remaining_other_quantity as other_quantity',
                     'level', 'pallet']);
             $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
             if ($item->level)
@@ -346,24 +346,46 @@ use Illuminate\Support\Str;
                 ->first();
 
             if ($item) {
+                $items_id = Arr::get($request->all(), 'items_id.' . $index);
+
                 $item_custom_value_rate = $item->custom_value / $item->quantity;
                 $item_gross_weight_rate = $item->gross_weight / $item->quantity;
                 $item_net_weight_rate = $item->net_weight / $item->quantity;
                 $item_cpm_rate = $item->cpm / $item->quantity;
                 $item_cpm_capacity_rate = $item->cpm_capacity / $item->quantity;
-                $quantity = Arr::get($request->quantities, $index);
                 $warehouse_item_id = trim(Arr::get($request->warehouse_item_ids, $index));
                 $warehouse_item = WarehouseItems::where('id', $warehouse_item_id)->first();
-                $remaining_quantity = $warehouse_item->remaining_quantity - $quantity;
+                //Quantity
+                $quantity = Arr::get($request->quantities, $index);
+                if ($items_id)
+                    $remaining_quantity = $warehouse_item->quantity - $quantity;
+                else
+                    $remaining_quantity = $warehouse_item->remaining_quantity - $quantity;
+
+                //Other Quantity
+                $remaining_other_quantity = null;
+                $other_quantity = Arr::get($request->other_quantities, $index);
+
+                if ($other_quantity && $warehouse_item->remaining_other_quantity) {
+                    if (!$items_id)
+                        $remaining_other_quantity = $warehouse_item->remaining_other_quantity - $other_quantity;
+                    else
+                        $remaining_other_quantity = $warehouse_item->other_quantity - $other_quantity;
+                } else {
+                    $remaining_other_quantity = $warehouse_item->other_quantity;
+                }
+
                 if ($check_quantity) {
                     if ($remaining_quantity == 0)
                         $warehouse_item->update(['is_status' => 0]);
                 }
                 $warehouse_item->update([
-                    'remaining_quantity' => $remaining_quantity
+                    'remaining_quantity' => $remaining_quantity,
+                    'remaining_other_quantity' => $remaining_other_quantity,
                 ]);
                 $item = [
                     'quantity' => $quantity,
+                    'other_quantity' => $other_quantity,
                     'location' => trim(Arr::get($request->locations, $index)),
                     'warehouse_item_id' => $warehouse_item_id,
                     'custom_value' => $item_custom_value_rate * $quantity,
@@ -376,7 +398,6 @@ use Illuminate\Support\Str;
                     'outbound_car_id' => trim(Arr::get($request->cars_id, $index))
                 ];
             }
-            $items_id = Arr::get($request->all(), 'items_id.' . $index);
 
             if ($items_id) {
                 OutboundWarehouseItems::where('id', $items_id)->update($item);
