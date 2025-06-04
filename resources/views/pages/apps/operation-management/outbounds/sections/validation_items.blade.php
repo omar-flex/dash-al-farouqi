@@ -16,6 +16,10 @@
                 <input class="form-control form-control-sm form-control-solid-bg" disabled value="{{$item?->quantity}}"
                        title="{{$item?->quantity}}"/>
             </div>
+            <div class="col-1 mb-2">
+                <input class="form-control form-control-sm form-control-solid-bg" disabled value="{{$item?->other_quantity}}"
+                       title="{{$item?->other_quantity}}"/>
+            </div>
             <div class="col mb-2">
                 <input type="number" step="any" min="0" class="form-control form-control-sm"
                        disabled
