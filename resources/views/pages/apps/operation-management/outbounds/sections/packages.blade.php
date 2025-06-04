@@ -184,11 +184,11 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                         confirmButtonText: 'Yes, change it!'
                     }).then(function (result) {
                         if (result.value) {
-                            {{-- if (sumQuantities() !== {{$outbound->quantity_packages}}){
+                             if (sumQuantities() !== {{$outbound->quantity_packages}}){
                                 toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$outbound->quantity_packages}})')
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 return false;
-                            } --}}
+                            }
                             let form = $("#formProducts");
                             let formData = new FormData(form[0]);
                             if (clickedButton) {

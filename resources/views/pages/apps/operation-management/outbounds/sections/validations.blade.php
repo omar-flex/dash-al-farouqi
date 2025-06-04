@@ -68,6 +68,28 @@
 </div>
 @push('scripts')
     <script>
+        function sumCustomValue() {
+            let sum = 0;
+            document.querySelectorAll('input[name="custom_values[]"]').forEach(input => {
+                sum += parseFloat(input.value) || 0;
+            });
+            return sum;
+        }
+        function sumGrossWeight() {
+            let sum = 0;
+            document.querySelectorAll('input[name="gross_weights[]"]').forEach(input => {
+                sum += parseFloat(input.value) || 0;
+            });
+            return sum;
+        }
+        function sumNetWeight() {
+            let sum = 0;
+            document.querySelectorAll('input[name="net_weights[]"]').forEach(input => {
+                sum += parseFloat(input.value) || 0;
+            });
+            return sum;
+        }
+
         $(document).ready(function () {
 
             let clickedButton = null;
@@ -93,11 +115,21 @@
                         confirmButtonText: 'Yes, change it!'
                     }).then(function (result) {
                         if (result.value) {
-                            {{-- if (sumQuantities() !== {{$enterRequest->quantity_packages}}){
-                                toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
+                            if (sumCustomValue() !== {{$outbound->total_cost}}){
+                                toastr.error('Sum Customs Value (' + sumCustomValue() + ') Must Equal Customs Value Sum ({{$outbound->total_cost}})')
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 return false;
-                            } --}}
+                            }
+                            if (sumGrossWeight() !== {{$outbound->gross_weight}}){
+                                toastr.error('Sum Gross Weight (' + sumGrossWeight() + ') Must Equal Gross Weight Sum ({{$outbound->gross_weight}})')
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
+                                return false;
+                            }
+                            if (sumNetWeight() !== {{$outbound->net_weight}}){
+                                toastr.error('Sum Net Weight (' + sumNetWeight() + ') Must Equal Net Weight Sum ({{$outbound->net_weight}})')
+                                $("#btn-submit,#btn-draft").prop("disabled", false)
+                                return false;
+                            }
                             let form = $("#formValidations");
                             let formData = new FormData(form[0]);
                             if (clickedButton) {
