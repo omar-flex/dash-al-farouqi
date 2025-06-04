@@ -192,6 +192,10 @@
                 newItem.find('.span_error').each(function () {
                     $(this).remove()
                 });
+
+                let uniqueId = Date.now() + Math.floor(Math.random() * 1000);
+                newItem.find('input.codes').val(uniqueId).attr('title', uniqueId);
+
                 repeaterList.append(newItem);
                 initSelect2();
                 checkVariantDetectability();
@@ -225,7 +229,7 @@
                         confirmButtonText: 'Yes, change it!'
                     }).then(function (result) {
                         if (result.value) {
-                             if (sumQuantities() !== {{$enterRequest->quantity_packages}}){
+                            if (sumQuantities() !== {{$enterRequest->quantity_packages}}) {
                                 toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$enterRequest->quantity_packages}})')
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 return false;

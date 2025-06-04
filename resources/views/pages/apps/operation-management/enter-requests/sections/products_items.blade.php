@@ -13,7 +13,7 @@
                            placeholder="Barcode" type="text" name="barcodes[]"/>
                 </div>
                 <div class="col mb-2">
-                    <input class="form-control form-control-solid-bg form-control-sm codes"
+                    <input class="form-control form-control-solid-bg form-control-sm"
                            placeholder="BN" type="text" name="batch_numbers[]"/>
                 </div>
                 <div class="col mb-2">
@@ -80,12 +80,12 @@
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm codes"
                                placeholder="Barcode" type="text" name="barcodes[]"
-                               value="{{$item?->product?->barcode}}" {{$disabled}}/>
+                               value="{{$item?->product?->barcode}}" {{$disabled}} title="{{$item?->product?->barcode}}"/>
                     </div>
                     <div class="col mb-2">
-                        <input class="form-control form-control-solid-bg form-control-sm codes"
+                        <input class="form-control form-control-solid-bg form-control-sm"
                                placeholder="BN" type="text" name="batch_numbers[]"
-                               value="{{$item?->batch_number}}" {{$disabled}}
+                               value="{{$item?->batch_number}}" title="{{$item?->batch_number}}" {{$disabled}}
                         />
                     </div>
                     <div class="col mb-2">
@@ -107,13 +107,13 @@
                                class="form-control form-control-sm form-control-solid-bg"
                                name="quantities[]" id="quantities"
                                aria-describedby="capacities" placeholder="Qty"
-                               value="{{$item?->quantity}}" {{$disabled}}/>
+                               value="{{$item?->quantity}}" {{$disabled}} title="{{$item?->quantity}}"/>
                     </div>
                     <div class="col-1 mb-2">
                         <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
                                name="other_quantities[]"
                                aria-describedby="capacities" placeholder="PCS"
-                               value="{{$item?->other_quantity}}" {{$disabled}}/>
+                               value="{{$item?->other_quantity}}" {{$disabled}} title="{{$item?->other_quantity}}"/>
                     </div>
                     <div class="col-md-2 mb-2">
                         <select name="locations[]"
@@ -130,11 +130,11 @@
                     </div>
                     <div class="col mb-2">
                         <input type="text" class="form-control form-control-sm" name="levels[]"
-                               placeholder="Level" value="{{$item?->level}}" {{$disabled}}/>
+                               placeholder="Level" value="{{$item?->level}}" {{$disabled}} title="{{$item?->level}}"/>
                     </div>
                     <div class="col mb-2">
                         <input type="text" class="form-control form-control-sm" name="pallets[]"
-                               placeholder="Pallet" value="{{$item?->pallet}}" {{$disabled}}/>
+                               placeholder="Pallet" value="{{$item?->pallet}}" {{$disabled}} title="{{$item?->pallet}}"/>
                     </div>
                     @if(!$disabled)
                         <div class="col mb-2">

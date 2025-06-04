@@ -9,7 +9,7 @@
 
     <div class="card">
         <div class="card-header border-0 pt-6">
-            <div class="card-title"><h1> Warehouses Report Products </h1></div>
+            <div class="card-title"><h1> Warehouses Report </h1></div>
         </div>
 
         <div class="card-body py-4">
