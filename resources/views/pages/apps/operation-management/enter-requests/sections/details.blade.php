@@ -47,8 +47,20 @@
                 </div>
 
                 <div class="mt-5">
-                    <span class="fw-bold">Manifest Year:</span>
-                    <span class="mx-1 text-gray-600">{{$enterRequest->manifest_year}}</span>
+                    <span class="fw-bold"> Customs Value:</span>
+                    <span
+                        class="mx-1  text-danger fw-bold">{{ $enterRequest->total_cost ? number_format($enterRequest->total_cost,4) : ''}}</span>
+                </div>
+                <div class="mt-5">
+                    <span class="fw-bold"> Gross weight:</span>
+                    <span
+                        class="mx-1  text-danger fw-bold">{{ $enterRequest->gross_weight ? number_format($enterRequest->gross_weight,4) : ''}}</span>
+                </div>
+
+                <div class="mt-5">
+                    <span class="fw-bold"> Net weight:</span>
+                    <span
+                        class="mx-1 text-danger fw-bold">{{ $enterRequest->net_weight ? number_format($enterRequest->net_weight,4) : ''}}</span>
                 </div>
 
                 <div class="mt-5">
@@ -87,18 +99,6 @@
                     <span class="mx-1 text-gray-600">
                                     {{$enterRequest->country_id ? $enterRequest->Country?->name : 'Multiple Countries'}}
                                 </span>
-                </div>
-
-                <div class="mt-5">
-                    <span class="fw-bold"> Gross weight:</span>
-                    <span
-                        class="mx-1 text-gray-600">{{ $enterRequest->gross_weight ? number_format($enterRequest->gross_weight,3) : ''}}</span>
-                </div>
-
-                <div class="mt-5">
-                    <span class="fw-bold"> Net weight:</span>
-                    <span
-                        class="mx-1 text-gray-600">{{ $enterRequest->net_weight ? number_format($enterRequest->net_weight,3) : ''}}</span>
                 </div>
 
                 <div class="mt-5">
