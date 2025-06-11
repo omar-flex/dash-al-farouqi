@@ -47,9 +47,15 @@ class EnterRequest extends Model
     public function WarehouseItems()
     {
         return $this->hasMany(WarehouseItems::class, 'enter_request_id')
-            ->when(request()->routeIs('warehouses.report.products') && request('warehouse_id'), function ($query) {
-                $query->whereHas('LocationLine.Location', function ($q) {
-                    $q->where('warehouse_id', request('warehouse_id'));
+            ->when(request()->routeIs('warehouses.report.products'), function ($query) {
+                $query->when(request('warehouse_id'), function ($query) {
+                    return $query->whereHas('LocationLine.Location', function ($query) {
+                        $query->where('warehouse_id', request('warehouse_id'));
+                    });
+                })->when(request('product_id'), function ($query) {
+                    return $query->where('product_id', request('product_id'));
+                })->when(request('enter_request_id'), function ($query) {
+                    return $query->where('enter_request_id', request('enter_request_id'));
                 });
             });
     }

@@ -354,7 +354,6 @@
                         toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
                     }
                 });
-
             });
 
             $('#outbounds').select2({

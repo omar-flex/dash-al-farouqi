@@ -15,21 +15,43 @@
         <div class="card-body py-4">
 
             <div class="row">
-                <div class="col-2">
+                <div class="col-1">
                     <label class="required fw-semibold fs-6 mb-2">From Date</label>
                     <input type="date" id="from_date" class="form-control form-control-solid-bg form-control-sm mb-2"
                            autocomplete="off"
                            placeholder="From Date" value="{{ now()->startOfYear()->format('Y-m-d') }}">
                 </div>
 
-                <div class="col-2">
+                <div class="col-1">
                     <label class="required fw-semibold fs-6 mb-2">To Date</label>
                     <input type="date" id="to_date" class="form-control form-control-solid-bg form-control-sm mb-2"
                            autocomplete="off"
                            placeholder="To Date" value="{{ date('Y-m-d') }}">
                 </div>
 
-                <div class="col-3">
+                <div class="col-2">
+                    <label class="fw-semibold fs-6 mb-2">Product</label>
+                    <select class="form-select form-select-solid form-select-sm mb-2 " id="product_filter"
+                            data-control="select2" data-placeholder="All Products" data-allow-clear="true">
+                        <option></option>
+                        @foreach($products as $product)
+                            <option value="{{$product->id}}">{{$product->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-2">
+                    <label class="fw-semibold fs-6 mb-2">Enter Request</label>
+                    <select class="form-select form-select-solid form-select-sm mb-2" id="enter_request_filter"
+                            data-control="select2" data-placeholder="All Products" data-allow-clear="true">
+                        <option></option>
+                        @foreach($enterRequests as $enterRequest)
+                            <option value="{{$enterRequest->id}}">{{$enterRequest->bound_number}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-2">
                     <label class="fw-semibold fs-6 mb-2">Customers</label>
                     <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
                             data-control="select2" data-placeholder="All Customers" data-allow-clear="true">
@@ -40,7 +62,7 @@
                     </select>
                 </div>
 
-                <div class="col-3">
+                <div class="col-2">
                     <label class="fw-semibold fs-6 mb-2">Warehouses</label>
                     <select class="form-select form-select-solid form-select-sm mb-2 " id="warehouse_filter"
                             data-control="select2" data-placeholder="All Warehouses" data-allow-clear="true">
@@ -65,14 +87,15 @@
             document.getElementById('submit').addEventListener('click', function () {
                 let fromDate = document.getElementById('from_date').value;
                 let toDate = document.getElementById('to_date').value;
+                let product_id = $('#product_filter').val();
+                let enter_request_id = $('#enter_request_filter').val();
                 let customer_id = $('#customer_filter').val();
                 let warehouse_id = $('#warehouse_filter').val();
-
                 if (!fromDate || !toDate) {
                     toastr.error('Please enter both dates.');
                     return;
                 }
-                let url = `warehouses-report/products?from_date=${fromDate}&to_date=${toDate}&customer_id=${customer_id}&warehouse_id=${warehouse_id}`;
+                let url = `warehouses-report/products?from_date=${fromDate}&to_date=${toDate}&customer_id=${customer_id}&warehouse_id=${warehouse_id}&product_id=${product_id}&enter_request_id=${enter_request_id}`;
                 window.open(url, '_blank');
             });
         </script>

@@ -9,7 +9,9 @@ use App\Http\Requests\WarehouseManagement\WarehouseRequest;
 use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestStatus;
+use App\Models\Product;
 use App\Models\Warehouse;
+use App\Models\WarehouseItems;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -51,9 +53,14 @@ class WarehouseController extends Controller
             ])->whereIntegerInRaw('manifest_type_number', [7, 4]);
         }])->get(['id', 'name']);
 
+        $product = WarehouseItems::where('is_status', 1);
+        $products = Product::whereIntegerInRaw('id', $product->pluck('product_id')->unique())->get(['id', 'name']);
+
+        $enterRequests = EnterRequest::whereIntegerInRaw('id', $product->pluck('enter_request_id')->unique())->get(['id', 'bound_number']);
+
         $warehouses = Warehouse::get(['id', 'code']);
 
-        return view('pages.reports.list', compact('customers', 'warehouses'));
+        return view('pages.reports.list', compact('customers', 'warehouses', 'products', 'enterRequests'));
     }
 
     public function reportDisclosure()
@@ -69,6 +76,14 @@ class WarehouseController extends Controller
             ->orderBy('date')
             ->when(request('customer_id'), function ($query) {
                 return $query->where('customer_id', request('customer_id'));
+            })
+            ->when(request('product_id'), function ($query) {
+                $enter_request_ids = WarehouseItems::where('is_status', 1)
+                    ->where('product_id', request('product_id'))
+                    ->pluck('enter_request_id')->unique();
+                return $query->whereIntegerInRaw('id', $enter_request_ids);
+            })->when(request('enter_request_id'), function ($query) {
+                return $query->where('id', request('enter_request_id'));
             })
             ->pluck('customer_id')
             ->unique();
