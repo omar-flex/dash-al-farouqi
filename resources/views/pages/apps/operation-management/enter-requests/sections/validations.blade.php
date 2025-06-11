@@ -74,21 +74,21 @@
             document.querySelectorAll('input[name="custom_values[]"]').forEach(input => {
                 sum += parseFloat(input.value) || 0;
             });
-            return sum;
+            return parseFloat(sum.toFixed(3));
         }
         function sumGrossWeight() {
             let sum = 0;
             document.querySelectorAll('input[name="gross_weights[]"]').forEach(input => {
                 sum += parseFloat(input.value) || 0;
             });
-            return sum;
+            return parseFloat(sum.toFixed(3));
         }
         function sumNetWeight() {
             let sum = 0;
             document.querySelectorAll('input[name="net_weights[]"]').forEach(input => {
                 sum += parseFloat(input.value) || 0;
             });
-            return sum;
+            return parseFloat(sum.toFixed(3));
         }
 
 

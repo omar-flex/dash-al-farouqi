@@ -112,7 +112,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
             document.querySelectorAll('input[name="quantities[]"]').forEach(input => {
                 sum += parseFloat(input.value) || 0;
             });
-            return sum;
+            return parseFloat(sum.toFixed(3));
         }
 
         function checkVariantDetectability() {

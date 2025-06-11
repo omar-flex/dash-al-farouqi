@@ -98,7 +98,7 @@
             document.querySelectorAll('input[name="quantities[]"]').forEach(input => {
                 sum += parseFloat(input.value) || 0; // Convert value to number or default to 0
             });
-            return sum;
+            return parseFloat(sum.toFixed(3));
         }
 
         function checkVariantDetectability() {
