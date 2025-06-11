@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-2">
-                    <label class="fw-semibold fs-6 mb-2">Product</label>
+                    <label class="fw-semibold fs-6 mb-2">Products</label>
                     <select class="form-select form-select-solid form-select-sm mb-2 " id="product_filter"
                             data-control="select2" data-placeholder="All Products" data-allow-clear="true">
                         <option></option>
@@ -41,9 +41,9 @@
                 </div>
 
                 <div class="col-2">
-                    <label class="fw-semibold fs-6 mb-2">Enter Request</label>
+                    <label class="fw-semibold fs-6 mb-2">Inbounds</label>
                     <select class="form-select form-select-solid form-select-sm mb-2" id="enter_request_filter"
-                            data-control="select2" data-placeholder="All Products" data-allow-clear="true">
+                            data-control="select2" data-placeholder="All Inbounds" data-allow-clear="true">
                         <option></option>
                         @foreach($enterRequests as $enterRequest)
                             <option value="{{$enterRequest->id}}">{{$enterRequest->bound_number}}</option>
