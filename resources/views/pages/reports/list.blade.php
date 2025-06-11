@@ -15,14 +15,14 @@
         <div class="card-body py-4">
 
             <div class="row">
-                <div class="col-1">
+                <div class="col">
                     <label class="required fw-semibold fs-6 mb-2">From Date</label>
                     <input type="date" id="from_date" class="form-control form-control-solid-bg form-control-sm mb-2"
                            autocomplete="off"
                            placeholder="From Date" value="{{ now()->startOfYear()->format('Y-m-d') }}">
                 </div>
 
-                <div class="col-1">
+                <div class="col">
                     <label class="required fw-semibold fs-6 mb-2">To Date</label>
                     <input type="date" id="to_date" class="form-control form-control-solid-bg form-control-sm mb-2"
                            autocomplete="off"
@@ -73,7 +73,7 @@
                     </select>
                 </div>
 
-                <div class="col-2">
+                <div class="col-1">
                     <a class="btn btn-light-primary btn-sm mt-8" id="submit"> Submit </a>
                 </div>
 
