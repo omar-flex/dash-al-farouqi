@@ -1,6 +1,5 @@
 <div class="row">
-    <div class="col-md-4 mb-7"></div>
-    <div class="col-md-6 mb-7">
+    <div class="col-md-12 mb-7">
         <label class="required fw-semibold fs-6 mb-2">Cars</label>
         <select class="form-select form-select-solid-bg mb-2" id="cars"
                 data-control="select2" data-placeholder="Select an Car">
@@ -21,7 +20,7 @@
 <script>
     $(document).ready(function () {
         $('#cars').select2({
-            dropdownParent: $('#modal'),
+            dropdownParent: $('#customer-modal'),
         });
 
         $('#submit').click(function () {

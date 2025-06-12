@@ -125,9 +125,9 @@
                     url: url,
                     method: 'get',
                     success: function (data) {
-                        $('#modal-body').html(data);
-                        $('#modal-title').text('Output Products Report');
-                        $('#modal').modal('show');
+                        $('#customer-modal-body').html(data);
+                        $('#customer-modal-title').text('Output Products Report');
+                        $('#customer-modal').modal('show');
                     }
                 });
             });
