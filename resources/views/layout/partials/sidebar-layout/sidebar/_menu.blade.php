@@ -17,6 +17,123 @@
                 </a>
             </div>
 
+            @hasrole('administrator')
+                <div data-kt-menu-trigger="click"
+                     class="menu-item menu-accordion {{ request()->routeIs('manifest-authorizations.*') ? 'here show' : '' }}">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="fa-sharp-duotone fa-solid fa-file-signature fa-lg"></i>
+                        </span>
+                        <span class="menu-title fs-7">Manifest Authorization</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('manifest-authorizations.inbounds.*') ? 'active' : '' }}"
+                               href="{{ route('manifest-authorizations.inbounds.index') }}">
+                                 <span class="menu-icon">
+                                        <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
+                                 </span>
+                                <span class="menu-title fs-7">Inbounds</span>
+                                @if(getManifestAuthorizationsInboundsCount() > 0)
+                                    <span class="badge badge-circle badge-danger"> {{getManifestAuthorizationsInboundsCount()}} </span>
+                                @endif
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endhasrole
+
+                @canany(['list_enter_requests','list_outbounds'])
+                    <div data-kt-menu-trigger="click"
+                         class="menu-item menu-accordion {{ request()->routeIs('operation-management.*') ? 'here show' : '' }}">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <i class="fa-sharp-duotone fa-solid fa-cogs fa-lg"></i>
+                    </span>
+                    <span class="menu-title fs-7 ">Operation Management</span>
+                    <span class="menu-arrow"></span>
+                </span>
+                        <div class="menu-sub menu-sub-accordion">
+
+                            @can('list_enter_requests')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ request()->routeIs('operation-management.enter_requests.*') ? 'active' : '' }}"
+                                       href="{{ route('operation-management.enter_requests.index') }}">
+                             <span class="menu-icon">
+                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
+                             </span>
+                                        <span class="menu-title fs-7">Inbound</span>
+                                    </a>
+                                </div>
+                            @endcanany
+                        </div>
+                        <div class="menu-sub menu-sub-accordion">
+                            @can('list_outbounds')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ request()->routeIs('operation-management.outbounds.*') ? 'active' : '' }}"
+                                       href="{{ route('operation-management.outbounds.index') }}">
+                             <span class="menu-icon">
+                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right fa-flip-horizontal"></i>
+                             </span>
+                                        <span class="menu-title fs-7">Outbound</span>
+                                    </a>
+                                </div>
+                            @endcanany
+                        </div>
+
+                    </div>
+                @endcan
+
+                @canany(['list_warehouses','list_locations'])
+                    <div data-kt-menu-trigger="click"
+                         class="menu-item menu-accordion {{ request()->routeIs('warehouse-management.*') ? 'here show' : '' }}">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <i class="fa-sharp-duotone fa-solid fa-warehouse fa-lg"></i>
+                    </span>
+                    <span class="menu-title fs-7">Warehouse Management</span>
+                    <span class="menu-arrow"></span>
+                </span>
+                        <div class="menu-sub menu-sub-accordion">
+                            @can('list_warehouses')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ request()->routeIs('warehouse-management.warehouses.*') ? 'active' : '' }}"
+                                       href="{{ route('warehouse-management.warehouses.index') }}">
+                             <span class="menu-icon">
+                                     <i class="fa-sharp-duotone fa-solid fa-warehouse-full"></i>
+                             </span>
+                                        <span class="menu-title fs-7">Warehouses</span>
+                                    </a>
+                                </div>
+                            @endcanany
+                            @can('list_locations')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ request()->routeIs('warehouse-management.locations.*') ? 'active' : '' }}"
+                                       href="{{ route('warehouse-management.locations.index') }}">
+                             <span class="menu-icon">
+                                 <i class="fa-sharp-duotone fa-solid fa-chart-tree-map"></i>
+                             </span>
+                                        <span class="menu-title fs-7">Locations</span>
+                                    </a>
+                                </div>
+                            @endcanany
+                        </div>
+                    </div>
+                @endcan
+
+                @can('warehouses_report')
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('warehouses.report') ? 'active' : '' }}"
+                           href="{{ route('warehouses.report') }}">
+                             <span class="menu-icon">
+                                 <i class="fa-sharp-duotone fa-solid fa-file-chart-column fa-lg"></i>
+                             </span>
+                            <span class="menu-title fs-7">Warehouse Report</span>
+                        </a>
+                    </div>
+                @endcanany
+
             @canany(['list_products'])
                 <div class="menu-item {{ request()->routeIs('products.*') ? 'here show' : '' }}">
                     <a class="menu-link" href="{{ route('products.index') }}">
@@ -39,109 +156,9 @@
             </div>
             @endhasrole
 
-            @canany(['list_enter_requests','list_outbounds'])
+                @hasrole('administrator')
                 <div data-kt-menu-trigger="click"
-                     class="menu-item menu-accordion {{ request()->routeIs('operation-management.*') ? 'here show' : '' }}">
-                <span class="menu-link">
-                    <span class="menu-icon">
-                        <i class="fa-sharp-duotone fa-solid fa-cogs fa-lg"></i>
-                    </span>
-                    <span class="menu-title fs-7 ">Operation Management</span>
-                    <span class="menu-arrow"></span>
-                </span>
-                    <div class="menu-sub menu-sub-accordion">
-                        @hasrole('administrator')
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('operation-management.manifest_authorizations.*') ? 'active' : '' }}"
-                               href="{{ route('operation-management.manifest_authorizations.index') }}">
-                             <span class="menu-icon">
-                                    <i class="fa-sharp-duotone fa-solid fa-file-signature"></i>
-                             </span>
-                                <span class="menu-title fs-7">Manifest Authorization</span>
-                            </a>
-                        </div>
-                        @endhasrole
-
-                        @can('list_enter_requests')
-                            <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('operation-management.enter_requests.*') ? 'active' : '' }}"
-                                   href="{{ route('operation-management.enter_requests.index') }}">
-                             <span class="menu-icon">
-                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right"></i>
-                             </span>
-                                    <span class="menu-title fs-7">Inbound</span>
-                                </a>
-                            </div>
-                        @endcanany
-                    </div>
-                    <div class="menu-sub menu-sub-accordion">
-                        @can('list_outbounds')
-                            <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('operation-management.outbounds.*') ? 'active' : '' }}"
-                                   href="{{ route('operation-management.outbounds.index') }}">
-                             <span class="menu-icon">
-                                    <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right fa-flip-horizontal"></i>
-                             </span>
-                                    <span class="menu-title fs-7">Outbound</span>
-                                </a>
-                            </div>
-                        @endcanany
-                    </div>
-
-                </div>
-            @endcan
-            @canany(['list_warehouses','list_locations'])
-                <div data-kt-menu-trigger="click"
-                     class="menu-item menu-accordion {{ request()->routeIs('warehouse-management.*') ? 'here show' : '' }}">
-                <span class="menu-link">
-                    <span class="menu-icon">
-                        <i class="fa-sharp-duotone fa-solid fa-warehouse fa-lg"></i>
-                    </span>
-                    <span class="menu-title fs-7">Warehouse Management</span>
-                    <span class="menu-arrow"></span>
-                </span>
-                    <div class="menu-sub menu-sub-accordion">
-                        @can('list_warehouses')
-                            <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('warehouse-management.warehouses.*') ? 'active' : '' }}"
-                                   href="{{ route('warehouse-management.warehouses.index') }}">
-                             <span class="menu-icon">
-                                     <i class="fa-sharp-duotone fa-solid fa-warehouse-full"></i>
-                             </span>
-                                    <span class="menu-title fs-7">Warehouses</span>
-                                </a>
-                            </div>
-                        @endcanany
-                        @can('list_locations')
-                            <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('warehouse-management.locations.*') ? 'active' : '' }}"
-                                   href="{{ route('warehouse-management.locations.index') }}">
-                             <span class="menu-icon">
-                                 <i class="fa-sharp-duotone fa-solid fa-chart-tree-map"></i>
-                             </span>
-                                    <span class="menu-title fs-7">Locations</span>
-                                </a>
-                            </div>
-                        @endcanany
-                    </div>
-                </div>
-            @endcan
-
-            @can('warehouses_report')
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('warehouses.report') ? 'active' : '' }}"
-                       href="{{ route('warehouses.report') }}">
-                             <span class="menu-icon">
-                                 <i class="fa-sharp-duotone fa-solid fa-file-chart-column fa-lg"></i>
-                             </span>
-                        <span class="menu-title fs-7">Warehouse Report</span>
-                    </a>
-                </div>
-            @endcanany
-
-            @hasrole('administrator')
-            <div data-kt-menu-trigger="click"
-                 class="menu-item menu-accordion {{ request()->routeIs('user-management.*') ? 'here show' : '' }}">
+                     class="menu-item menu-accordion {{ request()->routeIs('user-management.*') ? 'here show' : '' }}">
                 <span class="menu-link">
                     <span class="menu-icon">
                        <i class="fa-sharp-duotone fa-solid fa-users-gear fa-lg"></i>
@@ -149,40 +166,40 @@
                     <span class="menu-title fs-7">User Management</span>
                     <span class="menu-arrow"></span>
                 </span>
-                <div class="menu-sub menu-sub-accordion">
-                    <div class="menu-item">
-                        <a class="menu-link {{ request()->routeIs('user-management.users.*') ? 'active' : '' }}"
-                           href="{{ route('user-management.users.index') }}">
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('user-management.users.*') ? 'active' : '' }}"
+                               href="{{ route('user-management.users.index') }}">
                              <span class="menu-icon">
                                       <i class="fa-sharp-duotone fa-solid fa-users"></i>
                              </span>
-                            <span class="menu-title fs-7">Users</span>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a class="menu-link {{ request()->routeIs('user-management.roles.*') ? 'active' : '' }}"
-                           href="{{ route('user-management.roles.index') }}">
+                                <span class="menu-title fs-7">Users</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('user-management.roles.*') ? 'active' : '' }}"
+                               href="{{ route('user-management.roles.index') }}">
                             <span class="menu-icon">
                               <i class="fa-sharp-duotone fa-solid fa-shield-check"></i>
                              </span>
-                            <span class="menu-title fs-7">Roles</span>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a class="menu-link {{ request()->routeIs('user-management.permissions.*') ? 'active' : '' }}"
-                           href="{{ route('user-management.permissions.index') }}">
+                                <span class="menu-title fs-7">Roles</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('user-management.permissions.*') ? 'active' : '' }}"
+                               href="{{ route('user-management.permissions.index') }}">
                             <span class="menu-icon">
                               <i class="fa-sharp-duotone fa-solid fa-key-skeleton-left-right"></i>
                             </span>
-                            <span class="menu-title fs-7">Permissions</span>
-                        </a>
+                                <span class="menu-title fs-7">Permissions</span>
+                            </a>
+                        </div>
                     </div>
+
                 </div>
+                @endhasrole
 
             </div>
-            @endhasrole
-
         </div>
     </div>
-</div>
 

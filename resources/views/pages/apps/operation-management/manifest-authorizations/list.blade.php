@@ -4,7 +4,7 @@
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('operation-management.'.$payload->resource.'.index') }}
+        {{ Breadcrumbs::render('manifest-authorizations.'.$payload->resource.'.index') }}
     @endsection
 
     <div class="card">
@@ -45,21 +45,19 @@
     @push('scripts')
         {{ $dataTable->scripts() }}
         <script>
-            @can('edit_'.$payload->resource)
             $(document).on('click', '.edit_btn', function () {
                 let id = $(this).attr('id');
-                let url = '/operation-management/{{$payload->resource}}/' + id + '/edit'
+                let url = '/manifest-authorizations/{{$payload->resource}}/' + id + '/edit'
                 $.ajax({
                     url: url,
                     method: 'get',
                     success: function (data) {
                         $('#modal-body').html(data);
-                        $('#modal-title').html('{{$payload->title}}');
+                        $('#modal-title').html('{{$payload->sub_title}}');
                         $('#modal').modal('show');
                     }
                 });
             });
-            @endcan
 
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
                 window.LaravelDataTables['{{$payload->tableId}}'].search(this.value).draw();

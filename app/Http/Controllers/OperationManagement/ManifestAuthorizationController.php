@@ -5,7 +5,7 @@ namespace App\Http\Controllers\OperationManagement;
 
 use AllowDynamicProperties;
 use App\DataTables\OperationManagement\EnterRequestsDataTable;
-use App\DataTables\OperationManagement\ManifestAuthorizationsDataTable;
+use App\DataTables\OperationManagement\ManifestAuthorizationsInboundsDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
@@ -35,18 +35,15 @@ use Illuminate\Support\Str;
 
     public function __construct()
     {
-        $this->formId = 'manifestAuthorization';
-        $this->resource = 'manifest_authorizations';
+        $this->formId = 'Inbound';
+        $this->resource = 'inbounds';
     }
 
-    public function index(ManifestAuthorizationsDataTable $dataTable)
+    public function index(ManifestAuthorizationsInboundsDataTable $dataTable)
     {
-        if (!auth()->user()->can('list_' . $this->resource))
-            abort(403);
-
         $payload = (object)[
-            'title' => 'Manifest Authorizations',
-            'sub_title' => 'Manifest Authorization',
+            'title' => 'Manifest Authorizations Inbounds',
+            'sub_title' => 'Manifest Authorization Inbound',
             'tableId' => 'manifest_authorizations_table',
             'formId' => $this->formId,
             'resource' => $this->resource,
@@ -57,23 +54,20 @@ use Illuminate\Support\Str;
         return $dataTable->render('pages.apps.operation-management.manifest-authorizations.list', compact('payload'));
     }
 
-    public function edit(EnterRequest $manifest_authorization)
+    public function edit(EnterRequest $inbound)
     {
-        if (!auth()->user()->can('edit_' . $this->resource))
-            abort(403);
-
         $payload = (object)[
-            'title' => 'Inbound Edit',
+            'title' => 'Manifest Authorizations Inbound',
             'formId' => $this->formId,
             'resource' => $this->resource,
-            'tableId' => 'manifest_authorizations_table',
+            'tableId' => 'manifest_authorizations_inbounds_table',
             'customers' => Customer::get(['id', 'name']),
             'countries' => Country::all(['id', 'name']),
             'warehouses' => Warehouse::all(['id', 'code']),
             'companies' => ClearanceCompany::get(['id', 'name']),
         ];
 
-        return view('pages.apps.operation-management.manifest-authorizations.create', compact('payload', 'manifest_authorization'));
+        return view('pages.apps.operation-management.manifest-authorizations.create', compact('payload', 'inbound'));
     }
 
     public function update(ManifestAuthorizationsRequest $request, EnterRequest $manifest_authorization)

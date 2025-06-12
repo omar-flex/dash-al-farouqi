@@ -1,4 +1,4 @@
-<form action="{{ route('operation-management.manifest_authorizations.update', $manifest_authorization) }}"
+<form action="{{ route('manifest-authorizations.inbounds.update', $inbound) }}"
       id="{{$payload->formId}}"
       method="POST"
       enctype="multipart/form-data">
@@ -7,32 +7,43 @@
     <div class="row">
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Bound Number</label>
-            <div
-                class="input-group input-group-sm mb-5 fw-bold text-primary">{{$manifest_authorization->bound_number }} </div>
+            <a class="input-group input-group-sm mb-5 fw-bold text-primary" target="_blank"
+               href="{{route('operation-management.enter_requests.show',$inbound->id)}}">{{$inbound->bound_number }} </a>
         </div>
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Customer</label>
             <div
-                class="input-group input-group-sm mb-5 fw-bold text-primary">{{$manifest_authorization->Customer->name }} </div>
+                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->Customer->name }} </div>
         </div>
+        <div class="col-md-3 mb-3">
+            <label class="fw-semibold mb-2">Company</label>
+            <div
+                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->Company->name }} </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="fw-semibold mb-2">Manifest Date</label>
+            <div
+                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->manifest_date ? \Illuminate\Support\Carbon::parse($inbound->manifest_date)->format('d M Y') : '----'}} </div>
+        </div>
+
     </div>
-    <label class="fw-bolder mb-2 fs-3">Manifest Info</label>
+    <label class="fw-bolder mb-2 fs-3 text-info">Manifest Info</label>
     <div class="row">
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Quantity of Packages</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($manifest_authorization->quantity_packages) }}">
+                   value="{{number_format($inbound->quantity_packages) }}">
         </div>
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Customs Value</label>
+            <label class="fw-semibold mb-2">Total Cost</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($manifest_authorization->total_cost) }}">
+                   value="{{number_format($inbound->total_cost) }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class=" fw-semibold  mb-2">Gross weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($manifest_authorization->gross_weight)  }}">
+                       value="{{number_format($inbound->gross_weight)  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -40,29 +51,29 @@
             <label class=" fw-semibold  mb-2">Net weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($manifest_authorization->net_weight)  }}">
+                       value="{{number_format($inbound->net_weight)  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
     </div>
 
-    <label class="fw-bolder mb-2 fs-3">System Manifest Info</label>
+    <label class="fw-bolder mb-2 fs-3 text-danger">System Manifest Info</label>
     <div class="row">
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Quantity of Packages</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($manifest_authorization->WarehouseItems()->sum('quantity')) }}">
+                   value="{{number_format($inbound->WarehouseItems()->sum('quantity')) }}">
         </div>
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Customs Value</label>
+            <label class="fw-semibold mb-2">Total Cost</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($manifest_authorization->WarehouseItems->sum('custom_value'))  }}">
+                   value="{{number_format($inbound->WarehouseItems->sum('custom_value'))  }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class=" fw-semibold  mb-2">Gross weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($manifest_authorization->WarehouseItems->sum('gross_weight'))  }}">
+                       value="{{number_format($inbound->WarehouseItems->sum('gross_weight'))  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -70,7 +81,7 @@
             <label class=" fw-semibold  mb-2">Net weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($manifest_authorization->WarehouseItems->sum('net_weight'))  }}">
+                       value="{{number_format($inbound->WarehouseItems->sum('net_weight'))  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -86,7 +97,8 @@
     <div class="row">
         <div class="col-md-12 form-group">
             <input type="submit" class="btn btn-light-success btn-sm float-end" value="Approval" id="btn-approval">
-            <input type="submit" class="btn btn-light-info btn-sm float-end mx-2" value="Needs Revision" id="btn-revision">
+            <input type="submit" class="btn btn-light-info btn-sm float-end mx-2" value="Needs Revision"
+                   id="btn-revision">
             <input type="submit" class="btn btn-light-danger btn-sm float-end mx-2" value="Delete" id="btn-delete">
         </div>
     </div>

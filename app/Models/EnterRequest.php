@@ -14,7 +14,7 @@ class EnterRequest extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function company()
+    public function Company()
     {
         return $this->belongsTo(ClearanceCompany::class, 'clearance_company_id', 'id');
     }

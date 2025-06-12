@@ -51,14 +51,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('warehouses-report', [WarehouseController::class, 'report'])->name('warehouses.report');
     Route::get('warehouses-report/products', [WarehouseController::class, 'reportDisclosure'])->name('warehouses.report.products');
 
+    Route::name('manifest-authorizations.')
+        ->prefix('manifest-authorizations')
+        ->middleware('role:administrator')
+        ->group(function () {
+            Route::resource('inbounds', ManifestAuthorizationController::class)->only(['index', 'edit', 'update']);
+        });
+
     Route::name('operation-management.')
         ->prefix('operation-management/')
         ->group(function () {
-            Route::middleware('role:administrator')
-                ->group(function () {
-                    Route::resource('manifest_authorizations', ManifestAuthorizationController::class);
-                });
-
             //enter_requests
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');

@@ -1,5 +1,15 @@
 <?php
 
+use App\Models\EnterRequest;
+use App\Models\EnterRequestStatus;
+
+if (!function_exists('getManifestAuthorizationsInboundsCount')) {
+    function getManifestAuthorizationsInboundsCount()
+    {
+        return EnterRequest::where('status_id', EnterRequestStatus::AUTHORIZATION)->count();
+    }
+}
+
 if (!function_exists('theme')) {
     function theme()
     {
@@ -413,7 +423,7 @@ if (!function_exists('image')) {
      */
     function image($path)
     {
-        return asset('assets/media/'.$path);
+        return asset('assets/media/' . $path);
     }
 }
 

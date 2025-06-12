@@ -15,7 +15,7 @@ use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class ManifestAuthorizationsDataTable extends DataTable
+class ManifestAuthorizationsInboundsDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -77,7 +77,7 @@ class ManifestAuthorizationsDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('manifest_authorizations_table')
+            ->setTableId('manifest_authorizations_inbounds_table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('rt' . "<'row'<'col-sm-12'tr>><'d-flex justify-content-between'<'col-sm-12 col-md-5'i><'d-flex justify-content-between'p>>")
