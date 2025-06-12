@@ -1,0 +1,76 @@
+<x-default-layout>
+    @section('title')
+        {{$payload->title}}
+    @endsection
+
+    @section('breadcrumbs')
+        {{ Breadcrumbs::render('manifest-authorizations.'.$payload->resource.'.index') }}
+    @endsection
+
+    <div class="card">
+        <div class="card-header border-0 pt-6">
+            <div class="card-title">
+                <div class="d-flex align-items-center position-relative my-1">
+                    {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
+                    <input type="text" data-kt-user-table-filter="search"
+                           class="form-control form-control-solid w-250px ps-13"
+                           placeholder="Search {{$payload->sub_title}}"
+                           id="mySearchInput"/>
+                </div>
+            </div>
+            <div class="card-toolbar min-w-900px">
+                <div class="d-flex justify-content-end gap-3 w-100" data-kt-user-table-toolbar="base">
+                    <div class="w-25">
+                        <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
+                                data-control="select2" data-placeholder="Select an Customer" data-allow-clear="true">
+                            <option></option>
+                            @foreach($payload->customers as $customer)
+                                <option value="{{$customer->id}}">{{$customer->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-body py-4">
+            <div class="table-responsive">
+                {{ $dataTable->table() }}
+            </div>
+        </div>
+    </div>
+
+
+    @push('scripts')
+        {{ $dataTable->scripts() }}
+        <script>
+            $(document).on('click', '.edit_btn', function () {
+                let id = $(this).attr('id');
+                let url = '/manifest-authorizations/{{$payload->resource}}/' + id + '/edit'
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    success: function (data) {
+                        $('#modal-body').html(data);
+                        $('#modal-title').html('{{$payload->sub_title}}');
+                        $('#modal').modal('show');
+                    }
+                });
+            });
+
+            document.getElementById('mySearchInput').addEventListener('keyup', function () {
+                window.LaravelDataTables['{{$payload->tableId}}'].search(this.value).draw();
+            });
+
+            $('#customer_filter').select2().on('change', function () {
+                let query = '?';
+                let customer_id = $('#customer_filter').val();
+                if (customer_id)
+                    query += '&customer_id=' + customer_id;
+                window.LaravelDataTables['{{$payload->tableId}}'].ajax.url(query).load();
+            });
+        </script>
+    @endpush
+
+</x-default-layout>

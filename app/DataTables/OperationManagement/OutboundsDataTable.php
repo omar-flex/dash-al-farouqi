@@ -55,7 +55,7 @@ class OutboundsDataTable extends DataTable
                 return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
             })->addColumn('action', function (Outbound $model) {
                 $resource = 'outbounds';
-                $name = $model->bound_number;
+                $name = $model->outbound_number;
                 return view('pages.apps.operation-management.outbounds.columns._actions', compact('model', 'resource', 'name'));
             })->addIndexColumn();
     }

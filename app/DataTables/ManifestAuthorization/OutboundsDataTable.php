@@ -1,12 +1,13 @@
 <?php
 
-namespace App\DataTables\OperationManagement;
+namespace App\DataTables\ManifestAuthorization;
 
 
 use App\Actions\GetThemeType;
-use App\Models\Customer;
 use App\Models\EnterRequest;
 use App\Models\EnterRequestStatus;
+use App\Models\Outbound;
+use App\Models\OutboundStatus;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class ManifestAuthorizationsInboundsDataTable extends DataTable
+class OutboundsDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -25,30 +26,28 @@ class ManifestAuthorizationsInboundsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number','outbounds_count','customer_name'])
-            ->editColumn('customer_name', content: function (EnterRequest $model) {
+            ->rawColumns(['status_name', 'bound_number', 'outbounds_count', 'customer_name','outbound_number'])
+            ->editColumn('customer_name', content: function (Outbound $model) {
                 return '<div class="d-flex align-items-center justify-content-center">
                     <div class="d-flex flex-column">
                     <span class="fw-bold">' . $model->customer_name . '</span>
                      <span class="text-muted">' . $model->company_name . '</span>
                    </div> </div>';
             })
-            ->editColumn('created_at', function (EnterRequest $model) {
+            ->editColumn('created_at', function (Outbound $model) {
                 return $model->created_at->format('d M Y, h:i a');
             })
-            ->editColumn('bound_number', content: function (EnterRequest $model) {
+            ->editColumn('bound_number', content: function (Outbound $model) {
                 return '<a href="' . route('operation-management.enter_requests.show', $model->id) . '">' . $model->bound_number . '</a>';
             })
-            ->editColumn('outbounds_count', content: function (EnterRequest $model) {
-                return '<div class="badge badge-light-secondary fw-bold">' . $model->outbounds_count . '</div>';
+            ->editColumn('outbound_number', content: function (Outbound $model) {
+                return '<a href="' . route('operation-management.outbounds.show', $model->id) . '">' . $model->outbound_number . '</a>';
             })
-            ->editColumn('status_name', content: function (EnterRequest $model) {
+            ->editColumn('status_name', content: function (Outbound $model) {
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
                 return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
-            })->addColumn('action', function (EnterRequest $model) {
-                $resource = 'enter_requests';
-                $name = $model->bound_number;
-                return view('pages.apps.operation-management.manifest-authorizations.columns._actions', compact('model', 'resource', 'name'));
+            })->addColumn('action', function (Outbound $model) {
+                return view('pages.apps.manifest-authorizations.outbounds.columns._actions', compact('model'));
             })->addIndexColumn();
     }
 
@@ -56,18 +55,18 @@ class ManifestAuthorizationsInboundsDataTable extends DataTable
     /**
      * Get the query source of dataTable.
      */
-    public function query(EnterRequest $model): QueryBuilder
+    public function query(Outbound $model): QueryBuilder
     {
-        return $model->select("enter_requests.*", 'enter_request_statuses.name as status_name',
-            'customers.name as customer_name', 'clearance_companies.name as company_name')
-            ->leftJoin('enter_request_statuses', 'enter_request_statuses.id', '=', 'enter_requests.status_id')
+        return $model->selectRaw('outbounds.*,enter_requests.bound_number,enter_requests.id as inbound_id,
+                                            outbound_statuses.name as status_name,customers.name as customer_name')
+            ->leftJoin('outbound_statuses', 'outbound_statuses.id', '=', 'outbounds.status_id')
+            ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
-            ->leftJoin('clearance_companies', 'clearance_companies.id', '=', 'enter_requests.clearance_company_id')
-            ->where('status_id' , EnterRequestStatus::AUTHORIZATION)
-            ->when(request('customer_id'), function ($q) {
-                return $q->where('customer_id', request('customer_id'));
-            })->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
+            ->where('outbounds.status_id' , OutboundStatus::AUTHORIZATION)
+            ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
+            })->when(request('customer_id'), function ($q) {
+                return $q->where('enter_requests.customer_id', request('customer_id'));
             })->newQuery();
     }
 
@@ -77,7 +76,7 @@ class ManifestAuthorizationsInboundsDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('manifest_authorizations_inbounds_table')
+            ->setTableId('manifest_authorizations_outbounds_table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('rt' . "<'row'<'col-sm-12'tr>><'d-flex justify-content-between'<'col-sm-12 col-md-5'i><'d-flex justify-content-between'p>>")
@@ -93,7 +92,8 @@ class ManifestAuthorizationsInboundsDataTable extends DataTable
     {
         return [
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
-            Column::make('bound_number')->title('Manifest Number')->addClass('text-center text-dark'),
+            Column::make('outbound_number')->title('Out Bound Number')->addClass('text-center text-dark'),
+            Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
             Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),

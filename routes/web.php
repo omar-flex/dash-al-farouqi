@@ -7,8 +7,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManifestAuthorization\InboundsController;
 use App\Http\Controllers\OperationManagement\EnterRequestController;
-use App\Http\Controllers\OperationManagement\ManifestAuthorizationController;
 use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
@@ -55,7 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->prefix('manifest-authorizations')
         ->middleware('role:administrator')
         ->group(function () {
-            Route::resource('inbounds', ManifestAuthorizationController::class)->only(['index', 'edit', 'update']);
+            Route::resource('inbounds', InboundsController::class)->only(['index', 'edit', 'update']);
+            Route::resource('outbounds', \App\Http\Controllers\ManifestAuthorization\OutboundsController::class)->only(['index', 'edit', 'update']);
         });
 
     Route::name('operation-management.')

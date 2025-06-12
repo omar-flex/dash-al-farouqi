@@ -68,6 +68,11 @@ Breadcrumbs::for('manifest-authorizations.inbounds.index', function (BreadcrumbT
     $trail->push('Inbounds', route('manifest-authorizations.inbounds.index'));
 });
 
+Breadcrumbs::for('manifest-authorizations.outbounds.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('manifest-authorizations.index');
+    $trail->push('Outbounds', route('manifest-authorizations.outbounds.index'));
+});
+
 Breadcrumbs::for('operation-management.outbounds.index', function (BreadcrumbTrail $trail) {
     $trail->parent('operation-management.index');
     $trail->push('Outbounds', route('operation-management.outbounds.index'));

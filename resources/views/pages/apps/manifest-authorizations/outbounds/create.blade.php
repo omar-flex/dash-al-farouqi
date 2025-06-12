@@ -1,4 +1,4 @@
-<form action="{{ route('manifest-authorizations.inbounds.update', $inbound) }}"
+<form action="{{ route('manifest-authorizations.outbounds.update', $outbound) }}"
       id="{{$payload->formId}}"
       method="POST"
       enctype="multipart/form-data">
@@ -6,24 +6,30 @@
     @csrf
     <div class="row">
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Bound Number</label>
+            <label class="fw-semibold mb-2 text-gray-600">Outbound Number</label>
             <a class="input-group input-group-sm mb-5 fw-bold text-primary" target="_blank"
-               href="{{route('operation-management.enter_requests.show',$inbound->id)}}">{{$inbound->bound_number }} </a>
+               href="{{route('operation-management.outbounds.show',$outbound->id)}}">{{$outbound->outbound_number }} </a>
         </div>
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Customer</label>
+            <label class="fw-semibold mb-2 text-gray-600">InBound Number</label>
+            <a class="input-group input-group-sm mb-5 fw-bold text-primary" target="_blank"
+               href="{{route('operation-management.enter_requests.show',$outbound->EnterRequest->id)}}">{{$outbound->EnterRequest->bound_number }} </a>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="fw-semibold mb-2 text-gray-600">Customer</label>
             <div
-                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->Customer->name }} </div>
+                class="input-group input-group-sm mb-5 fw-bold ">{{$outbound->EnterRequest?->Customer?->name }} </div>
         </div>
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Company</label>
+            <label class="fw-semibold mb-2 text-gray-600">Company</label>
             <div
-                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->Company->name }} </div>
+                class="input-group input-group-sm mb-5 fw-bold ">{{$outbound->EnterRequest?->Company?->name }} </div>
         </div>
         <div class="col-md-3 mb-3">
-            <label class="fw-semibold mb-2">Manifest Date</label>
+            <label class="fw-semibold mb-2 text-gray-600">Manifest Date</label>
             <div
-                class="input-group input-group-sm mb-5 fw-bold ">{{$inbound->manifest_date ? \Illuminate\Support\Carbon::parse($inbound->manifest_date)->format('d M Y') : '----'}} </div>
+                class="input-group input-group-sm mb-5 fw-bold ">{{$outbound->manifest_date ? \Illuminate\Support\Carbon::parse($outbound->manifest_date)->format('d M Y') : '----'}} </div>
         </div>
 
     </div>
@@ -32,18 +38,18 @@
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Quantity of Packages</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($inbound->quantity_packages) }}">
+                   value="{{number_format($outbound->quantity_packages) }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Total Cost</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($inbound->total_cost) }}">
+                   value="{{number_format($outbound->total_cost) }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class=" fw-semibold  mb-2">Gross weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($inbound->gross_weight)  }}">
+                       value="{{number_format($outbound->gross_weight)  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -51,7 +57,7 @@
             <label class=" fw-semibold  mb-2">Net weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($inbound->net_weight)  }}">
+                       value="{{number_format($outbound->net_weight)  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -62,18 +68,18 @@
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Quantity of Packages</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($inbound->WarehouseItems()->sum('quantity')) }}">
+                   value="{{number_format($outbound->OutboundWarehouseItems()->sum('quantity')) }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class="fw-semibold mb-2">Total Cost</label>
             <input disabled class="form-control form-control-solid-bg form-control-sm mb-2"
-                   value="{{number_format($inbound->WarehouseItems->sum('custom_value'))  }}">
+                   value="{{number_format($outbound->OutboundWarehouseItems->sum('custom_value'))  }}">
         </div>
         <div class="col-md-3 mb-3">
             <label class=" fw-semibold  mb-2">Gross weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($inbound->WarehouseItems->sum('gross_weight'))  }}">
+                       value="{{number_format($outbound->OutboundWarehouseItems->sum('gross_weight'))  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
         </div>
@@ -81,17 +87,9 @@
             <label class=" fw-semibold  mb-2">Net weight</label>
             <div class="input-group input-group-sm  mb-5">
                 <input class="form-control form-control-solid-bg form-control-sm" disabled
-                       value="{{number_format($inbound->WarehouseItems->sum('net_weight'))  }}">
+                       value="{{number_format($outbound->OutboundWarehouseItems->sum('net_weight'))  }}">
                 <span class="input-group-text" id="inputGroup-sizing-default">kg</span>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3 mb-3">
-            <label class="required fw-semibold mb-2"> Invoicing Date </label>
-            <input type="date" name="invoicing_date"
-                   class="form-control form-control-solid-bg mb-2"
-                   placeholder="Date">
         </div>
     </div>
     <div class="row">
@@ -112,7 +110,7 @@
             clickedButton = $(this).attr('id');
         });
 
-        $('#manifestAuthorization').submit(function (e) {
+        $('#manifestAuthorizationOutbound').submit(function (e) {
             $(".span_error").each(function () {
                 $(this).remove()
             });

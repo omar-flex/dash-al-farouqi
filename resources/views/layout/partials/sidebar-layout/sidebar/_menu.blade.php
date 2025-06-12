@@ -40,6 +40,18 @@
                                 @endif
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('manifest-authorizations.outbounds.*') ? 'active' : '' }}"
+                               href="{{ route('manifest-authorizations.outbounds.index') }}">
+                                 <span class="menu-icon">
+                                        <i class="fa-sharp-duotone fa-solid fa-truck-arrow-right fa-flip-horizontal"></i>
+                                 </span>
+                                <span class="menu-title fs-7">Outbounds</span>
+                                @if(getManifestAuthorizationsOutboundsCount() > 0)
+                                    <span class="badge badge-circle badge-danger"> {{getManifestAuthorizationsOutboundsCount()}} </span>
+                                @endif
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endhasrole

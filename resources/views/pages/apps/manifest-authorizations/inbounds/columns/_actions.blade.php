@@ -4,5 +4,4 @@
             <i class="fa-sharp-duotone fa-solid fa-edit fa-xl"></i>
         </a>
     @endcan
-
 </td>

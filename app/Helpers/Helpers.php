@@ -10,6 +10,13 @@ if (!function_exists('getManifestAuthorizationsInboundsCount')) {
     }
 }
 
+if (!function_exists('getManifestAuthorizationsOutboundsCount')) {
+    function getManifestAuthorizationsOutboundsCount()
+    {
+        return \App\Models\Outbound::where('status_id', \App\Models\OutboundStatus::AUTHORIZATION)->count();
+    }
+}
+
 if (!function_exists('theme')) {
     function theme()
     {
