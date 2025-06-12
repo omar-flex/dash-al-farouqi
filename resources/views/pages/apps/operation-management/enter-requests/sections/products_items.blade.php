@@ -10,7 +10,8 @@
                 </div>
                 <div class="col mb-2">
                     <input class="form-control form-control-solid-bg form-control-sm codes"
-                           placeholder="Barcode" type="text" name="barcodes[]"/>
+                           placeholder="Barcode" type="text" name="barcodes[]"
+                           value="{{time() * 1000 + rand(0, 999)}}"/>
                 </div>
                 <div class="col mb-2">
                     <input class="form-control form-control-solid-bg form-control-sm"
@@ -80,7 +81,8 @@
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm codes"
                                placeholder="Barcode" type="text" name="barcodes[]"
-                               value="{{$item?->product?->barcode}}" {{$disabled}} title="{{$item?->product?->barcode}}"/>
+                               value="{{$item?->product?->barcode}}"
+                               {{$disabled}} title="{{$item?->product?->barcode}}"/>
                     </div>
                     <div class="col mb-2">
                         <input class="form-control form-control-solid-bg form-control-sm"
@@ -134,7 +136,8 @@
                     </div>
                     <div class="col mb-2">
                         <input type="text" class="form-control form-control-sm" name="pallets[]"
-                               placeholder="Pallet" value="{{$item?->pallet}}" {{$disabled}} title="{{$item?->pallet}}"/>
+                               placeholder="Pallet" value="{{$item?->pallet}}"
+                               {{$disabled}} title="{{$item?->pallet}}"/>
                     </div>
                     @if(!$disabled)
                         <div class="col mb-2">
