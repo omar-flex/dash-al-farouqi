@@ -26,7 +26,7 @@
         $('#submit').click(function () {
             let car_id = $('#cars').val();
             if (car_id) {
-                let url = "outbounds/{{$outbound->id}}/output-products/pdf/" + car_id;
+                let url = "/operation-management/outbounds/{{$outbound->id}}/output-products/pdf/" + car_id;
                 window.open(url, '_blank');
             }
         })

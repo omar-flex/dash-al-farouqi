@@ -40,8 +40,8 @@
                            href="#validation_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                            tabindex="-1">
                             <i class="fa-sharp-duotone fa-solid fa-ballot-check fa-lg"></i>
-                            <strong>( {{number_format($outbound?->OutboundWarehouseItems?->count() )}} )</strong> Manifest
-                            Validation
+                            <strong>( {{number_format($outbound?->OutboundWarehouseItems?->count() )}} )</strong>
+                            Manifest Validation
                         </a>
                     </li>
                 @endif
@@ -71,6 +71,7 @@
             </div>
 
         </div>
-
     </div>
+
+
 </x-default-layout>

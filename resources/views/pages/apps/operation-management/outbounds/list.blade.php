@@ -126,7 +126,7 @@
                     method: 'get',
                     success: function (data) {
                         $('#modal-body').html(data);
-                        $('#modal-title').text('Edit {{$payload->sub_title}}');
+                        $('#modal-title').text('Output Products Report');
                         $('#modal').modal('show');
                     }
                 });

@@ -9,7 +9,8 @@
             @endif
             <span class="fs-3 text-gray-800 fw-bold mb-3">{{$outbound->outbound_number}} </span>
             <span class="text-gray-600 mb-3 "> From Inbound </span>
-            <a href="{{route('operation-management.enter_requests.show',$outbound->enterRequest?->id )}}" target="_blank"
+            <a href="{{route('operation-management.enter_requests.show',$outbound->enterRequest?->id )}}"
+               target="_blank"
                class="fs-3 text-primary fw-bold mb-3">{{$outbound->enterRequest?->bound_number}} </a>
             <div class="mb-4">
                 @php
@@ -18,7 +19,19 @@
                 <div class="badge badge-lg {{$class}} d-inline">{{$outbound->Status?->name}}</div>
             </div>
         </div>
+        @can('edit_'.$payload->resource)
+            <div class="d-flex flex-center flex-column py-3">
+                <div class="mb-4 fw-bolder">Action</div>
 
+                <a class="btn btn-sm btn-light btn-light-google output_products_pdf_btn @if($outbound->status_id < \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) pe-none @endif"
+                   @if($outbound->status_id < \App\Models\EnterRequestStatus::WH_ENTER_PRODUCT) disabled
+                   @endif  title="pdf" target="_blank">
+                    <i class="fa-sharp-duotone fa-solid fa-truck-container fa-flip-horizontal fa-xl ms-2"></i> Output
+                    Products Report
+                </a>
+            </div>
+            <hr class="text-gray-500">
+        @endcan
         <div class="d-flex flex-stack fs-4 py-3">
             <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details"
                  role="button" aria-expanded="false" aria-controls="kt_user_view_details">
@@ -118,3 +131,22 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        @can('edit_'.$payload->resource)
+        $(document).on('click', '.output_products_pdf_btn', function () {
+            let id = "{{$outbound->id}}";
+            let url = '/operation-management/outbounds/' + id + '/output-products'
+            $.ajax({
+                url: url,
+                method: 'get',
+                success: function (data) {
+                    $('#modal-body').html(data);
+                    $('#modal-title').text('Output Products Report');
+                    $('#modal').modal('show');
+                }
+            });
+        });
+        @endcan
+    </script>
+@endpush
