@@ -85,7 +85,7 @@ use Illuminate\Support\Str;
             ->unique();
 
         foreach ($outbound->OutboundWarehouseItems as $item) {
-           $product_ids->push($item->warehouseItem->product_id);
+            $product_ids->push($item->warehouseItem->product_id);
         }
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
@@ -332,7 +332,7 @@ use Illuminate\Support\Str;
     public function products($outbound_id, OutboundProductsRequest $request)
     {
         $outbound = Outbound::firstWhere('id', $outbound_id);
-        $check_quantity = false;
+
 
         $delete_items_ids = [];
         $items_ids = $outbound->OutboundWarehouseItems->pluck('id')->toArray();
@@ -341,7 +341,6 @@ use Illuminate\Support\Str;
 
         if ($request->button_clicked == 'btn-submit') {
             $outbound->update(['status_id' => OutboundStatus::VALIDATION]);
-            $check_quantity = true;
         }
 
         foreach ($request->products_id as $index => $product) {
@@ -379,10 +378,11 @@ use Illuminate\Support\Str;
                     $remaining_other_quantity = $warehouse_item->other_quantity;
                 }
 
-                if ($check_quantity) {
-                    if ($remaining_quantity == 0 && $request->button_clicked == 'btn-submit')
+                if ($request->button_clicked == 'btn-submit') {
+                    if ($remaining_quantity == 0)
                         $warehouse_item->update(['is_status' => 0]);
                 }
+
                 $warehouse_item->update([
                     'remaining_quantity' => $remaining_quantity,
                     'remaining_other_quantity' => $remaining_other_quantity,
