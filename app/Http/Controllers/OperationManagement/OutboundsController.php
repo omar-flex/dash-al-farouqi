@@ -380,7 +380,7 @@ use Illuminate\Support\Str;
                 }
 
                 if ($check_quantity) {
-                    if ($remaining_quantity == 0)
+                    if ($remaining_quantity == 0 && $request->button_clicked == 'btn-submit')
                         $warehouse_item->update(['is_status' => 0]);
                 }
                 $warehouse_item->update([
