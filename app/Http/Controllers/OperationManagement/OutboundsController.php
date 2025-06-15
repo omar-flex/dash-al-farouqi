@@ -85,7 +85,7 @@ use Illuminate\Support\Str;
             ->unique();
 
         foreach ($outbound->OutboundWarehouseItems as $item) {
-           $product_ids->push($item->product_id);
+           $product_ids->push($item->warehouseItem->product_id);
         }
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
