@@ -81,8 +81,12 @@ use Illuminate\Support\Str;
         $product_ids = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
             ->when($outbound->status_id == OutboundStatus::WH_RELEASE_PRODUCT, function ($q) {
                 return $q->where('is_status', 1);
-            })->pluck('product_id')->unique();
+            })->pluck('product_id')
+            ->unique();
 
+        foreach ($outbound->OutboundWarehouseItems as $item) {
+           $product_ids->push($item->product_id);
+        }
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
             ->leftJoin('unit_measures', 'products.unit_measure_id', '=', 'unit_measures.id')
