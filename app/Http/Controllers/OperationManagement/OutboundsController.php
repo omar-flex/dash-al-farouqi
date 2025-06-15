@@ -378,8 +378,7 @@ use Illuminate\Support\Str;
                     $remaining_other_quantity = $warehouse_item->other_quantity;
                 }
 
-                if ($request->button_clicked == 'btn-submit') {
-                    if ($remaining_quantity == 0)
+                if ($request->button_clicked == 'btn-submit' && $remaining_quantity == 0) {
                         $warehouse_item->update(['is_status' => 0]);
                 }
 
