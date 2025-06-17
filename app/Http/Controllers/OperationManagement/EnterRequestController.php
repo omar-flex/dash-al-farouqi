@@ -262,7 +262,9 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
             ]);
             $item = [
                 'quantity' => trim(Arr::get($request->quantities, $index)),
+                'remaining_quantity' => trim(Arr::get($request->quantities, $index)),
                 'other_quantity' => Arr::get($request->other_quantities, $index),
+                'remaining_other_quantity' => Arr::get($request->other_quantities, $index),
                 'location_line_id' => trim(Arr::get($request->locations, $index)),
                 'level' => trim(Arr::get($request->levels, $index)),
                 'pallet' => trim(Arr::get($request->pallets, $index)),
