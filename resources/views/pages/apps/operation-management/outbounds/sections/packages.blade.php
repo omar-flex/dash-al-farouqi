@@ -85,7 +85,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
 
         function getProductsInfo(product, is_edit = true) {
             let product_id = product.val();
-            let batch_number = product.attr('data-batch-number');
+            let batch_number = product.find('option:selected').attr('data-batch-number');
             let parent = product.parent().parent()
             $.ajax({
                 url: '/operation-management/outbounds/{{$outbound->id}}/products/' + product_id + '?batch_number=' + batch_number,
