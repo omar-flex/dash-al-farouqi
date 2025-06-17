@@ -26,7 +26,7 @@ class ProductsRequest extends FormRequest
             'unit_measures.*' => 'required|exists:unit_measures,id',
 
             'quantities' => 'required|array|min:1',
-            'quantities.*' => 'required|integer|min:1',
+            'quantities.*' => 'required|numeric|min:1',
 
             'locations' => 'required|array|min:1',
             'locations.*' => 'required|integer|min:1',
