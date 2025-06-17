@@ -32,7 +32,7 @@
                 </div>
                 <div class="col-1 mb-2">
                     <input type="number" min="1" class="form-control form-control-sm form-control-solid-bg"
-                           name="quantities[]"
+                           name="quantities[]" step="any"
                            aria-describedby="capacities" placeholder="Qty"/>
                 </div>
                 <div class="col-1 mb-2">
