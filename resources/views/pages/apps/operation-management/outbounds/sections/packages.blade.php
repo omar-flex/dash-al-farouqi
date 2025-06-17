@@ -85,9 +85,10 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
 
         function getProductsInfo(product, is_edit = true) {
             let product_id = product.val();
+            let batch_number = product.attr('data-batch-number');
             let parent = product.parent().parent()
             $.ajax({
-                url: '/operation-management/outbounds/{{$outbound->id}}/products/' + product_id,
+                url: '/operation-management/outbounds/{{$outbound->id}}/products/' + product_id + '?batch_number=' + batch_number,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -97,7 +98,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                     parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
                     if (is_edit) {
                         parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
-                        parent.find('.other_quantities').attr('max', data.other_quantity ).val(data.other_quantity ).attr('title', data.other_quantity )
+                        parent.find('.other_quantities').attr('max', data.other_quantity).val(data.other_quantity).attr('title', data.other_quantity)
                     }
                     parent.find('.location').val(data.location).attr('title', data.location)
                 },
@@ -184,7 +185,7 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
                         confirmButtonText: 'Yes, change it!'
                     }).then(function (result) {
                         if (result.value) {
-                             if (sumQuantities() !== {{$outbound->quantity_packages}}){
+                            if (sumQuantities() !== {{$outbound->quantity_packages}}) {
                                 toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$outbound->quantity_packages}})')
                                 $("#btn-submit,#btn-draft").prop("disabled", false)
                                 return false;

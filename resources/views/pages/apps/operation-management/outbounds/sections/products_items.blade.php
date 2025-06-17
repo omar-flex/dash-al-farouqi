@@ -10,7 +10,7 @@
                             data-placeholder="Product">
                         <option></option>
                         @foreach($products as $product)
-                            <option value="{{ $product->id }}">
+                            <option value="{{ $product->id }}" data-batch_number = "{{ $product->batch_number }}">
                                 @if($product->batch_number)
                                     {{ $product->name .' - '. $product->batch_number}}
                                 @else

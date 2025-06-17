@@ -312,13 +312,13 @@ use Illuminate\Support\Str;
             $item = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
                 ->with('product', 'product.UnitMeasure')
                 ->where('product_id', $product_id)
-                ->first(['id',
-                    'batch_number',
-                    'product_id',
-                    'location_line_id',
+                ->when(request('batch_number'), function ($query) {
+                    return $query->where('batch_number', '=', request('batch_number'));
+                })->first(['id', 'batch_number', 'product_id', 'location_line_id',
                     'remaining_quantity as quantity',
                     'remaining_other_quantity as other_quantity',
                     'level', 'pallet']);
+
             $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
             if ($item->level)
                 $item->location = $item->location . '-' . $item->level;
