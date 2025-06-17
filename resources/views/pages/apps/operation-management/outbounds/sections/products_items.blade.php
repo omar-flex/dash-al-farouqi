@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-1 mb-2">
                     <input type="number" min="1" class="form-control form-control-sm quantities"
-                           name="quantities[]"
+                           name="quantities[]" step="any"
                            aria-describedby="capacities" placeholder="Qty"/>
                 </div>
                 <div class="col-1 mb-2">
@@ -90,7 +90,7 @@
                     </div>
                     <div class="col-1 mb-2">
                         <input type="number" min="1" class="form-control form-control-sm quantities"
-                               name="quantities[]"
+                               name="quantities[]" step="any"
                                aria-describedby="capacities" placeholder="Qty" value="{{ $item->quantity }}"
                                max="{{ $item->quantity  + $item->WarehouseItem?->remaining_quantity }}"/>
                     </div>

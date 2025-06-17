@@ -107,7 +107,7 @@
                     <div class="col-1 mb-2">
                         <input type="number" min="1"
                                class="form-control form-control-sm form-control-solid-bg"
-                               name="quantities[]" id="quantities"
+                               name="quantities[]" id="quantities" step="any"
                                aria-describedby="capacities" placeholder="Qty"
                                value="{{$item?->quantity}}" {{$disabled}} title="{{$item?->quantity}}"/>
                     </div>
