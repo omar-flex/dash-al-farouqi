@@ -30,7 +30,7 @@
                        href="#products_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                        tabindex="-1">
                         <i class="fa-sharp-duotone fa-solid fa-container-storage fa-lg"></i>
-                        <strong>({{number_format($outbound->quantity_packages)}})</strong> Release Packages
+                        <strong>({{number_format($outbound->quantity_packages,3)}})</strong> Release Packages
                     </a>
                 </li>
                 @if( in_array($outbound->status_id,[ \App\Models\OutboundStatus::VALIDATION,\App\Models\OutboundStatus::AUTHORIZATION,\App\Models\OutboundStatus::NEED_REVISION,\App\Models\OutboundStatus::APPROVED]))
