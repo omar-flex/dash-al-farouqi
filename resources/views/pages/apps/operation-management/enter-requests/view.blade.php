@@ -31,7 +31,7 @@
                        href="#product_tab" data-kt-initialized="1" aria-selected="false" role="tab"
                        tabindex="-1">
                         <i class="fa-sharp-duotone fa-solid fa-container-storage fa-lg"></i>
-                        <strong>({{number_format($enterRequest->quantity_packages,5)}})</strong> Packages
+                        <strong>({{number_format($enterRequest->quantity_packages,3)}})</strong> Packages
                     </a>
                 </li>
                 @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED]))
