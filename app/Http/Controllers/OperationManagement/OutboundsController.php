@@ -217,7 +217,20 @@ use Illuminate\Support\Str;
             }
             $file->delete();
         }
+        foreach ($outbound->OutboundWarehouseItems as $item) {
+            $this->modifyRemainingUponDeletion($item);
+        }
         $outbound->delete();
+    }
+
+    public function modifyRemainingUponDeletion($outbound_warehouse_item)
+    {
+        $warehouseItem = WarehouseItems::where('id', $outbound_warehouse_item->warehouse_item_id)->first();
+        $warehouseItem->update([
+            'remaining_quantity' => $warehouseItem->remaining_quantity + $outbound_warehouse_item->quantity,
+            'remaining_other_quantity' => $warehouseItem->remaining_other_quantity + $outbound_warehouse_item->remaining_quantity,
+            'is_status' => 1
+        ]);
     }
 
     public function filesCreate($outbound)
@@ -409,7 +422,11 @@ use Illuminate\Support\Str;
                 OutboundWarehouseItems::create($item);
             }
             if (count($delete_items_ids) > 0) {
-                OutboundWarehouseItems::whereIn('id', $delete_items_ids)->delete();
+                $outboundWarehouseItems = OutboundWarehouseItems::whereIn('id', $delete_items_ids)->get();
+                foreach ($outboundWarehouseItems as $outboundWarehouseItem) {
+                    $this->modifyRemainingUponDeletion($outboundWarehouseItem);
+                }
+                $outboundWarehouseItems->each->delete();
             }
         }
 
