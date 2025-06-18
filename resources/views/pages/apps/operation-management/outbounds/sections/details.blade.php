@@ -85,7 +85,8 @@
 
                 <div class="mt-5">
                     <span class="fw-bold">Manifest Date:</span>
-                    <span class="mx-1 text-gray-600">{{$outbound->manifest_date}}</span>
+                    <span
+                        class="mx-1 text-gray-600"> {{$outbound->manifest_date ? \Illuminate\Support\Carbon::parse($outbound->manifest_date)->format('d M Y') : '----'}}</span>
                 </div>
 
                 <div class="mt-5">
