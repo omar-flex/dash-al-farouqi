@@ -89,6 +89,13 @@
                 </div>
 
                 <div class="mt-5">
+                    <span class="fw-bold"> Date:</span>
+                    <span class="mx-1 text-gray-600">
+                        {{$outbound->date ? \Illuminate\Support\Carbon::parse($outbound->date)->format('d M Y') : '----'}}
+                    </span>
+                </div>
+
+                <div class="mt-5">
                     <span class="fw-bold"> Quantity of Car:</span>
                     <span class="mx-1 text-gray-600">{{$outbound->quantity_car}}</span>
                 </div>
