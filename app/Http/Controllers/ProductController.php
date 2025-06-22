@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DataTables\ProductsDataTable;
 use App\Http\Requests\ProductRequest;
+use App\Models\EnterRequest;
+use App\Models\EnterRequestStatus;
 use App\Models\Product;
 use App\Models\UnitMeasure;
 use App\Models\WarehouseItems;
@@ -25,7 +27,9 @@ class ProductController extends Controller
 
         $results = Product::where('name', 'like', '%' . $q . '%')
             ->when(request('enter_request_id'), function ($query) {
-                $product_ids = WarehouseItems::where('enter_request_id', request('enter_request_id'))
+                $enterRequest = EnterRequest::firstWhere(['id' => request('enter_request_id')]);
+                $enter_request_ids = EnterRequest::where('customer_id', $enterRequest->Customer->id)->pluck('id');
+                $product_ids = WarehouseItems::whereIntegerInRaw('enter_request_id', $enter_request_ids)
                     ->pluck('product_id');
                 $query->whereIntegerInRaw('id', $product_ids);
             })
