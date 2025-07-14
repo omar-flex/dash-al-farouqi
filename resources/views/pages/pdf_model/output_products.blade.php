@@ -52,7 +52,7 @@
             <td>{{ $outbound->EnterRequest?->bound_number }}</td>
             <td>{{ $outbound->EnterRequest?->Customer?->tax_number }}</td>
             <td>{{ $outbound->outbound_number }}</td>
-            <td>{{\Illuminate\Support\Carbon::parse($outbound->date)->format('Y/m/d')}}</td>
+            <td>{{\Illuminate\Support\Carbon::parse($outbound->manifest_date)->format('Y/m/d')}}</td>
             <td>{{ $outbound->EnterRequest?->Company?->name }}</td>
         </tr>
         </tbody>
@@ -93,7 +93,7 @@
         <div class="mb-2">رقم هوية السائق: ....................................................</div>
         <div class="mb-2">
             <span> تاريخ الإخراج: </span>
-            <span class="mx-2"> _ / _ / __ </span>
+            <span class="mx-2"> {{\Illuminate\Support\Carbon::parse($outbound->date)->format('Y/m/d')}} </span>
         </div>
         <div class="mb-2">
             <span> سبب الإخراج: </span>
