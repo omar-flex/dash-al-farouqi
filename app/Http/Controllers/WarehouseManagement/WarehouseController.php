@@ -70,8 +70,7 @@ class WarehouseController extends Controller
 
         $fromDate = request('from_date', now()->startOfYear()->format('Y-m-d'));
         $toDate = request('to_date', now()->format('Y-m-d'));
-        $customer_ids = EnterRequest::whereIntegerInRaw('manifest_type_number', [7, 4])
-            ->whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+        $customer_ids = EnterRequest::whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
             ->whereBetween('date', [$fromDate, $toDate])
             ->orderBy('date')
             ->when(request('customer_id'), function ($query) {
