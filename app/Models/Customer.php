@@ -25,10 +25,9 @@ class Customer extends Model
         $fromDate = request('from_date', now()->startOfYear()->format('Y-m-d'));
         $toDate = request('to_date', now()->format('Y-m-d'));
 
-        return EnterRequest::whereIntegerInRaw('manifest_type_number', [7, 4])
-            ->where('customer_id', $id)
+        return EnterRequest::where('customer_id', $id)
             ->whereBetween('date', [$fromDate, $toDate])
-            ->whereIntegerInRaw('status_id', [EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
+            ->whereIntegerInRaw('status_id', [EnterRequestStatus::VALIDATION, EnterRequestStatus::AUTHORIZATION, EnterRequestStatus::APPROVED])
             ->when(request('customer_id'), function ($query) {
                 return $query->where('customer_id', request('customer_id'));
             })

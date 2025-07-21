@@ -69,7 +69,7 @@ class EnterRequest extends Model
     {
         return Outbound::where('enter_request_id', Arr::get($this->attributes, 'id'))
             ->orderBy('date', 'desc')
-            ->whereIn('status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+            ->whereIn('status_id', [OutboundStatus::VALIDATION, OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
             ->first();
     }
 
