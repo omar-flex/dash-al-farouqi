@@ -121,7 +121,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="required fw-semibold  mb-2">Gross weight</label>
-                        <div class="input-group  mb-5">
+                        <div class="input-group input-group-sm mb-5">
                             <input type="number" step="any" name="gross_weight" min="0"
                                    class="form-control form-control-solid-bg form-control-sm "
                                    placeholder="Gross weight"
@@ -131,7 +131,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="required fw-semibold  mb-2">Net weight</label>
-                        <div class="input-group  mb-5">
+                        <div class="input-group input-group-sm mb-5">
                             <input type="number" step="any" name="net_weight" min="0"
                                    class="form-control form-control-solid-bg" form-control-sm
                                    placeholder="Net weight"
@@ -144,7 +144,7 @@
                     <div class="col-md-3 mb-3">
                         <label class="required fw-semibold  mb-2">Country</label>
                         <div class="form-check form-check-custom form-check-solid ">
-                            <select name="country_id" class="form-select form-select-solid-bg mb-2"
+                            <select name="country_id" class="form-select form-select-solid-bg mb-2 form-select-sm"
                                     id="countries"
                                     @if(!(isset($enterRequest) && $enterRequest->country_id)) disabled
                                     @endif
@@ -174,13 +174,13 @@
 
 
                     @isset($enterRequest)
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label class="fw-semibold  mb-2">Cpm Calculated</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg form-control-sm mb-2"
                                    placeholder="Cpm Calculated" value="{{ $enterRequest->cpm_calculated }}">
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label class="fw-semibold  mb-2">Cpm Result</label>
                             <input type="number" step="any" min="0" disabled
                                    class="form-control form-control-solid-bg form-control-sm mb-2"
@@ -209,6 +209,18 @@
                             @endforeach
                         </select>
                     </div>
+
+                    @if(isset($enterRequest) && $enterRequest->manifest_type_number == 8)
+                        <div class="col-md-2 mb-3">
+                            <label class="fw-semibold mb-2">IN.Trans</label>
+                            <div class="input-group input-group-sm mb-5">
+                                <span class="input-group-text">7/</span>
+                                <input type="text" class="form-control" aria-label="IN.Trans" name="inbound_transfer"
+                                       value="{{$enterRequest->inbound_transfer}}"/>
+                            </div>
+                        </div>
+                    @endif
+
                     @if(!isset($enterRequest))
                         <div class="col-md-8">
 
@@ -218,28 +230,34 @@
                         <label class="required fw-semibold  mb-2"> General description Goods</label>
                         <textarea class="form-control form-control-solid-bg form-control-sm mb-2"
                                   name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($enterRequest){{ $enterRequest->general_description_goods }}@endisset</textarea>
+                                  placeholder="General description Goods">@isset($enterRequest)
+                                {{ $enterRequest->general_description_goods }}
+                            @endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="required fw-semibold  mb-2"> Notes</label>
                         <textarea class="form-control form-control-solid-bg form-control-sm mb-2" name="notes"
-                                  style="min-height: 30px" placeholder="Notes">@isset($enterRequest){{ $enterRequest->notes }}@endisset</textarea>
+                                  style="min-height: 30px" placeholder="Notes">@isset($enterRequest)
+                                {{ $enterRequest->notes }}
+                            @endisset</textarea>
                     </div>
 
                     @isset($enterRequest)
                         <div class="d-flex justify-content-start">
                             <label class="fw-semibold mb-2 me-2">Customs Manifest Status</label>
                             <a class="cursor-pointer"
-                               href="{{route('operation-management.receipt-delivery-commitment-form.pdf',$enterRequest)}}" target="_blank">
+                               href="{{route('operation-management.receipt-delivery-commitment-form.pdf',$enterRequest)}}"
+                               target="_blank">
                                 <i class="fa-sharp-duotone fa-solid fa-file-download fa-sm text-danger"></i>
                                 Receipt and Delivery Commitment Form
                             </a>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="form-check form-check-sm">
-                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->customs_department_representative}}"
+                                <input class="form-check-input" type="checkbox"
+                                       value="{{$enterRequest->customs_department_representative}}"
                                        @if($enterRequest->customs_department_representative) checked @endif
-                                       id="customs_department_representative"  name="customs_department_representative"/>
+                                       id="customs_department_representative" name="customs_department_representative"/>
                                 <label class="form-check-label text-dark fw-bold"
                                        for="customs_department_representative">
                                     Customs Department Representative
@@ -248,8 +266,10 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="form-check form-check-sm">
-                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->scanning_archiving}}"
-                                       id="scanning_archiving" name="scanning_archiving" @if($enterRequest->scanning_archiving) checked @endif/>
+                                <input class="form-check-input" type="checkbox"
+                                       value="{{$enterRequest->scanning_archiving}}"
+                                       id="scanning_archiving" name="scanning_archiving"
+                                       @if($enterRequest->scanning_archiving) checked @endif/>
                                 <label class="form-check-label text-dark fw-bold" for="scanning_archiving">
                                     Scanning and Archiving
                                 </label>
@@ -257,8 +277,9 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="form-check form-check-sm">
-                                <input class="form-check-input" type="checkbox" value="{{$enterRequest->clearance_company_representative}}"
-                                       id="clearance_company_representative"   name="clearance_company_representative"
+                                <input class="form-check-input" type="checkbox"
+                                       value="{{$enterRequest->clearance_company_representative}}"
+                                       id="clearance_company_representative" name="clearance_company_representative"
                                        @if($enterRequest->clearance_company_representative) checked @endif/>
                                 <label class="form-check-label text-dark fw-bold"
                                        for="clearance_company_representative">

@@ -56,8 +56,19 @@
                                @isset($customer) value="{{ $customer->tax_number }}" @endisset>
                     </div>
 
-
+                    @hasrole('administrator')
+                    <div class="col-md-4 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2"> @if( !isset($customer))
+                                Password
+                            @else
+                                Change Password
+                            @endif</label>
+                        <input type="password" name="password" class="form-control form-control-solid-bg mb-2"
+                               placeholder="************" autocomplete="off">
+                    </div>
+                    @endhasrole
                 </div>
+
 
                 <div class="col-md-12 form-group">
                     <input type="submit" class="btn btn-light-success btn-sm float-end" value="Submit"

@@ -20,6 +20,7 @@ class RolesPermissionsSeeder extends Seeder
             'warehouse-manager',
             'senior-management',
             'data-entry',
+            'customer'
         ];
 
         foreach ($roles as $role) {

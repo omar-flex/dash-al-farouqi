@@ -48,6 +48,7 @@ class EnterCreateRequest extends FormRequest
             if ($this?->enter_request?->files()?->count() > 0) {
                 $rules['files'] = 'nullable';
             }
+            $rules['inbound_transfer'] = 'nullable|numeric';
         }
 
         return $rules;

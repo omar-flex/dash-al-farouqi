@@ -6,6 +6,7 @@ namespace App\DataTables\OperationManagement;
 use App\Actions\GetThemeType;
 use App\Models\Customer;
 use App\Models\EnterRequest;
+use App\Models\EnterRequestStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
@@ -85,6 +86,10 @@ class EnterRequestsDataTable extends DataTable
             ->leftJoin('products', 'products.id', '=', 'warehouse_items.product_id')
             ->groupBy('enter_requests.id')
             ->withCount('Outbounds')
+            ->when(Auth::user()->hasRole('customer'), function ($query) {
+                return $query->where('customer_id', Auth::user()->customer?->id)
+                    ->where('status_id', EnterRequestStatus::APPROVED);
+            })
             ->when(request('customer_id'), function ($q) {
                 return $q->where('customer_id', request('customer_id'));
             })
@@ -141,7 +146,8 @@ class EnterRequestsDataTable extends DataTable
             $this->configureColumn('customer_name', [
                 'name' => 'customers.name',
                 'title' => 'Customer Name',
-                'class' => 'text-center'
+                'class' => 'text-center',
+                 'visible' => !Auth::user()->hasRole('customer')
             ]),
             $this->configureColumn('net_weight', [
                 'title' => 'Net weight',
@@ -158,7 +164,8 @@ class EnterRequestsDataTable extends DataTable
             $this->configureColumn('status_name', [
                 'name' => 'enter_request_statuses.name',
                 'title' => 'Stage',
-                'class' => 'text-center'
+                'class' => 'text-center',
+                'visible' => !Auth::user()->hasRole('customer')
             ]),
             $this->configureColumn('created_at', [
                 'title' => 'Created At',

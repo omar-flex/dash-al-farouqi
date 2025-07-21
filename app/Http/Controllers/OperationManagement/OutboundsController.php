@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
-#[AllowDynamicProperties] class OutboundsController extends Controller
+#[AllowDynamicProperties] class  OutboundsController extends Controller
 {
 
     public function __construct()
@@ -63,6 +63,9 @@ use Illuminate\Support\Str;
 
     public function show(Outbound $outbound)
     {
+        if (!auth()->user()->can('list_' . $this->resource))
+            abort(403);
+
         $locations = [];
 
         $locationLines = LocationLine::with('location', 'location.warehouse')->get();

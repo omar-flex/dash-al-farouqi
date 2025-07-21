@@ -47,7 +47,6 @@ class UserManagementController extends Controller
         $role = Role::findById($request->role_id);
         $user->assignRole($role->name);
 
-
         return response()->json(['message' => 'Added Successfully', 'status' => 200]);
     }
 

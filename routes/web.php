@@ -26,8 +26,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
-
+Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -82,7 +81,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/outbounds/{id}/validations/store', [OutboundsController::class, 'validations'])->name('outbounds.validations.store');
             Route::get('outbounds/{id}/output-products', [OutboundsController::class, 'outputProducts'])->name('outputProducts');
             Route::get('outbounds/{id}/output-products/pdf/{car_id}', [OutboundsController::class, 'pdfOutputProducts'])->name('pdfOutputProducts.pdf');
-
         });
 
     Route::name('user-management.')

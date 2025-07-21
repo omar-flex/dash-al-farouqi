@@ -4,8 +4,8 @@ namespace App\DataTables\OperationManagement;
 
 
 use App\Actions\GetThemeType;
-use App\Models\EnterRequest;
 use App\Models\Outbound;
+use App\Models\OutboundStatus;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +24,7 @@ class OutboundsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->rawColumns(['status_name', 'bound_number', 'outbound_number','customer_name'])
+            ->rawColumns(['status_name', 'bound_number', 'outbound_number', 'customer_name'])
             ->filterColumn('product_names', function ($query, $keyword) {
                 $query->havingRaw('GROUP_CONCAT(DISTINCT products.name) LIKE ?', ["%{$keyword}%"]);
             })
@@ -66,6 +66,7 @@ class OutboundsDataTable extends DataTable
      */
     public function query(Outbound $model): QueryBuilder
     {
+
         return $model->selectRaw('
         outbounds.*,
         enter_requests.bound_number,
@@ -82,6 +83,13 @@ class OutboundsDataTable extends DataTable
             ->leftJoin('products', 'products.id', '=', 'warehouse_items.product_id')
             ->leftJoin('clearance_companies', 'clearance_companies.id', '=', 'enter_requests.clearance_company_id')
             ->groupBy('outbounds.id')
+            ->when(Auth::user()->hasRole('customer'), function ($query) {
+                return $query->where('enter_requests.customer_id', Auth::user()->customer?->id)
+                    ->where('outbounds.status_id', OutboundStatus::APPROVED)
+                    ->when(request()->routeIs('operation-management.enter_requests.show'), function ($query) {
+                        return $query->where('outbounds.enter_request_id', request()->route('enter_request')->id);
+                    });
+            })
             ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
             })->when(request('customer_id'), function ($q) {
@@ -118,11 +126,22 @@ class OutboundsDataTable extends DataTable
         return [
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
             Column::make('outbound_number')->title('Out Bound Number')->addClass('text-center text-dark'),
-            Column::make('bound_number')->name('enter_requests.bound_number')->title('Bound Number')->addClass('text-center text-dark'),
-            Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
+            Column::make('bound_number')
+                ->name('enter_requests.bound_number')
+                ->title('In Bound Number')
+                ->addClass('text-center text-dark')
+                ->visible(!request()->routeIs('operation-management.enter_requests.show')),
+            Column::make('customer_name')
+                ->name('customers.name')
+                ->title('Customer Name')
+                ->addClass('text-center')
+                ->visible(!Auth::user()->hasRole('customer')),
             Column::make('net_weight')->title('Net weight')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
-            Column::make('status_name')->title('Stage')->name('outbound_statuses.name')->addClass('text-center'),
+            Column::make('status_name')->title('Stage')
+                ->name('outbound_statuses.name')
+                ->addClass('text-center')
+                ->visible(!Auth::user()->hasRole('customer')),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::computed('action')

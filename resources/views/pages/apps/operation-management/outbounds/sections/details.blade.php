@@ -12,12 +12,14 @@
             <a href="{{route('operation-management.enter_requests.show',$outbound->enterRequest?->id )}}"
                target="_blank"
                class="fs-3 text-primary fw-bold mb-3">{{$outbound->enterRequest?->bound_number}} </a>
-            <div class="mb-4">
-                @php
-                    $class = app(GetThemeType::class)->handle('badge-light-?', $outbound->Status?->name);
-                @endphp
-                <div class="badge badge-lg {{$class}} d-inline">{{$outbound->Status?->name}}</div>
-            </div>
+            @if(!Auth::user()->hasRole('customer'))
+                <div class="mb-4">
+                    @php
+                        $class = app(GetThemeType::class)->handle('badge-light-?', $outbound->Status?->name);
+                    @endphp
+                    <div class="badge badge-lg {{$class}} d-inline">{{$outbound->Status?->name}}</div>
+                </div>
+            @endif
         </div>
         @can('edit_'.$payload->resource)
             <div class="d-flex flex-center flex-column py-3">

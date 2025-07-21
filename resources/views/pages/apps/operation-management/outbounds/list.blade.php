@@ -18,47 +18,50 @@
                            id="mySearchInput"/>
                 </div>
             </div>
-            <div class="card-toolbar min-w-900px">
-                <div class="d-flex justify-content-end gap-3 w-100" data-kt-user-table-toolbar="base">
-                    <div class="w-25">
-                        <select class="form-select form-select-solid form-select-sm mb-2 " id="company_filter"
-                                data-control="select2" data-placeholder="Select an Company" data-allow-clear="true">
-                            <option></option>
-                            @foreach($payload->companies as $company)
-                                <option value="{{$company->id}}">{{$company->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="w-25">
-                        <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
-                                data-control="select2" data-placeholder="Select an Customer" data-allow-clear="true">
-                            <option></option>
-                            @foreach($payload->customers as $customer)
-                                <option value="{{$customer->id}}">{{$customer->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="w-25">
-                        <select class="form-select form-select-solid form-select-sm mb-2 " id="status_filter"
-                                data-control="select2" data-placeholder="Select an Status" data-allow-clear="true">
-                            <option></option>
-                            @foreach($payload->statuses as $status)
-                                <option value="{{$status->id}}">{{$status->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    @can('add_'.$payload->resource)
-                        <div class="w-15">
-                            <a class="btn btn-light-primary btn-sm" id="add">
-                                {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                                Add {{$payload->sub_title}}
-                            </a>
+            @if(!Auth::user()->hasRole('customer'))
+                <div class="card-toolbar min-w-900px">
+                    <div class="d-flex justify-content-end gap-3 w-100" data-kt-user-table-toolbar="base">
+                        <div class="w-25">
+                            <select class="form-select form-select-solid form-select-sm mb-2 " id="company_filter"
+                                    data-control="select2" data-placeholder="Select an Company" data-allow-clear="true">
+                                <option></option>
+                                @foreach($payload->companies as $company)
+                                    <option value="{{$company->id}}">{{$company->name}}</option>
+                                @endforeach
+                            </select>
                         </div>
-                    @endcan
+                        <div class="w-25">
+                            <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
+                                    data-control="select2" data-placeholder="Select an Customer"
+                                    data-allow-clear="true">
+                                <option></option>
+                                @foreach($payload->customers as $customer)
+                                    <option value="{{$customer->id}}">{{$customer->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="w-25">
+                            <select class="form-select form-select-solid form-select-sm mb-2 " id="status_filter"
+                                    data-control="select2" data-placeholder="Select an Status" data-allow-clear="true">
+                                <option></option>
+                                @foreach($payload->statuses as $status)
+                                    <option value="{{$status->id}}">{{$status->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
+                        @can('add_'.$payload->resource)
+                            <div class="w-15">
+                                <a class="btn btn-light-primary btn-sm" id="add">
+                                    {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                                    Add {{$payload->sub_title}}
+                                </a>
+                            </div>
+                        @endcan
+
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
 
         <div class="card-body py-4">

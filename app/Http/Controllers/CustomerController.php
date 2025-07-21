@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\DataTables\CustomersDataTable;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
@@ -49,11 +52,18 @@ class CustomerController extends Controller
         if (!auth()->user()->can('add_' . $this->resource))
             abort(403);
 
-        $data = $request->only('email', 'company_name', 'phone', 'national_number', 'tax_number');
+        $data = $request->only('company_name', 'phone', 'national_number', 'tax_number');
+
+        $user = ['email' => Str::lower($request->email), 'password' => Hash::make($request->password), 'email_verified_at' => now()->toDateTimeString(), 'name' => $request->customer_name];
+
+        $user = User::create($user);
+        $data['user_id'] = $user->id;
 
         $data['name'] = $request->customer_name;
 
-        Customer::create($data);
+        $customer = Customer::create($data + ['email' => Str::lower($request->email), 'password' => Hash::make($request->password), 'email_verified_at' => now()->toDateTimeString()]);
+
+        $customer->assignRole('customer');
 
         if (request('enter_request'))
             return Customer::get(['id', 'name']);
@@ -77,7 +87,18 @@ class CustomerController extends Controller
         if (!auth()->user()->can('edit_' . $this->resource))
             abort(403);
 
-        $data = $request->only('email', 'company_name', 'phone', 'national_number', 'tax_number');
+        $user = ['email' => Str::lower($request->email), 'password' => Hash::make($request->password), 'email_verified_at' => now()->toDateTimeString(), 'name' => $request->customer_name];
+
+        $data = $request->only('company_name', 'phone', 'national_number', 'tax_number');
+
+        if ($customer->user) {
+            $customer->user->update($user);
+            $customer->user->syncRoles('customer');
+        } else {
+            $user = User::create($user);
+            $data['user_id'] = $user->id;
+            $user->syncRoles('customer');
+        }
 
         $data['name'] = $request->customer_name;
 

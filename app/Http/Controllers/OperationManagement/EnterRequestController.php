@@ -5,6 +5,7 @@ namespace App\Http\Controllers\OperationManagement;
 
 use AllowDynamicProperties;
 use App\DataTables\OperationManagement\EnterRequestsDataTable;
+use App\DataTables\OperationManagement\OutboundsDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OperationManagement\CarsRequest;
 use App\Http\Requests\OperationManagement\EnterCreateRequest;
@@ -62,8 +63,11 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
         return $dataTable->render('pages.apps.operation-management.enter-requests.list', compact('payload'));
     }
 
-    public function show(EnterRequest $enterRequest)
+    public function show(EnterRequest $enterRequest, OutboundsDataTable $dataTable)
     {
+        if (!auth()->user()->can('list_' . $this->resource))
+            abort(403);
+
         $payload = (object)[
             'title' => 'Inbound',
             'resource' => $this->resource,
@@ -73,7 +77,7 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
 
         $warehouseItems = $enterRequest->WarehouseItems;
 
-        return view('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'warehouseItems', 'payload'));
+        return $dataTable->render('pages.apps.operation-management.enter-requests.view', compact('enterRequest', 'warehouseItems', 'payload'));
     }
 
     public function create()
@@ -162,6 +166,10 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
 
 
         $data['bound_number'] = $request->manifest_year . '/' . $request->customs_entry_center . '/' . $request->manifest_type_number . '/' . $request->manifest_bound_number;
+
+        if ($enterRequest->manifest_type_number == 8 && $request->inbound_transfer) {
+            $data['bound_number'] = $data['bound_number'] . '/7/' . $request->inbound_transfer;
+        }
 
         if ($enterRequest->status_id == EnterRequestStatus::DRAFT) {
             if ($request->button_clicked == 'btn-draft') {

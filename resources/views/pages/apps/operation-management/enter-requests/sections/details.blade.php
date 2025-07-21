@@ -4,12 +4,14 @@
         <div class="d-flex flex-center flex-column py-3 text-center">
             <span class="fs-3 text-gray-800 fw-bold mb-3"> {{$enterRequest?->Customer?->name}}  </span>
             <span class="fs-3 text-gray-800 fw-bold mb-3">{{$enterRequest->bound_number}} </span>
-            <div class="mb-4">
-                @php
-                    $class = app(GetThemeType::class)->handle('badge-light-?', $enterRequest->Status?->name);
-                @endphp
-                <div class="badge badge-lg {{$class}} d-inline">{{$enterRequest->Status?->name}}</div>
-            </div>
+            @if(!Auth::user()->hasRole('customer'))
+                <div class="mb-4">
+                    @php
+                        $class = app(GetThemeType::class)->handle('badge-light-?', $enterRequest->Status?->name);
+                    @endphp
+                    <div class="badge badge-lg {{$class}} d-inline">{{$enterRequest->Status?->name}}</div>
+                </div>
+            @endif
         </div>
 
         <div class="d-flex flex-stack fs-4 py-3">
