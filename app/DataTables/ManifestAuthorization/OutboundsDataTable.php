@@ -43,10 +43,10 @@ class OutboundsDataTable extends DataTable
             ->editColumn('outbound_number', content: function (Outbound $model) {
                 return '<a href="' . route('operation-management.outbounds.show', $model->id) . '">' . $model->outbound_number . '</a>';
             })
-            ->editColumn('status_name', content: function (Outbound $model) {
+           /* ->editColumn('status_name', content: function (Outbound $model) {
                 $class = app(GetThemeType::class)->handle('bg-light-? text-?', $model->status_name);
                 return '<div class="badge ' . $class . ' fw-bold">' . $model->status_name . '</div>';
-            })->addColumn('action', function (Outbound $model) {
+            })*/->addColumn('action', function (Outbound $model) {
                 return view('pages.apps.manifest-authorizations.outbounds.columns._actions', compact('model'));
             })->addIndexColumn();
     }
@@ -57,9 +57,8 @@ class OutboundsDataTable extends DataTable
      */
     public function query(Outbound $model): QueryBuilder
     {
-        return $model->selectRaw('outbounds.*,enter_requests.bound_number,enter_requests.id as inbound_id,
-                                            outbound_statuses.name as status_name,customers.name as customer_name')
-            ->leftJoin('outbound_statuses', 'outbound_statuses.id', '=', 'outbounds.status_id')
+        return $model->selectRaw('outbounds.*,enter_requests.bound_number,enter_requests.id as inbound_id,customers.name as customer_name')
+           // ->leftJoin('outbound_statuses', 'outbound_statuses.id', '=', 'outbounds.status_id')
             ->leftJoin('enter_requests', 'enter_requests.id', '=', 'outbounds.enter_request_id')
             ->leftJoin('customers', 'customers.id', '=', 'enter_requests.customer_id')
             ->where('outbounds.status_id' , OutboundStatus::AUTHORIZATION)
@@ -93,9 +92,9 @@ class OutboundsDataTable extends DataTable
         return [
             Column::make('DT_RowIndex')->name('id')->title('#')->addClass('text-center'),
             Column::make('outbound_number')->title('Out Bound Number')->addClass('text-center text-dark'),
-            Column::make('bound_number')->title('Bound Number')->addClass('text-center text-dark'),
+            Column::make('bound_number')->title('Bound Number')->name('enter_requests.bound_number')->addClass('text-center text-dark'),
             Column::make('customer_name')->name('customers.name')->title('Customer Name')->addClass('text-center'),
-            Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
+           // Column::make('status_name')->title('Stage')->name('enter_request_statuses.name')->addClass('text-center'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-center text-nowrap')
