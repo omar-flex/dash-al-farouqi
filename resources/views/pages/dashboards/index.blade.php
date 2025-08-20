@@ -36,7 +36,7 @@
             </style>
         <div class="container-fluid">
             <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
-                <div class="col">
+                {{--<div class="col">
                     <div class="card rounded-4">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>--}}
                 <div class="col">
                     <div class="card rounded-4">
                         <div class="card-body">
