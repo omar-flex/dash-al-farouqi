@@ -78,52 +78,77 @@
                         {{$customer->name}} - {{$customer->tax_number}}
                     </td>
                 </tr>
-                @php $count = 1; @endphp
+                @php
+                    $count = 1;
+                    $totalQuantity = 0;
+                    $totalRemaining = 0;
+                @endphp
 
                 @foreach($validInbounds as $inbound)
                     @foreach($inbound->WarehouseItems as $item)
-                        @if($item->quantity - $item->SumOutboundItems() > 0)
-                            @php $loop = $count % 2 == 0; @endphp
+                        @php $remaining = $item->quantity - $item->SumOutboundItems(); @endphp
+                        @if($remaining > 0)
+                            @php
+                                $totalQuantity += $item->quantity;
+                                $totalRemaining += $remaining;
+                            @endphp
+                        @endif
+                    @endforeach
+                @endforeach
+
+
+                <tr style="background: #eaeaea; font-weight: bold;">
+                    <td colspan="3"></td>
+                    <td class="text-danger">{{ $totalQuantity }}</td>
+                    <td class="text-danger">{{ $totalRemaining }}</td>
+                    <td colspan="7"></td>
+                </tr>
+
+                @foreach($validInbounds as $inbound)
+                    @foreach($inbound->WarehouseItems as $item)
+                        @if(($item->quantity - $item->SumOutboundItems()) > 0)
+                            @php
+                                $loopClass = $count % 2 == 0 ? 'odd' : '';
+                                $remaining = $item->quantity - $item->SumOutboundItems();
+                            @endphp
                             <tr>
-                                <td @if($loop) class="odd" @endif >{{$count}}</td>
-                                <td @if($loop) class="odd" @endif >{{ $item->EnterRequest->bound_number }}</td>
-                                <td @if($loop) class="odd" @endif style="font-size:10px" width="400px">
+                                <td class="{{ $loopClass }}">{{$count}}</td>
+                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->bound_number }}</td>
+                                <td class="{{ $loopClass }}" style="font-size:10px" width="400px">
                                     {{ $item->Product->name }} -  {{ $item->Product->barcode }} -  {{ $item->batch_number }}
                                 </td>
-                                <td @if($loop) class="odd" @endif >{{ $item->quantity }}</td>
-                                <td @if($loop) class="odd" @endif >
-                                    {{$item->quantity - $item->SumOutboundItems()}}
-                                </td>
-                                <td @if($loop) class="odd" @endif >
+                                <td class="{{ $loopClass }}">{{ $item->quantity }}</td>
+                                <td class="{{ $loopClass }}">{{$remaining}}</td>
+                                <td class="{{ $loopClass }}">
                                     {{ \Carbon\Carbon::parse($item->EnterRequest->date)->format('d/m/Y') }}
                                 </td>
-                                <td @if($loop) class="odd" @endif >
+                                <td class="{{ $loopClass }}">
                                     {{ optional($item->EnterRequest->LastOutbound())->date
                                         ? \Carbon\Carbon::parse($item->EnterRequest->LastOutbound()->date)->format('d/m/Y')
                                         : '-' }}
                                 </td>
-                                <td @if($loop) class="odd" @endif >
+                                <td class="{{ $loopClass }}">
                                     {{ \Carbon\Carbon::parse($item->EnterRequest->date)->addYears(3)->format('d/m/Y') }}
                                 </td>
-                                <td @if($loop) class="odd" @endif >
-                                    {{ $item->EnterRequest->manifest_bound_number }}
-                                </td>
-                                <td @if($loop) class="odd" @endif >
-                                    {{ $item->EnterRequest->manifest_type_number }}
-                                </td>
-                                <td @if($loop) class="odd" @endif >
-                                    {{ $item->EnterRequest->manifest_year }}
-                                </td>
-                                <td @if($loop) class="odd" @endif >
-                                    {{ $item->EnterRequest->customs_entry_center }}
-                                </td>
+                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_bound_number }}</td>
+                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_type_number }}</td>
+                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_year }}</td>
+                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->customs_entry_center }}</td>
                             </tr>
                             @php ++$count; @endphp
                         @endif
                     @endforeach
                 @endforeach
+                <tr style="background: #eaeaea; font-weight: bold;">
+                    <td colspan="3"></td>
+                    <td class="text-danger">{{ $totalQuantity }}</td>
+                    <td class="text-danger">{{ $totalRemaining }}</td>
+                    <td colspan="7"></td>
+                </tr>
             @endif
         @endforeach
+
+
 
 
         </tbody>

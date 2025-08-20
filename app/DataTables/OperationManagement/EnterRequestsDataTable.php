@@ -46,6 +46,9 @@ class EnterRequestsDataTable extends DataTable
             ->editColumn('created_at', function (EnterRequest $model) {
                 return $model->created_at->format('d M Y');
             })
+            ->editColumn('total_cost', content: function (EnterRequest $model) {
+                return number_format($model->total_cost, '2');
+            })
             ->editColumn('net_weight', content: function (EnterRequest $model) {
                 return number_format($model->net_weight, '2');
             })
@@ -155,6 +158,10 @@ class EnterRequestsDataTable extends DataTable
             ]),
             $this->configureColumn('gross_weight', [
                 'title' => 'Gross Weight',
+                'class' => 'text-center'
+            ]),
+            $this->configureColumn('total_cost', [
+                'title' => 'Total Cost',
                 'class' => 'text-center'
             ]),
             $this->configureColumn('cpm_result', [

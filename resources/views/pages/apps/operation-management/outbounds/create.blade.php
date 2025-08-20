@@ -156,14 +156,11 @@
                     @endisset
                     <div class="col-md-6 mb-7">
                         <label class="required fw-semibold fs-6 mb-2"> General description Goods</label>
-                        <textarea class="form-control form-control-solid-bg mb-2"
-                                  name="general_description_goods" style="min-height: 30px"
-                                  placeholder="General description Goods">@isset($outbound){{ $outbound->general_description_goods }}@endisset</textarea>
+                        <textarea class="form-control form-control-solid-bg mb-2" name="general_description_goods" style="min-height: 30px" placeholder="General description Goods">@isset($outbound){{ $outbound->general_description_goods }}@endisset</textarea>
                     </div>
                     <div class="col-md-6 mb-7">
                         <label class="fw-semibold fs-6 mb-2"> Notes</label>
-                        <textarea class="form-control form-control-solid-bg mb-2" name="notes" style="min-height: 30px"
-                                  placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
+                        <textarea class="form-control form-control-solid-bg mb-2" name="notes" style="min-height: 30px" placeholder="Notes">@isset($outbound){{ $outbound->notes }}@endisset</textarea>
                     </div>
 
                     @isset($outbound)

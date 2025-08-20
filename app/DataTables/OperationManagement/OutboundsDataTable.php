@@ -44,6 +44,12 @@ class OutboundsDataTable extends DataTable
             ->editColumn('net_weight', content: function (Outbound $model) {
                 return number_format($model->net_weight, '2');
             })
+            ->editColumn('gross_weight', content: function (Outbound $model) {
+                return number_format($model->gross_weight, '2');
+            })
+            ->editColumn('total_cost', content: function (Outbound $model) {
+                return number_format($model->total_cost, '2');
+            })
             ->editColumn('bound_number', content: function (Outbound $model) {
                 return '<a href="' . route('operation-management.enter_requests.show', $model->inbound_id) . '">' . $model->bound_number . '</a>';
             })
@@ -137,6 +143,8 @@ class OutboundsDataTable extends DataTable
                 ->addClass('text-center')
                 ->visible(!Auth::user()->hasRole('customer')),
             Column::make('net_weight')->title('Net weight')->addClass('text-center'),
+            Column::make('gross_weight')->title('Gross Weight')->addClass('text-center'),
+            Column::make('total_cost')->title('Total Cost')->addClass('text-center'),
             Column::make('cpm_result')->title('CPM')->addClass('text-center'),
             Column::make('status_name')->title('Stage')
                 ->name('outbound_statuses.name')
