@@ -1,8 +1,8 @@
 @php
     $total_qty = $warehouseItems->sum('quantity');
     $total_other_qty = $warehouseItems->sum('other_quantity');
-    $total_remaining_qty = $warehouseItems->sum(fn($item) => $item->SumOutboundItems() - $item->quantity);
-    $total_remaining_other_qty = $warehouseItems->sum(fn($item) => $item->SumOutboundItemsOtherQuantity() - $item->other_quantity);
+    $total_remaining_qty = $warehouseItems->sum(fn($item) =>  $item->quantity - $item->SumOutboundItems());
+    $total_remaining_other_qty = $warehouseItems->sum(fn($item) => $item->other_quantity - $item->SumOutboundItemsOtherQuantity());
     $total_custom_value = $warehouseItems->sum('custom_value');
     $total_gross_weight = $warehouseItems->sum('gross_weight');
     $total_net_weight = $warehouseItems->sum('net_weight');
@@ -34,9 +34,9 @@
                         <td class="fs-8">{{$item?->product->name}}</td>
                         <td>{{$item?->product?->UnitMeasure?->name}}</td>
                         <td>{{$item?->quantity}}</td>
-                        <td>{{$item?->SumOutboundItems() - $item?->quantity}}</td>
-                        <td class="text-muted">{{$item?->other_quantity ?? 0}}</td>
-                        <td class="text-muted">{{$item?->SumOutboundItemsOtherQuantity() - $item?->other_quantity}}</td>
+                        <td>{{$item?->quantity - $item?->SumOutboundItems()}}</td>
+                        <td>{{$item?->other_quantity ?? 0}}</td>
+                        <td>{{$item?->other_quantity -$item?->SumOutboundItemsOtherQuantity()}}</td>
                         <td>{{$item?->custom_tariff_code}}</td>
                         <td>{{$item?->custom_value}}</td>
                         <td>{{$item?->gross_weight}}</td>
