@@ -22,7 +22,7 @@ class CustomerRequest extends FormRequest
         if ($this->routeIs('customers.update')) {
             $rules = [
                 'customer_name' => "required|max:255|unique:App\Models\Customer,name,{$this->customer->id}",
-                'email' => "required|email|max:255|unique:App\Models\User,email,{$this->customer->id}",
+                'email' => "required|email|max:255|unique:App\Models\User,email,{$this->user()->id}",
                 'phone' => "required|max:255|unique:App\Models\Customer,phone,{$this->customer->id}",
                 'company_name' => 'nullable|max:255',
                 'national_number' => "nullable|numeric|unique:App\Models\Customer,national_number,{$this->customer->id}",

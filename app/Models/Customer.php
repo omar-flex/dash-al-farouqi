@@ -35,4 +35,9 @@ class Customer extends Model
             ->get();
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

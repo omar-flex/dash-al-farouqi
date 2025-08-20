@@ -58,12 +58,11 @@ class CustomerController extends Controller
 
         $user = User::create($user);
         $data['user_id'] = $user->id;
+        $user->syncRoles('customer');
 
         $data['name'] = $request->customer_name;
 
-        $customer = Customer::create($data + ['email' => Str::lower($request->email), 'password' => Hash::make($request->password), 'email_verified_at' => now()->toDateTimeString()]);
-
-        $customer->assignRole('customer');
+        Customer::create($data + ['email' => Str::lower($request->email), 'password' => Hash::make($request->password), 'email_verified_at' => now()->toDateTimeString()]);
 
         if (request('enter_request'))
             return Customer::get(['id', 'name']);
