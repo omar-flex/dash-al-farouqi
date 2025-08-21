@@ -38,8 +38,8 @@ class OutboundsDataTable extends DataTable
             ->editColumn('product_name', function ($row) {
                 return $row->product_name ?? '—';
             })
-            ->editColumn('created_at', function (Outbound $model) {
-                return $model->created_at->format('d M Y, h:i a');
+            ->editColumn('date', function (Outbound $model) {
+                return $model->date->format('d/m/Y');
             })
             ->editColumn('net_weight', content: function (Outbound $model) {
                 return number_format($model->net_weight, '2');
@@ -150,7 +150,7 @@ class OutboundsDataTable extends DataTable
                 ->name('outbound_statuses.name')
                 ->addClass('text-center')
                 ->visible(!Auth::user()->hasRole('customer')),
-            Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('date')->title('Date')->addClass('text-nowrap'),
             Column::make('product_names')->name('products.name')->addClass('text-nowrap')->visible(false),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')

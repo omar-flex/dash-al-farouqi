@@ -43,8 +43,8 @@ class EnterRequestsDataTable extends DataTable
             ->editColumn('invoicing_date', function (EnterRequest $model) {
                 return $model->invoicing_date ? Carbon::parse($model->invoicing_date)->format('d M Y') : '---';
             })
-            ->editColumn('created_at', function (EnterRequest $model) {
-                return $model->created_at->format('d M Y');
+            ->editColumn('date', function (EnterRequest $model) {
+                return $model->date->format('d/m/Y');
             })
             ->editColumn('total_cost', content: function (EnterRequest $model) {
                 return number_format($model->total_cost, '2');
@@ -174,8 +174,8 @@ class EnterRequestsDataTable extends DataTable
                 'class' => 'text-center',
                 'visible' => !Auth::user()->hasRole('customer')
             ]),
-            $this->configureColumn('created_at', [
-                'title' => 'Created At',
+            $this->configureColumn('date', [
+                'title' => 'Date',
                 'class' => 'text-nowrap'
             ])
         ];
