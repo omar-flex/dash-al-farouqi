@@ -6,6 +6,7 @@ namespace App\DataTables\OperationManagement;
 use App\Actions\GetThemeType;
 use App\Models\Outbound;
 use App\Models\OutboundStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,7 @@ class OutboundsDataTable extends DataTable
                 return $row->product_name ?? '—';
             })
             ->editColumn('date', function (Outbound $model) {
-                return $model->date->format('d/m/Y');
+                return Carbon::createFromDate($model->date)->format('d/m/Y');
             })
             ->editColumn('net_weight', content: function (Outbound $model) {
                 return number_format($model->net_weight, '2');
