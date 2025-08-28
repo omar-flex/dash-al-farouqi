@@ -73,7 +73,9 @@ class OutboundsDataTable extends DataTable
      */
     public function query(Outbound $model): QueryBuilder
     {
-
+        $date = explode('to', request('date'));
+        $date_from = trim(Arr::get($date, 0));
+        $date_to = trim(Arr::get($date, 1));
         return $model->selectRaw('
         outbounds.*,
         enter_requests.bound_number,
@@ -104,6 +106,12 @@ class OutboundsDataTable extends DataTable
             })
             ->when(request('company_id'), function ($q) {
                 return $q->where('enter_requests.clearance_company_id', request('company_id'));
+            })
+            ->when($date_from, function ($query) use ($date_from) {
+                return $query->whereDate('outbounds.date', '>=', $date_from);
+            })
+            ->when($date_to, function ($query) use ($date_to) {
+                return $query->whereDate('outbounds.date', '<=', $date_to);
             })
             ->when(request('status_id'), function ($q) {
                 return $q->where('outbounds.status_id', request('status_id'));

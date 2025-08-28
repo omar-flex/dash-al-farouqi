@@ -13,7 +13,7 @@
                 <div class="d-flex align-items-center position-relative my-1">
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
                     <input type="text" data-kt-user-table-filter="search"
-                           class="form-control form-control-solid w-250px ps-13"
+                           class="form-control form-control-solid form-control-sm w-250px ps-13"
                            placeholder="Search {{$payload->sub_title}} Or Products"
                            id="mySearchInput"/>
                 </div>
@@ -21,7 +21,7 @@
             @if(!Auth::user()->hasRole('customer'))
                 <div class="card-toolbar min-w-900px">
                     <div class="d-flex justify-content-end gap-3 w-100" data-kt-user-table-toolbar="base">
-                        <div class="w-25">
+                        <div class="w-200px">
                             <select class="form-select form-select-solid form-select-sm mb-2 " id="company_filter"
                                     data-control="select2" data-placeholder="Select an Company" data-allow-clear="true">
                                 <option></option>
@@ -30,7 +30,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="w-25">
+                        <div class="w-200px">
                             <select class="form-select form-select-solid form-select-sm mb-2 " id="customer_filter"
                                     data-control="select2" data-placeholder="Select an Customer"
                                     data-allow-clear="true">
@@ -40,7 +40,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="w-25">
+                        <div class="w-200px">
                             <select class="form-select form-select-solid form-select-sm mb-2 " id="status_filter"
                                     data-control="select2" data-placeholder="Select an Status" data-allow-clear="true">
                                 <option></option>
@@ -49,9 +49,12 @@
                                 @endforeach
                             </select>
                         </div>
-
+                        <div class="w-250px">
+                            <input type="date" class="form-control form-control-sm form-control-solid" id="date"
+                                   placeholder="Date">
+                        </div>
                         @can('add_'.$payload->resource)
-                            <div class="w-15">
+                            <div class="w-150px">
                                 <a class="btn btn-light-primary btn-sm" id="add">
                                     {!! getIcon('plus', 'fs-2', '', 'i') !!}
                                     Add {{$payload->sub_title}}
@@ -75,18 +78,28 @@
     @push('scripts')
         {{ $dataTable->scripts() }}
         <script>
+            $(document).ready(function () {
+                flatpickr("#date", {
+                    mode: "range",
+                });
+            });
 
-            $('#status_filter,#customer_filter,#company_filter').select2().on('change', function () {
+            $('#status_filter,#customer_filter,#company_filter').select2();
+
+            $('#status_filter,#customer_filter,#company_filter,#date').on('change', function () {
                 let query = '?';
                 let status_id = $('#status_filter').val();
                 let customer_id = $('#customer_filter').val();
                 let company_id = $('#company_filter').val();
+                let date = $('#date').val();
                 if (status_id)
                     query += 'status_id=' + status_id;
                 if (customer_id)
                     query += '&customer_id=' + customer_id;
                 if (company_id)
                     query += '&company_id=' + company_id;
+                if (date)
+                    query += '&date=' + date;
                 window.LaravelDataTables['{{$payload->tableId}}'].ajax.url(query).load();
             });
 
