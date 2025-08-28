@@ -77,6 +77,10 @@ class EnterRequestsDataTable extends DataTable
      */
     public function query(EnterRequest $model): QueryBuilder
     {
+
+        $date = explode('to', request('date'));
+        $date_from = trim(Arr::get($date, 0));
+        $date_to = trim(Arr::get($date, 1));
         return $model->selectRaw('enter_requests.*,
                                         enter_request_statuses.name as status_name,
                                         customers.name as customer_name,
@@ -99,9 +103,16 @@ class EnterRequestsDataTable extends DataTable
             ->when(request('company_id'), function ($q) {
                 return $q->where('clearance_company_id', request('company_id'));
             })
+            ->when($date_from, function ($query) use ($date_from) {
+                return $query->whereDate('date', '>=', $date_from);
+            })
+            ->when($date_to, function ($query) use ($date_to) {
+                return $query->whereDate('date', '<=', $date_to);
+            })
             ->when(request('status_id'), function ($q) {
                 return $q->where('status_id', request('status_id'));
-            })->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
+            })
+            ->when(Arr::get(request('order'), '0.column') == 0, function ($q) {
                 return $q->latest();
             })->newQuery();
     }
@@ -150,7 +161,7 @@ class EnterRequestsDataTable extends DataTable
                 'name' => 'customers.name',
                 'title' => 'Customer Name',
                 'class' => 'text-center',
-                 'visible' => !Auth::user()->hasRole('customer')
+                'visible' => !Auth::user()->hasRole('customer')
             ]),
             $this->configureColumn('net_weight', [
                 'title' => 'Net weight',
