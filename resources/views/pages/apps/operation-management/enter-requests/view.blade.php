@@ -43,8 +43,7 @@
                                tabindex="-1">
                                 <i class="fa-sharp-duotone fa-solid fa-ballot-check fa-lg"></i>
                                 <strong>( {{number_format($enterRequest?->WarehouseItems?->count() )}} )</strong>
-                                Manifest
-                                Validation
+                                Manifest Validation
                             </a>
                         </li>
                     @endif
@@ -83,7 +82,7 @@
                         <div
                             class="tab-pane fade @if( in_array($enterRequest->status_id,[ \App\Models\EnterRequestStatus::VALIDATION,\App\Models\EnterRequestStatus::AUTHORIZATION,\App\Models\EnterRequestStatus::NEED_REVISION,\App\Models\EnterRequestStatus::APPROVED])) active show @endif "
                             id="validation_tab" role="tabpanel">
-                            @include('pages.apps.operation-management.enter-requests.customer.product_items')
+                            @include('pages.apps.operation-management.enter-requests.sections.validations')
                         </div>
                     @endif
                 @else
