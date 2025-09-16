@@ -90,6 +90,15 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('/user-management/roles', RoleManagementController::class);
             Route::resource('/user-management/permissions', PermissionManagementController::class);
         });
+
+    Route::get('/check-vars', function () {
+        return [
+            'max_input_vars' => ini_get('max_input_vars'),
+            'post_max_size' => ini_get('post_max_size'),
+            'upload_max_filesize' => ini_get('upload_max_filesize'),
+        ];
+    });
+
 });
 
 Route::get('/error', function () {

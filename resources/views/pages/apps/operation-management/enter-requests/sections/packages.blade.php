@@ -235,7 +235,7 @@
                                 return false;
                             }
                             let form = $("#formProducts");
-                            let formData = new FormData(form[0]);
+                            let formData = form.serialize();
                             if (clickedButton) {
                                 formData.append('button_clicked', clickedButton);
                             }
