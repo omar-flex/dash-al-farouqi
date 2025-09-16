@@ -42,7 +42,8 @@
     </div>
 
     <div style="text-align: center; margin-bottom: 20px;">
-        <p><strong>الفترة:</strong> من {{ \Carbon\Carbon::parse($fromDate)->format('d/m/Y') }} إلى {{ \Carbon\Carbon::parse($toDate)->format('d/m/Y') }}</p>
+        <p><strong>الفترة:</strong> من {{ \Carbon\Carbon::parse($fromDate)->format('d/m/Y') }}
+            إلى {{ \Carbon\Carbon::parse($toDate)->format('d/m/Y') }}</p>
     </div>
 
     <table class="table table-bordered mt-3 text-center">
@@ -53,6 +54,7 @@
             <th>ﻭﺻﻒ ﺍﻟﺒﻀﺎﻋﺔ</th>
             <th>ﺍﻟﻜﻤﻴﺔ</th>
             <th>ﺍﻟﻤﺘﺒﻘﻲ</th>
+            <th>القيمة الجمركية</th>
             <th>ﺕ.ﺇﺩﺧﺎﻝ</th>
             <th>ﺕ.ﺇﺧﺮﺍﺝ</th>
             <th>ﺕ.ﺇﻧﺘﻬﺎﺀ</th>
@@ -74,7 +76,7 @@
 
             @if($validInbounds->count() > 0)
                 <tr>
-                    <td colspan="12" style="background: #0B0C10; color: #fff; font-size: 20px">
+                    <td colspan="13" style="background: #0B0C10; color: #fff; font-size: 20px">
                         {{$customer->name}} - {{$customer->tax_number}}
                     </td>
                 </tr>
@@ -82,15 +84,20 @@
                     $count = 1;
                     $totalQuantity = 0;
                     $totalRemaining = 0;
+                    $totalCustomValue = 0;
                 @endphp
 
                 @foreach($validInbounds as $inbound)
                     @foreach($inbound->WarehouseItems as $item)
-                        @php $remaining = $item->quantity - $item->SumOutboundItems(); @endphp
+                        @php
+                            $remaining = $item->quantity - $item->SumOutboundItems();
+                            $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue()
+                        @endphp
                         @if($remaining > 0)
                             @php
                                 $totalQuantity += $item->quantity;
                                 $totalRemaining += $remaining;
+                                $totalCustomValue += $remaining_custom_value;
                             @endphp
                         @endif
                     @endforeach
@@ -101,7 +108,8 @@
                     <td colspan="3"></td>
                     <td class="text-danger">{{ $totalQuantity }}</td>
                     <td class="text-danger">{{ $totalRemaining }}</td>
-                    <td colspan="7"></td>
+                    <td class="text-danger"> {{ number_format($totalCustomValue ,2)}}</td>
+                    <td colspan="6"></td>
                 </tr>
 
                 @foreach($validInbounds as $inbound)
@@ -110,15 +118,18 @@
                             @php
                                 $loopClass = $count % 2 == 0 ? 'odd' : '';
                                 $remaining = $item->quantity - $item->SumOutboundItems();
+                                $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue()
                             @endphp
                             <tr>
                                 <td class="{{ $loopClass }}">{{$count}}</td>
                                 <td class="{{ $loopClass }}">{{ $item->EnterRequest->bound_number }}</td>
                                 <td class="{{ $loopClass }}" style="font-size:10px" width="400px">
-                                    {{ $item->Product->name }} -  {{ $item->Product->barcode }} -  {{ $item->batch_number }}
+                                    {{ $item->Product->name }} - {{ $item->Product->barcode }}
+                                    - {{ $item->batch_number }}
                                 </td>
                                 <td class="{{ $loopClass }}">{{ $item->quantity }}</td>
                                 <td class="{{ $loopClass }}">{{$remaining}}</td>
+                                <td class="{{ $loopClass }}">{{number_format($remaining_custom_value,2)}}</td>
                                 <td class="{{ $loopClass }}">
                                     {{ \Carbon\Carbon::parse($item->EnterRequest->date)->format('d/m/Y') }}
                                 </td>
@@ -143,12 +154,11 @@
                     <td colspan="3"></td>
                     <td class="text-danger">{{ $totalQuantity }}</td>
                     <td class="text-danger">{{ $totalRemaining }}</td>
-                    <td colspan="7"></td>
+                    <td class="text-danger"> {{ number_format($totalCustomValue ,2)}}</td>
+                    <td colspan="6"></td>
                 </tr>
             @endif
         @endforeach
-
-
 
 
         </tbody>
