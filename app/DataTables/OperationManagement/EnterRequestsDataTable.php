@@ -44,7 +44,7 @@ class EnterRequestsDataTable extends DataTable
                 return $model->invoicing_date ? Carbon::parse($model->invoicing_date)->format('d M Y') : '---';
             })
             ->editColumn('date', function (EnterRequest $model) {
-                return Carbon::createFromDate($model->date)->format('d/m/Y');
+                return $model->date ? Carbon::createFromDate($model->date)->format('d M Y') : '---';
             })
             ->editColumn('total_cost', content: function (EnterRequest $model) {
                 return number_format($model->total_cost, '2');

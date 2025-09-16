@@ -40,7 +40,7 @@ class OutboundsDataTable extends DataTable
                 return $row->product_name ?? '—';
             })
             ->editColumn('date', function (Outbound $model) {
-                return Carbon::createFromDate($model->date)->format('d/m/Y');
+                return $model->date ? Carbon::createFromDate($model->date)->format('d M Y') : '---';
             })
             ->editColumn('net_weight', content: function (Outbound $model) {
                 return number_format($model->net_weight, '2');
