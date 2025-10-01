@@ -13,6 +13,7 @@ use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
+use App\Models\EnterRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -103,6 +104,16 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/error', function () {
     abort(500);
+    $outbounds = EnterRequest::where('customer_id', 19)
+        ->join('outbounds', 'outbounds.enter_request_id', '=', 'enter_requests.id')
+        ->join('outbound_warehouse_items', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
+        ->join('warehouse_items', 'warehouse_items.id', '=', 'outbound_warehouse_items.warehouse_item_id')
+        ->join('products', 'products.id', '=', 'warehouse_items.product_id')
+        ->whereBetween('outbounds.date', ['2025-09-01', '2025-09-30'])
+        ->select('outbounds.outbound_number', 'outbounds.date', 'products.name')
+        ->toRawSql();
+
+    dd($outbounds);
 });
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);

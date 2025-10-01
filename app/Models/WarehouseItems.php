@@ -48,6 +48,18 @@ class WarehouseItems extends Model
         return 0;
     }
 
+    public function SumOutboundGrossWeight()
+    {
+        $id = Arr::get($this->attributes, 'id');
+        if ($id) {
+            return OutboundWarehouseItems::where('warehouse_item_id', $id)
+                ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
+                ->whereIn('outbounds.status_id', [OutboundStatus::VALIDATION, OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->sum('outbound_warehouse_items.gross_weight');
+        }
+        return 0;
+    }
+
     public function SumOutboundItemsOtherQuantity()
     {
         $id = Arr::get($this->attributes, 'id');

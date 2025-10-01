@@ -55,6 +55,7 @@
             <th>ﺍﻟﻜﻤﻴﺔ</th>
             <th>ﺍﻟﻤﺘﺒﻘﻲ</th>
             <th>القيمة الجمركية</th>
+            <th>الوزن الإجمالي</th>
             <th>ﺕ.ﺇﺩﺧﺎﻝ</th>
             <th>ﺕ.ﺇﺧﺮﺍﺝ</th>
             <th>ﺕ.ﺇﻧﺘﻬﺎﺀ</th>
@@ -76,7 +77,7 @@
 
             @if($validInbounds->count() > 0)
                 <tr>
-                    <td colspan="13" style="background: #0B0C10; color: #fff; font-size: 20px">
+                    <td colspan="14" style="background: #0B0C10; color: #fff; font-size: 20px">
                         {{$customer->name}} - {{$customer->tax_number}}
                     </td>
                 </tr>
@@ -85,19 +86,22 @@
                     $totalQuantity = 0;
                     $totalRemaining = 0;
                     $totalCustomValue = 0;
+                    $totalGrossWeight = 0;
                 @endphp
 
                 @foreach($validInbounds as $inbound)
                     @foreach($inbound->WarehouseItems as $item)
                         @php
                             $remaining = $item->quantity - $item->SumOutboundItems();
-                            $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue()
+                            $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue();
+                            $remaining_cross_weight =  $item->gross_weight - $item->SumOutboundGrossWeight()
                         @endphp
                         @if($remaining > 0)
                             @php
                                 $totalQuantity += $item->quantity;
                                 $totalRemaining += $remaining;
                                 $totalCustomValue += $remaining_custom_value;
+                                $totalGrossWeight += $remaining_cross_weight;
                             @endphp
                         @endif
                     @endforeach
@@ -109,6 +113,7 @@
                     <td class="text-danger">{{ $totalQuantity }}</td>
                     <td class="text-danger">{{ $totalRemaining }}</td>
                     <td class="text-danger"> {{ number_format($totalCustomValue ,2)}}</td>
+                    <td class="text-danger"> {{ number_format($totalGrossWeight ,2)}}</td>
                     <td colspan="6"></td>
                 </tr>
 
@@ -118,7 +123,8 @@
                             @php
                                 $loopClass = $count % 2 == 0 ? 'odd' : '';
                                 $remaining = $item->quantity - $item->SumOutboundItems();
-                                $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue()
+                                $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue();
+                                $remaining_cross_weight =  $item->gross_weight - $item->SumOutboundGrossWeight();
                             @endphp
                             <tr>
                                 <td class="{{ $loopClass }}">{{$count}}</td>
@@ -130,6 +136,7 @@
                                 <td class="{{ $loopClass }}">{{ $item->quantity }}</td>
                                 <td class="{{ $loopClass }}">{{$remaining}}</td>
                                 <td class="{{ $loopClass }}">{{number_format($remaining_custom_value,2)}}</td>
+                                <td class="{{ $loopClass }}">{{number_format($remaining_cross_weight,2)}}</td>
                                 <td class="{{ $loopClass }}">
                                     {{ \Carbon\Carbon::parse($item->EnterRequest->date)->format('d/m/Y') }}
                                 </td>
