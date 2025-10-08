@@ -32,6 +32,7 @@ class CheckRemainingQuantity extends Command
             $items->update([
                 'remaining_quantity' => max($sum_remaining_quantity, 0),
                 'remaining_other_quantity' => max($sum_remaining_quantity_other_quantity, 0),
+                'is_status' => max($sum_remaining_quantity, 0) > 0 ? 1 : 0,
             ]);
         });
     }
