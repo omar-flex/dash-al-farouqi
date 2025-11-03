@@ -1,6 +1,13 @@
-<!--begin::Footer-->
-{{--<div class="app-sidebar-footer flex-column-auto pt-2 pb-6 px-6" id="kt_app_sidebar_footer">
-	<a href="https://1.envato.market/EA4JP" target="_blank" class="btn btn-flex flex-center btn-custom btn-primary overflow-hidden text-nowrap px-0 h-40px w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="Purchase Metronic on ThemeForest">
-	<span class="btn-label">Purchase Metronic</span>{!! getIcon('document', 'btn-icon fs-2 m-0') !!}</a>
-</div>--}}
-<!--end::Footer-->
+@hasrole('administrator')
+<div class="app-sidebar-footer flex-column-auto pt-2 pb-6 px-6" id="kt_app_sidebar_footer">
+    <a class="btn btn-flex flex-center btn-custom btn-primary overflow-hidden text-nowrap px-0 h-40px w-100"
+       id="check-remaining-quantity"
+       data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click"
+       title="Check Remaining Quantity">
+        <i class="fa-sharp-duotone fa-solid fa-gears"></i>
+        <span class="btn-label">Check Remaining Quantity</span>
+    </a>
+</div>
+@endhasrole
+
+

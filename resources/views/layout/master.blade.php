@@ -26,7 +26,7 @@
     @endforeach
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.css">
     <style>
-        .iti{
+        .iti {
             width: 100%;
         }
     </style>
@@ -105,6 +105,58 @@
                 confirmButtonText: confirmButtonText,
                 customClass: {
                     confirmButton: 'btn btn-primary'
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#check-remaining-quantity').on('click', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This will trigger the process to check remaining quantities.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Please wait while we check the quantities.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('check.remaining.quantity') }}",
+                        method: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Done!',
+                                text: response.message,
+                                confirmButtonText: 'OK'
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Something went wrong while performing the operation.',
+                                confirmButtonText: 'OK'
+                            });
+                            console.error(xhr.responseText);
+                        }
+                    });
                 }
             });
         });

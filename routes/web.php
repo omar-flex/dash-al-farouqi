@@ -28,6 +28,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('/check-remaining-quantity', function () {
+        Artisan::call('app:check-remaining-quantity');
+        return response()->json(['message' => 'Remaining quantities updated successfully!']);
+    })->name('check.remaining.quantity');
+
     Route::get('/', [DashboardController::class, 'index']);
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
