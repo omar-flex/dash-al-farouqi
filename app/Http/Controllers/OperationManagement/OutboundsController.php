@@ -32,7 +32,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
-#[AllowDynamicProperties] class  OutboundsController extends Controller
+#[AllowDynamicProperties]
+class  OutboundsController extends Controller
 {
 
     public function __construct()
@@ -88,7 +89,8 @@ use Illuminate\Support\Str;
             ->unique();
 
         foreach ($outbound->OutboundWarehouseItems as $item) {
-            $product_ids->push($item->warehouseItem->product_id);
+            if ($item->warehouse_item_id)
+                $product_ids->push($item->warehouseItem->product_id);
         }
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
