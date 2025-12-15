@@ -224,6 +224,7 @@ class  OutboundsController extends Controller
         }
         foreach ($outbound->OutboundWarehouseItems as $item) {
             $this->modifyRemainingUponDeletion($item);
+            $item->delete();
         }
         $outbound->delete();
     }
