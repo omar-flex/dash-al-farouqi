@@ -85,17 +85,22 @@ class  OutboundsController extends Controller
         $product_ids = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
             ->when($outbound->status_id == OutboundStatus::WH_RELEASE_PRODUCT, function ($q) {
                 return $q->where('is_status', 1);
-            })->pluck('product_id')
-            ->unique();
+            })->pluck('product_id');
 
-        foreach ($outbound->OutboundWarehouseItems as $item) {
-            if ($item->warehouse_item_id)
-                $product_ids->push($item->warehouseItem->product_id);
-        }
+        $outboundProductIds = OutboundWarehouseItems::where('outbound_id', $outbound->id)
+            ->whereNotNull('warehouse_item_id')
+            ->join('warehouse_items', 'warehouse_items.id', '=', 'outbound_warehouse_items.warehouse_item_id')
+            ->where('warehouse_items.enter_request_id', $outbound->enter_request_id)
+            ->pluck('warehouse_items.product_id');
+
+        $product_ids = $product_ids->merge($outboundProductIds)->unique()->values();
 
         $products = Product::whereIntegerInRaw('products.id', $product_ids)
             ->leftJoin('unit_measures', 'products.unit_measure_id', '=', 'unit_measures.id')
-            ->leftJoin('warehouse_items', 'products.id', '=', 'warehouse_items.product_id')
+            ->leftJoin('warehouse_items', function ($join) use ($outbound) {
+                $join->on('products.id', '=', 'warehouse_items.product_id')
+                    ->where('warehouse_items.enter_request_id', '=', $outbound->enter_request_id);
+            })
             ->select('products.id',
                 'products.name',
                 'products.barcode',
