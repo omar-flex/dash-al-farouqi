@@ -327,25 +327,41 @@ class  OutboundsController extends Controller
     public function product($outbound_id, $product_id)
     {
         $outbound = Outbound::firstWhere('id', $outbound_id);
-        if ($outbound) {
-            $item = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
-                ->with('product', 'product.UnitMeasure')
-                ->where('product_id', $product_id)
-                ->when(request('batch_number'), function ($query) {
-                    return $query->where('batch_number', '=', request('batch_number'));
-                })->first(['id', 'batch_number', 'product_id', 'location_line_id',
-                    'remaining_quantity as quantity',
-                    'remaining_other_quantity as other_quantity',
-                    'level', 'pallet']);
-
-            $item->location = $item->locationLine->location->warehouse->code . '-' . $item->locationLine->location->code . '-' . $item->locationLine->code;
-            if ($item->level)
-                $item->location = $item->location . '-' . $item->level;
-            if ($item->pallet)
-                $item->location = $item->location . '-' . $item->pallet;
-            return $item;
+        if (!$outbound) {
+            return response()->json(['message' => 'Outbound not found'], 404);
         }
-        return null;
+
+        $batchNumber = request('batch_number');
+        if (in_array($batchNumber, [null, '', 'undefined', 'null'], true)) {
+            $batchNumber = null;
+        }
+
+        $item = WarehouseItems::where('enter_request_id', $outbound->enter_request_id)
+            ->with('product', 'product.UnitMeasure', 'locationLine.location.warehouse')
+            ->where('product_id', $product_id)
+            ->when($batchNumber, function ($query) use ($batchNumber) {
+                return $query->where('batch_number', '=', $batchNumber);
+            })->first(['id', 'batch_number', 'product_id', 'location_line_id',
+                'remaining_quantity as quantity',
+                'remaining_other_quantity as other_quantity',
+                'level', 'pallet']);
+
+        if (!$item) {
+            return response()->json(['message' => 'Warehouse item not found'], 404);
+        }
+
+        $locationParts = [
+            $item?->locationLine?->location?->warehouse?->code,
+            $item?->locationLine?->location?->code,
+            $item?->locationLine?->code,
+            $item?->level,
+            $item?->pallet,
+        ];
+        $item->location = implode('-', array_filter($locationParts, function ($value) {
+            return $value !== null && $value !== '';
+        }));
+
+        return $item;
     }
 
     public function products($outbound_id, OutboundProductsRequest $request)
