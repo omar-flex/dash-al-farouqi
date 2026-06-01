@@ -155,8 +155,8 @@ class  OutboundsController extends Controller
 
         $outbound->update(['cpm_result' => $cpm_result]);
 
-        if ($request->has('files')) {
-            $this->filesCreate($outbound);
+        if ($request->hasFile('files')) {
+            $this->filesCreate($outbound, $request);
         }
 
         return response()->json(['message' => $message, 'status' => 200]);
@@ -208,8 +208,8 @@ class  OutboundsController extends Controller
 
         $outbound->update(['cpm_result' => $cpm_result]);
 
-        if ($request->has('files')) {
-            $this->filesCreate($outbound);
+        if ($request->hasFile('files')) {
+            $this->filesCreate($outbound, $request);
         }
 
         return response()->json(['message' => 'Update Successfully', 'status' => 200]);
@@ -244,22 +244,25 @@ class  OutboundsController extends Controller
         ]);
     }
 
-    public function filesCreate($outbound)
+    public function filesCreate($outbound, OutboundRequest $request)
     {
-        if (request('files')) {
-            foreach (request('files') as $file) {
-                $extension = $file->getClientOriginalExtension();
-                $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-                $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
-                $path = Storage::putFileAs('Outbounds', $file, $uniqueName);
-                OutboundFile::create([
-                    'filename' => Str::replace('/', '-', $outbound->outbound_number),
-                    'path' => $path,
-                    'extension' => $extension,
-                    'outbound_id' => $outbound->id,
-                    'user_id' => Auth::id(),
-                ]);
+        foreach ($request->file('files', []) as $file) {
+            $extension = $file->getClientOriginalExtension();
+            $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
+            $path = Storage::disk('public')->putFileAs('Outbounds', $file, $uniqueName);
+
+            if ($path === false) {
+                throw new \RuntimeException('Failed to store outbound file.');
             }
+
+            OutboundFile::create([
+                'filename' => Str::replace('/', '-', $outbound->outbound_number),
+                'path' => $path,
+                'extension' => $extension,
+                'outbound_id' => $outbound->id,
+                'user_id' => Auth::id(),
+            ]);
         }
     }
 

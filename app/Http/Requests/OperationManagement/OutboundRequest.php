@@ -26,13 +26,14 @@ class OutboundRequest extends FormRequest
             'total_cost' => 'required',
             'gross_weight' => 'required|numeric',
             'net_weight' => 'required|numeric',
-            'files' => 'required|max:10240',
+            'files' => 'required|array|max:10',
+            'files.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,gif,webp',
             'notes' => 'nullable|string',
         ];
 
         if ($this->routeIs('operation-management.outbounds.update')) {
             if ($this?->outbound?->files()?->count() > 0) {
-                $rules["files"] = "nullable";
+                $rules['files'] = 'nullable|array|max:10';
             }
         }
         return $rules;
