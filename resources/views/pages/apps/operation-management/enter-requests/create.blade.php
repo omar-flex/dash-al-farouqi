@@ -310,7 +310,6 @@
 
                         @endif
                         <div class="fv-row mb-2">
-                            <input type="hidden" name="files">
                             <div class="dropzone" id="dropzone">
                                 <div class="dz-message needsclick">
                                     <i class="ki-duotone ki-file-up text-primary fs-3x">
@@ -363,5 +362,4 @@
     </form>
 
     @include('pages.apps.operation-management.enter-requests.createJs')
-
 

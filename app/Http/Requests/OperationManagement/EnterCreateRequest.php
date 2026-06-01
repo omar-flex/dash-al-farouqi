@@ -35,7 +35,8 @@ class EnterCreateRequest extends FormRequest
             'net_weight' => 'required|numeric',
             'cpm' => 'required|numeric',
             'country_id' => 'nullable|exists:countries,id',
-            'files' => 'required|max:10240',
+            'files' => 'required|array|max:10',
+            'files.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,gif,webp',
             'notes' => 'nullable|string',
             'warehouse_id' => 'required|exists:warehouses,id',
             'clearance_company_id' => 'nullable|exists:clearance_companies,id',
@@ -46,7 +47,7 @@ class EnterCreateRequest extends FormRequest
                 $rules['quantity_car'] = 'nullable';
             }
             if ($this?->enter_request?->files()?->count() > 0) {
-                $rules['files'] = 'nullable';
+                $rules['files'] = 'nullable|array|max:10';
             }
             $rules['inbound_transfer'] = 'nullable|numeric';
         }
@@ -58,6 +59,7 @@ class EnterCreateRequest extends FormRequest
     {
         return [
             'manifest_bound_number.unique' => 'The combination of manifest bound number, manifest type number, customs entry center, and manifest year must be unique.',
+            'files.*.uploaded' => 'The selected file could not be uploaded. Please check the server upload size limit.',
         ];
     }
 }

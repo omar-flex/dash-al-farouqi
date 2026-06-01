@@ -131,8 +131,8 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
 
         $enterRequest->update($data);
 
-        if ($request->has('files')) {
-            $this->filesCreate($enterRequest);
+        if ($request->hasFile('files')) {
+            $this->filesCreate($enterRequest, $request);
         }
 
         return response()->json(['message' => $message, 'status' => 200]);
@@ -203,8 +203,8 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
 
         $enterRequest->update($data);
 
-        if ($request->has('files')) {
-            $this->filesCreate($enterRequest);
+        if ($request->hasFile('files')) {
+            $this->filesCreate($enterRequest, $request);
         }
 
         return response()->json(['message' => 'Update Successfully', 'enter_request_id' => $enterRequest->id, 'status' => 200]);
@@ -325,22 +325,25 @@ use phpseclib3\File\ASN1\Maps\UniqueIdentifier;
         return response()->json(['message' => 'Added or Update Validations item Successfully', 'status' => 200]);
     }
 
-    public function filesCreate($enterRequest)
+    public function filesCreate($enterRequest, EnterCreateRequest $request)
     {
-        if (request('files')) {
-            foreach (request('files') as $file) {
-                $extension = $file->getClientOriginalExtension();
-                $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-                $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
-                $path = Storage::putFileAs('Inbounds', $file, $uniqueName);
-                EnterRequestFile::create([
-                    'filename' => Str::replace('/', '-', $enterRequest->bound_number),
-                    'path' => $path,
-                    'extension' => $extension,
-                    'enter_request_id' => $enterRequest->id,
-                    'user_id' => Auth::id(),
-                ]);
+        foreach ($request->file('files', []) as $file) {
+            $extension = $file->getClientOriginalExtension();
+            $cleanName = preg_replace('/[^A-Za-z0-9\.\-_]/', '-', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $uniqueName = $cleanName . '-' . uniqid() . '.' . $extension;
+            $path = Storage::disk('public')->putFileAs('Inbounds', $file, $uniqueName);
+
+            if ($path === false) {
+                throw new \RuntimeException('Failed to store inbound file.');
             }
+
+            EnterRequestFile::create([
+                'filename' => Str::replace('/', '-', $enterRequest->bound_number),
+                'path' => $path,
+                'extension' => $extension,
+                'enter_request_id' => $enterRequest->id,
+                'user_id' => Auth::id(),
+            ]);
         }
     }
 
