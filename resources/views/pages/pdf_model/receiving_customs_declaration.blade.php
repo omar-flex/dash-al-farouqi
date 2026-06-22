@@ -90,7 +90,7 @@
             </div>
         </div>
         <div class="col-4 text-start" style="margin: auto">
-            <img src="{{asset('assets/media/logos/default-dark.png')}}" alt="Right Logo" class="img-fluid"
+            <img src="{{asset('assets/media/logos/default-dark-new.png')}}" alt="Right Logo" class="img-fluid"
                  style="max-width: 180px; max-height: 75px;">
         </div>
     </div>
