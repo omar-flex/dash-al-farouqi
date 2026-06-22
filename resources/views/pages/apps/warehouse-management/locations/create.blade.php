@@ -21,7 +21,7 @@
                         <label class="required fw-semibold fs-6 mb-2">Location Code</label>
                         <input type="text" name="code" class="form-control form-control-solid-bg mb-2"
                                autocomplete="off"
-                               placeholder="Warehouse Code"
+                               placeholder="Location Code"
                                @isset($location) value="{{ $location->code }}" @endisset>
                     </div>
                     <div class="col-md-6 mb-7">
