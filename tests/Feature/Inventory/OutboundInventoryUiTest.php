@@ -64,6 +64,22 @@ class OutboundInventoryUiTest extends TestCase
         $this->assertStringContainsString('text: String(message)', $scripts);
     }
 
+    public function test_dynamic_product_selects_are_initialized_only_by_the_local_repeater_script(): void
+    {
+        $html = $this->renderProducts(OutboundStatus::WH_RELEASE_PRODUCT, true);
+        $template = file_get_contents(resource_path(
+            'views/pages/apps/operation-management/outbounds/sections/products_items.blade.php'
+        ));
+        $scriptTemplate = file_get_contents(resource_path(
+            'views/pages/apps/operation-management/outbounds/sections/packages.blade.php'
+        ));
+
+        $this->assertStringContainsString('class="form-select form-select-solid-bg form-select-sm mb-2 warehouse-items"', $html);
+        $this->assertStringContainsString('class="form-select form-select-solid-bg form-select-sm mb-2 cars"', $html);
+        $this->assertStringNotContainsString('data-control="select2"', $template);
+        $this->assertStringContainsString('initProductSelects();', $scriptTemplate);
+    }
+
     public function test_car_controls_require_edit_permission_and_car_check_status(): void
     {
         foreach ([

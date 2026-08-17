@@ -346,6 +346,27 @@ class OutboundInventoryServiceTest extends TestCase
         $this->assertSame(OutboundStatus::CAR_CHECK, (int) $outbound->fresh()->status_id);
     }
 
+    public function test_cars_endpoint_returns_success_after_committing_the_car_step(): void
+    {
+        [$outbound, $car] = $this->outboundWithCar(quantityPackages: 10);
+        $outbound->update(['status_id' => OutboundStatus::CAR_CHECK]);
+
+        $request = Mockery::mock(CarsRequest::class);
+        $request->shouldReceive('validated')->once()->andReturn([
+            'numbers' => ['CAR-UPDATED'],
+            'seal_numbers' => [null],
+            'car_ids' => [$car->id],
+        ]);
+
+        $response = $this->app->make(OutboundsController::class)->cars($outbound->id, $request);
+        $payload = $response->getData(true);
+
+        $this->assertSame(200, $payload['status']);
+        $this->assertArrayNotHasKey('html', $payload);
+        $this->assertSame('CAR-UPDATED', $car->fresh()->number);
+        $this->assertSame(OutboundStatus::WH_RELEASE_PRODUCT, (int) $outbound->fresh()->status_id);
+    }
+
     public function test_cars_endpoint_cannot_regress_a_later_workflow_status(): void
     {
         [$outbound] = $this->outboundWithCar(quantityPackages: 10);
@@ -477,6 +498,7 @@ class OutboundInventoryServiceTest extends TestCase
             $table->id();
             $table->unsignedBigInteger('outbound_id')->nullable();
             $table->string('number')->nullable();
+            $table->string('seal_number')->nullable();
             $table->timestamps();
         });
 

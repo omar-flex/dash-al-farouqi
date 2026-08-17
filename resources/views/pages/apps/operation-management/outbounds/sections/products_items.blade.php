@@ -37,7 +37,6 @@
 
                 <div class="col-3 mb-2 search-wrapper">
                     <select data-field="warehouse_item_id"
-                            data-control="select2"
                             class="form-select form-select-solid-bg form-select-sm mb-2 warehouse-items"
                             data-placeholder="Product / batch" @disabled($disabled)>
                         <option></option>
@@ -111,7 +110,7 @@
                 </div>
 
                 <div class="col-md-2 mb-2">
-                    <select data-field="outbound_car_id" data-control="select2"
+                    <select data-field="outbound_car_id"
                             class="form-select form-select-solid-bg form-select-sm mb-2 cars"
                             data-placeholder="Car" @disabled($disabled)>
                         <option></option>

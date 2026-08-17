@@ -466,9 +466,11 @@ class OutboundsController extends Controller
             return $lockedOutbound->fresh('Cars');
         });
 
-        $cares_list = view('pages.apps.operation-management.outbounds.sections._cares-list', compact('outbound'))->render();
-
-        return response()->json(['message' => 'Added Cars Successfully', 'html' => $cares_list, 'status' => 200]);
+        // The client reloads the page after a successful save. Rendering the
+        // partial here used variables that only exist in the full page and
+        // could turn a committed car save into a 500 response, leaving the
+        // browser on the stale car-check screen.
+        return response()->json(['message' => 'Added Cars Successfully', 'status' => 200]);
     }
 
     public function products($outbound_id, OutboundProductsRequest $request)
