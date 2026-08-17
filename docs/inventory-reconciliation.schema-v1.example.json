@@ -1,0 +1,55 @@
+{
+    "schema_version": 1,
+    "reference": "signed-dispatch-example-2026-001",
+    "approved_by": "Inventory Review Committee",
+    "operations": [
+        {
+            "operation_id": "create-missing-movement-example-1",
+            "action": "create",
+            "reason": "Signed dispatch and vehicle sheet confirm eight packages left the warehouse.",
+            "expected": {
+                "warehouse_items": [
+                    {
+                        "id": 1001,
+                        "quantity": 80.0,
+                        "remaining_quantity": 80.0,
+                        "other_quantity": null,
+                        "remaining_other_quantity": null
+                    }
+                ],
+                "outbounds": [
+                    {
+                        "id": 2001,
+                        "quantity_packages": 20.0,
+                        "status_id": 7,
+                        "enter_request_id": 4001
+                    }
+                ],
+                "outbound_cars": [
+                    {
+                        "id": 3001,
+                        "outbound_id": 2001
+                    }
+                ],
+                "ledger": null
+            },
+            "after": {
+                "ledger": {
+                    "warehouse_item_id": 1001,
+                    "outbound_id": 2001,
+                    "outbound_car_id": 3001,
+                    "quantity": 8.0,
+                    "other_quantity": null,
+                    "location": "WH-A-L01-01"
+                }
+            }
+        }
+    ],
+    "outbound_updates": [
+        {
+            "id": 2001,
+            "expected_quantity_packages": 20.0,
+            "quantity_packages": 28.0
+        }
+    ]
+}

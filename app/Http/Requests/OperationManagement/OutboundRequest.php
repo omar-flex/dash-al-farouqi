@@ -4,7 +4,6 @@ namespace App\Http\Requests\OperationManagement;
 
 use App\Http\Requests\DefaultRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class OutboundRequest extends FormRequest
 {
@@ -18,14 +17,14 @@ class OutboundRequest extends FormRequest
             'manifest_type_number' => 'required|numeric',
             'customs_entry_center' => 'required|numeric',
             'manifest_year' => 'required|numeric',
-            'quantity_packages' => 'required|numeric',
+            'quantity_packages' => 'required|numeric|decimal:0,3|gte:0.001',
             'manifest_date' => 'required|date_format:Y-m-d',
             'date' => 'required|date_format:Y-m-d',
-            'quantity_car' => 'required|string|max:255',
+            'quantity_car' => 'required|integer|min:1',
             'general_description_goods' => 'required',
-            'total_cost' => 'required',
-            'gross_weight' => 'required|numeric',
-            'net_weight' => 'required|numeric',
+            'total_cost' => 'required|numeric|gte:0',
+            'gross_weight' => 'required|numeric|gte:0',
+            'net_weight' => 'required|numeric|gte:0',
             'files' => 'required|array|max:10',
             'files.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,gif,webp',
             'notes' => 'nullable|string',
@@ -36,6 +35,7 @@ class OutboundRequest extends FormRequest
                 $rules['files'] = 'nullable|array|max:10';
             }
         }
+
         return $rules;
     }
 }

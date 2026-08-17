@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\ManifestAuthorization;
 
-
 use AllowDynamicProperties;
 use App\DataTables\ManifestAuthorization\InboundsDataTable;
 use App\Http\Controllers\Controller;
@@ -14,12 +13,12 @@ use App\Models\EnterRequest;
 use App\Models\EnterRequestFile;
 use App\Models\EnterRequestStatus;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Validation\ValidationException;
 
 #[AllowDynamicProperties] class InboundsController extends Controller
 {
-
     public function __construct()
     {
         $this->formId = 'manifestAuthorizationInbound';
@@ -28,7 +27,7 @@ use Illuminate\Support\Facades\Storage;
 
     public function index(InboundsDataTable $dataTable)
     {
-        $payload = (object)[
+        $payload = (object) [
             'title' => 'Manifest Authorizations Inbounds',
             'sub_title' => 'Manifest Authorization Inbound',
             'tableId' => 'manifest_authorizations_inbounds_table',
@@ -43,7 +42,7 @@ use Illuminate\Support\Facades\Storage;
 
     public function edit(EnterRequest $inbound)
     {
-        $payload = (object)[
+        $payload = (object) [
             'title' => 'Manifest Authorizations Inbound',
             'formId' => $this->formId,
             'resource' => $this->resource,
@@ -59,33 +58,65 @@ use Illuminate\Support\Facades\Storage;
 
     public function update(ManifestAuthorizationsRequest $request, EnterRequest $inbound)
     {
-        if ($request->button_clicked == 'btn-delete') {
-            $count = $inbound->Outbounds->count();
-            if ($inbound->Outbounds->count() > 0)
-                return response()->json([
-                    'exception' => "Cannot Delete This Inbound Because It Has Outbound ($count)",
-                ], 403);
-            else {
-                $files = EnterRequestFile::where('enter_request_id', $inbound->id)->get();
-                foreach ($files as $file) {
-                    if (Storage::path($file->path)) {
-                        Storage::delete($file->path);
-                    }
-                    $file->delete();
-                }
-                $inbound->delete();
+        if (! in_array($request->button_clicked, ['btn-approval', 'btn-revision', 'btn-delete'], true)) {
+            throw ValidationException::withMessages([
+                'button_clicked' => 'An approval, revision, or delete action is required.',
+            ]);
+        }
+
+        $paths = DB::transaction(function () use ($request, $inbound): array {
+            $lockedInbound = EnterRequest::query()
+                ->whereKey($inbound->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ((int) $lockedInbound->status_id !== EnterRequestStatus::AUTHORIZATION) {
+                throw ValidationException::withMessages([
+                    'inbound' => 'Only an inbound awaiting manifest authorization can be changed here.',
+                ]);
             }
-        } elseif ($request->button_clicked == 'btn-revision')
-            $inbound->update(['status_id' => EnterRequestStatus::NEED_REVISION]);
-        else {
-            $inbound->update([
-                'status_id' => EnterRequestStatus::APPROVED,
-                'invoicing_date' => $request->invoicing_date,
+
+            if ($request->button_clicked === 'btn-delete') {
+                $outboundCount = $lockedInbound->Outbounds()->count();
+                if ($outboundCount > 0) {
+                    throw ValidationException::withMessages([
+                        'inbound' => "Cannot delete this inbound because it has $outboundCount outbound declaration(s).",
+                    ]);
+                }
+
+                if ($lockedInbound->WarehouseItems()->exists()) {
+                    throw ValidationException::withMessages([
+                        'inbound' => 'Cannot delete this inbound while warehouse stock rows exist.',
+                    ]);
+                }
+
+                $files = EnterRequestFile::query()
+                    ->where('enter_request_id', $lockedInbound->id)
+                    ->lockForUpdate()
+                    ->get();
+                $paths = $files->pluck('path')->filter()->values()->all();
+                $files->each->delete();
+                $lockedInbound->delete();
+
+                return $paths;
+            }
+
+            $lockedInbound->update([
+                'status_id' => $request->button_clicked === 'btn-revision'
+                    ? EnterRequestStatus::NEED_REVISION
+                    : EnterRequestStatus::APPROVED,
+                'invoicing_date' => $request->button_clicked === 'btn-approval'
+                    ? $request->invoicing_date
+                    : $lockedInbound->invoicing_date,
             ]);
 
+            return [];
+        });
+
+        if ($paths !== []) {
+            Storage::disk('public')->delete($paths);
         }
 
         return response()->json(['message' => 'Modified successfully', 'status' => 200]);
     }
-
 }

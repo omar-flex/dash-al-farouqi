@@ -14,6 +14,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use App\Models\EnterRequest;
+use App\Services\Inventory\InventoryAuditor;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,10 +38,14 @@ Route::middleware(['auth'])->group(function () {
         ];
     });
 
-    Route::post('/check-remaining-quantity', function () {
-        Artisan::call('app:check-remaining-quantity');
-        return response()->json(['message' => 'Remaining quantities updated successfully!']);
-    })->name('check.remaining.quantity');
+    Route::post('/check-remaining-quantity', function (InventoryAuditor $auditor) {
+        $report = $auditor->run();
+
+        return response()->json([
+            'message' => 'Read-only inventory audit completed. No quantities were changed.',
+            'summary' => $report['summary'] ?? null,
+        ]);
+    })->middleware('role:administrator')->name('check.remaining.quantity');
 
     Route::get('/', [DashboardController::class, 'index']);
 
@@ -48,7 +53,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('customers', CustomerController::class);
     Route::resource('companies', CompanyController::class);
-
 
     Route::get('products-search', [ProductController::class, 'search'])->name('products.search');
     Route::resource('products', ProductController::class);
@@ -76,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::name('operation-management.')
         ->prefix('operation-management/')
         ->group(function () {
-            //enter_requests
+            // enter_requests
             Route::resource('enter_requests', EnterRequestController::class);
             Route::post('/enter_requests/{id}/cars/store', [EnterRequestController::class, 'cars'])->name('enter_requests.cars.store');
             Route::post('/enter_requests/{id}/products/store', [EnterRequestController::class, 'products'])->name('enter_requests.products.store');
@@ -85,10 +89,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('inbounds/{id}/receipt-delivery-commitment-form/pdf', [EnterRequestController::class, 'pdfForm'])->name('receipt-delivery-commitment-form.pdf');
             Route::post('/enter_requests/{id}/validations/store', [EnterRequestController::class, 'validations'])->name('enter_requests.validations.store');
 
-            //outbound
+            // outbound
             Route::resource('outbounds', OutboundsController::class);
             Route::post('/outbounds/{id}/cars/store', [OutboundsController::class, 'cars'])->name('outbounds.cars.store');
-            Route::get('/outbounds/{id}/products/{product_id}', [OutboundsController::class, 'product'])->name('outbounds.products.info');
             Route::post('/outbounds/{id}/products/store', [OutboundsController::class, 'products'])->name('outbounds.products.store');
             Route::delete('outbounds/files/{id}', [OutboundsController::class, 'fileDelete'])->name('outbounds.files.delete');
             Route::get('outbounds/{id}/pdf', [OutboundsController::class, 'pdf'])->name('outbounds.pdf');
@@ -132,4 +135,4 @@ Route::get('/error', function () {
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

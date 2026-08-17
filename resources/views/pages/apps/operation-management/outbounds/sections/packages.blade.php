@@ -1,15 +1,15 @@
 <style>
-    .span_error {
+    .product-validation-error {
         font-size: 10px;
     }
 </style>
 @php
-    if(!auth()->user()->hasRole('administrator') && ($outbound->status_id == \App\Models\OutboundStatus::VALIDATION || $outbound->status_id == \App\Models\OutboundStatus::AUTHORIZATION))
-        $disabled  = 'disabled';
-    else
-        $disabled  = null;
-if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
- $disabled  = 'disabled';
+    $canEditProducts = auth()->user()->can('edit_outbounds')
+        && in_array((int) $outbound->status_id, [
+            \App\Models\OutboundStatus::WH_RELEASE_PRODUCT,
+            \App\Models\OutboundStatus::NEED_REVISION,
+        ], true);
+    $disabled = !$canEditProducts;
 @endphp
 
 <div class="card card-flush mb-6 mb-xl-9" id="product_items">
@@ -24,13 +24,14 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
             <div class="card-toolbar">
                 @if(!$disabled)
                     <input type="submit" class="btn btn-light-success btn-sm float-end mx-2" value="save"
-                           id="btn-submit">
+                           id="products-submit" data-product-action="submit">
                     <input type="submit" class="btn btn-light-warning btn-sm float-end" value="Save as Draft"
-                           id="btn-draft">
+                           id="products-draft" data-product-action="draft">
                 @endif
             </div>
         </div>
         <div class="card-body p-9 pt-4">
+            <div id="product-errors" class="alert alert-danger d-none" role="alert" aria-live="polite"></div>
             <div class="row px-3">
                 <div class="col-3 mb-3">
                     <label class="fw-semibold fs-7 mb-3  @if(!$disabled) required @endif" title="Product">
@@ -79,220 +80,207 @@ if($outbound->status_id == \App\Models\OutboundStatus::APPROVED)
 </div>
 @push('scripts')
     <script>
-        function initSelect2() {
-            $('.products,.cars').select2();
+        $(function () {
+        const outboundPackageQuantity = Number(@json((float) $outbound->quantity_packages));
+        let productFormAction = 'draft';
+
+        function productRows() {
+            return $('#formProducts').find('[data-repeater-products-list] > [data-repeater-products-item]');
         }
 
-        function getProductsInfo(product, is_edit = true) {
-            let product_id = product.val();
-            let batch_number = product.find('option:selected').attr('data-batch-number');
-            let parent = product.parent().parent()
-            $.ajax({
-                url: '/operation-management/outbounds/{{$outbound->id}}/products/' + product_id + '?batch_number=' + batch_number,
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    parent.find('.warehouse_item_ids').val(data.id).attr('title', data.id)
-                    parent.find('.barcode').val(data.product.barcode).attr('title', data.product.barcode)
-                    parent.find('.unit_measure').val(data.product.unit_measure.name).attr('title', data.product.unit_measure.name)
-                    parent.find('.batch_number').val(data.batch_number).attr('title', data.batch_number)
-                    if (is_edit) {
-                        parent.find('.quantities').attr('max', data.quantity).val(data.quantity).attr('title', data.quantity)
-                        parent.find('.other_quantities').attr('max', data.other_quantity).val(data.other_quantity).attr('title', data.other_quantity)
-                    }
-                    parent.find('.location').val(data.location).attr('title', data.location)
-                },
-                error: function (xhr, status, error) {
-                    toastr.error(xhr.status + ' : ' + error);
+        function reindexProductRows() {
+            productRows().each(function (index) {
+                $(this).find('[data-field]').each(function () {
+                    $(this).attr('name', `items[${index}][${$(this).data('field')}]`);
+                });
+            });
+        }
+
+        function initProductSelects(scope = document) {
+            $(scope).find('.warehouse-items,.cars').each(function () {
+                if (!$(this).hasClass('select2-hidden-accessible')) {
+                    $(this).select2({width: '100%'});
                 }
             });
+        }
+
+        function setWarehouseItemDetails(select) {
+            const row = select.closest('[data-repeater-products-item]');
+            const option = select.find('option:selected');
+            let available = Number(option.attr('data-available') || 0);
+            let otherAvailable = Number(option.attr('data-other-available') || 0);
+
+            row.find('.barcode').val(option.attr('data-barcode') || '');
+            row.find('.batch_number').val(option.attr('data-batch-number') || '');
+            row.find('.unit_measure').val(option.attr('data-unit-measure') || '');
+            row.find('.location').val(option.attr('data-location') || '');
+            row.find('.quantities').attr('max', available > 0 ? available : 0);
+            row.find('.other_quantities').attr('max', otherAvailable > 0 ? otherAvailable : 0);
         }
 
         function sumQuantities() {
             let sum = 0;
-            document.querySelectorAll('input[name="quantities[]"]').forEach(input => {
-                sum += parseFloat(input.value) || 0;
+            productRows().find('[data-field="quantity"]').each(function () {
+                sum += Number($(this).val()) || 0;
             });
-            return parseFloat(sum.toFixed(3));
+            return Number(sum.toFixed(3));
         }
 
         function checkVariantDetectability() {
-            if ($('[data-repeater-products-item]').length == 1) {
-                $('[data-repeater-products-delete]').prop('disabled', true).addClass('disabled');
-            } else {
-                $('[data-repeater-products-delete]').prop('disabled', false).removeClass('disabled');
-            }
+            const onlyOneRow = productRows().length === 1;
+            $('#formProducts').find('[data-repeater-products-delete]')
+                .prop('disabled', onlyOneRow)
+                .toggleClass('disabled', onlyOneRow);
         }
 
-        $(document).ready(function () {
+        function clearValidationErrors() {
+            const form = $('#formProducts');
+            form.find('.product-validation-error').remove();
+            form.find('#product-errors').empty().addClass('d-none');
+        }
 
-            @isset($warehouseItems)
-            $('#product_items .products').each(function () {
-                const selectedOption = $(this).find('option:selected[data-selected="true"]');
-                if (selectedOption.length > 0) {
-                    getProductsInfo($(this), false);
+        function showValidationErrors(errors) {
+            clearValidationErrors();
+            $.each(errors || {}, function (key, messages) {
+                const parts = key.split('.');
+                const message = Array.isArray(messages) ? messages[0] : messages;
+                let target = $();
+
+                if (parts[0] === 'items' && parts.length >= 3) {
+                    target = productRows().eq(Number(parts[1])).find(`[data-field="${parts[2]}"]`).parent().last();
                 }
-            });
-            @endisset
 
-            $(document).on('change', '.products', function (e) {
-                e.preventDefault();
-                getProductsInfo($(this), true)
-            });
-
-
-            $("[data-repeater-products-create]").click(function () {
-                let repeaterList = $("[data-repeater-products-list]");
-                let newItem = repeaterList.find("[data-repeater-products-item]:first").clone();
-
-                newItem.find("input").val("");
-                newItem.find("select").prop("selectedIndex", 0);
-                newItem.find('.select2-container').remove();
-                newItem.find('.suggestions').empty();
-                newItem.find('.span_error').each(function () {
-                    $(this).remove()
-                });
-                repeaterList.append(newItem);
-                initSelect2();
-                checkVariantDetectability();
-            });
-            let clickedButton = null;
-
-            $('input[type="submit"]').click(function () {
-                clickedButton = $(this).attr('id');
-            });
-            $(document).on("click", "[data-repeater-products-delete]", function () {
-                if ($('[data-repeater-products-item]').length > 1) {
-                    $(this).closest("[data-repeater-products-item]").remove();
-                }
-                checkVariantDetectability();
-            });
-            initSelect2()
-            $('#formProducts').submit(function (e) {
-                e.preventDefault();
-                $(".span_error").each(function () {
-                    $(this).remove()
-                });
-                $("#btn-submit,#btn-draft").prop("disabled", true)
-                if (clickedButton === 'btn-submit') {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        html: "<span> You won't be able to <span class='text-danger'> Manifest Validation! </span> </span>",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, change it!'
-                    }).then(function (result) {
-                        if (result.value) {
-                            if (sumQuantities() !== {{$outbound->quantity_packages}}) {
-                                toastr.error('Quantity Product (' + sumQuantities() + ') Must equal packages Count ({{$outbound->quantity_packages}})')
-                                $("#btn-submit,#btn-draft").prop("disabled", false)
-                                return false;
-                            }
-                            let form = $("#formProducts");
-                            let formData = new FormData(form[0]);
-                            if (clickedButton) {
-                                formData.append('button_clicked', clickedButton);
-                            }
-                            let url = form.attr('action');
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: formData,
-                                dataType: "json",
-                                contentType: false,
-                                cache: false,
-                                processData: false,
-                                success: function (data) {
-                                    if (data.status === 422) {
-                                        $("#btn-submit,#btn-draft").prop("disabled", false)
-                                        $.each(data.errors, function (index, value) {
-                                            let error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                            let repeaterList = $("[data-repeater-products-list]");
-                                            if (index.split('.').length > 1) {
-                                                const parts = index.split('.');
-                                                let line = parts[1];
-                                                let name = parts[0] + '[]';
-                                                repeaterList.children().eq(line).find('[name="' + name + '"]').parent().last().append(error)
-                                            } else {
-                                                let input = $('[name="' + index + '"]').parent().last()
-                                                if (input.length > 0) {
-                                                    input.append(error)
-                                                } else {
-                                                    $('#error').append(error)
-                                                }
-                                            }
-                                        });
-                                        toastr.error('Oops,there were an errors...');
-                                    } else {
-                                        //$('#product_items').empty().append(data.html)
-                                        toastr.success(data.message);
-                                        location.reload(true);
-
-                                    }
-                                },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    $("#btn-submit,#btn-draft").prop("disabled", false)
-                                    toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
-                                }
-                            });
-                        } else {
-                            $("#btn-submit,#btn-draft").prop("disabled", false)
-                        }
-                    });
+                if (target.length) {
+                    $('<span>', {
+                        class: 'text-danger product-validation-error',
+                        text: String(message),
+                    }).appendTo(target);
                 } else {
-                    let form = $(this);
-                    let formData = new FormData(this);
-                    if (clickedButton) {
-                        formData.append('button_clicked', clickedButton);
+                    const summary = $('#formProducts').find('#product-errors').removeClass('d-none');
+                    $('<div>', {
+                        class: 'product-validation-error',
+                        text: String(message),
+                    }).appendTo(summary);
+                }
+            });
+            toastr.error('Please correct the highlighted inventory lines.');
+        }
+
+        function setProductButtonsDisabled(disabled) {
+            $('#formProducts').find('[data-product-action]').prop('disabled', disabled);
+        }
+
+        function submitProductForm(action) {
+            const form = $('#formProducts');
+            reindexProductRows();
+            const formData = new FormData(form[0]);
+            formData.set('action', action);
+
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    if (data.status === 422) {
+                        setProductButtonsDisabled(false);
+                        showValidationErrors(data.errors);
+                        return;
                     }
-                    let url = form.attr('action');
 
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: formData,
-                        dataType: "json",
-                        contentType: false,
-                        cache: false,
-                        processData: false,
-                        success: function (data) {
-                            if (data.status === 422) {
-                                $("#btn-submit,#btn-draft").prop("disabled", false)
-                                $.each(data.errors, function (index, value) {
-                                    let error = '<span class="text-danger span_error"> ' + value + '</span>'
-                                    let repeaterList = $("[data-repeater-products-list]");
-                                    if (index.split('.').length > 1) {
-                                        const parts = index.split('.');
-                                        let line = parts[1];
-                                        let name = parts[0] + '[]';
-                                        repeaterList.children().eq(line).find('[name="' + name + '"]').parent().last().append(error)
-                                    } else {
-                                        let input = $('[name="' + index + '"]').parent().last()
-                                        if (input.length > 0) {
-                                            input.append(error)
-                                        } else {
-                                            $('#error').append(error)
-                                        }
-                                    }
-                                });
-                                toastr.error('Oops,there were an errors...');
-                            } else {
-                                //$('#product_items').empty().append(data.html)
-                                toastr.success(data.message);
-                                location.reload(true);
+                    toastr.success(data.message);
+                    location.reload(true);
+                },
+                error: function (xhr) {
+                    setProductButtonsDisabled(false);
+                    if (xhr.status === 422) {
+                        showValidationErrors(xhr.responseJSON?.errors);
+                        return;
+                    }
+                    toastr.error(xhr.responseJSON?.message || xhr.responseJSON?.exception || `${xhr.status}: Request failed`);
+                }
+            });
+        }
 
-                            }
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            $("#btn-submit,#btn-draft").prop("disabled", false)
-                            toastr.error(xhr.status + ' : ' + xhr.responseJSON.exception);
-                        }
-                    });
+            reindexProductRows();
+            initProductSelects();
+            checkVariantDetectability();
+
+            $('#formProducts').on('change', '.warehouse-items', function () {
+                setWarehouseItemDetails($(this));
+            });
+
+            $('#formProducts').on('click', '[data-repeater-products-create]', function () {
+                const repeaterList = $('#formProducts').find('[data-repeater-products-list]');
+                const newItem = productRows().first().clone(false, false);
+
+                newItem.find('.select2-container').remove();
+                newItem.find('select').removeClass('select2-hidden-accessible').removeAttr('data-select2-id aria-hidden tabindex').val('');
+                newItem.find('option').removeAttr('data-select2-id');
+                newItem.find('input').val('');
+                newItem.find('[data-field="id"]').val('');
+                newItem.attr('data-original-warehouse-item-id', '');
+                newItem.attr('data-original-quantity', '0');
+                newItem.attr('data-original-other-quantity', '0');
+                newItem.find('.product-validation-error').remove();
+                repeaterList.append(newItem);
+
+                reindexProductRows();
+                initProductSelects(newItem);
+                checkVariantDetectability();
+            });
+
+            $('#formProducts').on('click', '[data-repeater-products-delete]', function () {
+                if (productRows().length > 1) {
+                    $(this).closest('[data-repeater-products-item]').remove();
+                    reindexProductRows();
+                }
+                checkVariantDetectability();
+            });
+
+            $('#formProducts').on('click', '[data-product-action]', function () {
+                productFormAction = $(this).data('product-action');
+            });
+
+            $('#formProducts').on('submit', function (event) {
+                event.preventDefault();
+                const submitterAction = $(event.originalEvent?.submitter).data('product-action');
+                const action = submitterAction || productFormAction;
+                clearValidationErrors();
+                setProductButtonsDisabled(true);
+
+                if (action !== 'submit') {
+                    submitProductForm(action);
+                    return;
                 }
 
+                const productQuantity = sumQuantities();
+                if (Math.abs(productQuantity - outboundPackageQuantity) > 0.0005) {
+                    showValidationErrors({
+                        items: [`Product quantity (${productQuantity}) must equal package count (${outboundPackageQuantity}).`],
+                    });
+                    setProductButtonsDisabled(false);
+                    return;
+                }
 
+                Swal.fire({
+                    title: 'Submit inventory release?',
+                    text: 'The inventory lines will be sent to manifest validation.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, submit'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        submitProductForm(action);
+                    } else {
+                        setProductButtonsDisabled(false);
+                    }
+                });
             });
         });
     </script>

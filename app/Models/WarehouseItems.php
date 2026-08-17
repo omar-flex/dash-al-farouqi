@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Inventory\InventoryBalanceCalculator;
 use Arr;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,9 +31,10 @@ class WarehouseItems extends Model
         if ($id) {
             return OutboundWarehouseItems::where('warehouse_item_id', $id)
                 ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
-                ->whereIn('outbounds.status_id', [OutboundStatus::VALIDATION, OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->whereIn('outbounds.status_id', InventoryBalanceCalculator::OFFICIAL_STATUSES)
                 ->sum('quantity');
         }
+
         return 0;
     }
 
@@ -42,9 +44,10 @@ class WarehouseItems extends Model
         if ($id) {
             return OutboundWarehouseItems::where('warehouse_item_id', $id)
                 ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
-                ->whereIn('outbounds.status_id', [OutboundStatus::VALIDATION, OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->whereIn('outbounds.status_id', InventoryBalanceCalculator::OFFICIAL_STATUSES)
                 ->sum('custom_value');
         }
+
         return 0;
     }
 
@@ -54,9 +57,10 @@ class WarehouseItems extends Model
         if ($id) {
             return OutboundWarehouseItems::where('warehouse_item_id', $id)
                 ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
-                ->whereIn('outbounds.status_id', [OutboundStatus::VALIDATION, OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->whereIn('outbounds.status_id', InventoryBalanceCalculator::OFFICIAL_STATUSES)
                 ->sum('outbound_warehouse_items.gross_weight');
         }
+
         return 0;
     }
 
@@ -66,10 +70,11 @@ class WarehouseItems extends Model
         if ($id) {
             return OutboundWarehouseItems::where('warehouse_item_id', $id)
                 ->leftJoin('outbounds', 'outbounds.id', '=', 'outbound_warehouse_items.outbound_id')
-                ->whereIn('outbounds.status_id', [OutboundStatus::AUTHORIZATION, OutboundStatus::APPROVED])
+                ->whereIn('outbounds.status_id', InventoryBalanceCalculator::OFFICIAL_STATUSES)
                 ->sum('other_quantity');
 
         }
+
         return 0;
     }
 

@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\OutboundWarehouseItems;
-use App\Models\WarehouseItems;
+use App\Services\Inventory\InventoryAuditor;
 use Illuminate\Console\Command;
 
 class CheckRemainingQuantity extends Command
@@ -20,24 +19,23 @@ class CheckRemainingQuantity extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Deprecated read-only alias for inventory:audit';
 
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(InventoryAuditor $auditor): int
     {
-        OutboundWarehouseItems::whereNull('outbound_id')->delete();
-        WarehouseItems::get()->each(function ($items) {
-            $sum_remaining_quantity = $items->quantity - $items->OutboundWarehouseItems->sum('quantity');
-            $sum_remaining_quantity_other_quantity = $items->other_quantity - $items->OutboundWarehouseItems->sum('other_quantity');
-            $items->update([
-                'remaining_quantity' => max($sum_remaining_quantity, 0),
-                'remaining_other_quantity' => max($sum_remaining_quantity_other_quantity, 0),
-                'is_status' => max($sum_remaining_quantity, 0) > 0 ? 1 : 0,
-            ]);
-        });
+        $this->components->warn(
+            'This command is deprecated and read-only. Use inventory:audit --format=json instead.',
+        );
 
-        $this->info('Done');
+        $report = $auditor->run();
+        $this->line(json_encode([
+            'read_only' => true,
+            'summary' => $report['summary'],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+
+        return self::SUCCESS;
     }
 }

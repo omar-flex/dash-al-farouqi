@@ -4,7 +4,6 @@ namespace App\Http\Requests\OperationManagement;
 
 use App\Http\Requests\DefaultRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CarsRequest extends FormRequest
 {
@@ -20,10 +19,10 @@ class CarsRequest extends FormRequest
             'seal_numbers.*' => 'nullable|string',
 
             'statuses' => 'required|nullable|array|min:1',
-            'statuses.*' => 'required|nullable',
+            'statuses.*' => 'required|in:0,1',
 
             'tracking_devices' => 'nullable|sometimes|array|min:1',
-            'tracking_devices.*' => 'nullable|sometimes',
+            'tracking_devices.*' => 'nullable|sometimes|in:0,1',
         ];
 
         if ($this->routeIs('operation-management.outbounds.cars.store')) {
@@ -33,6 +32,9 @@ class CarsRequest extends FormRequest
 
                 'seal_numbers' => 'nullable|array|min:1',
                 'seal_numbers.*' => 'nullable|string',
+
+                'car_ids' => 'nullable|array',
+                'car_ids.*' => 'nullable|integer|distinct',
             ];
         }
 

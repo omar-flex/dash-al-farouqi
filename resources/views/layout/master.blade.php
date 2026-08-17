@@ -115,9 +115,9 @@
             e.preventDefault();
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: 'This will trigger the process to check remaining quantities.',
-                icon: 'warning',
+                title: 'Run inventory audit?',
+                text: 'This is a read-only check. It will not change stock quantities.',
+                icon: 'info',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, proceed',
                 cancelButtonText: 'Cancel',
@@ -125,8 +125,8 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Processing...',
-                        text: 'Please wait while we check the quantities.',
+                        title: 'Auditing...',
+                        text: 'Please wait while inventory records are checked.',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -142,7 +142,7 @@
                         success: function (response) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Done!',
+                                title: 'Audit complete',
                                 text: response.message,
                                 confirmButtonText: 'OK'
                             });
@@ -151,7 +151,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: 'Something went wrong while performing the operation.',
+                                text: 'Something went wrong while running the read-only audit.',
                                 confirmButtonText: 'OK'
                             });
                             console.error(xhr.responseText);

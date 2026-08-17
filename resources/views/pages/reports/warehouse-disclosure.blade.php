@@ -13,6 +13,12 @@
         .odd {
             background-color: rgba(114, 57, 234, 0.35) !important;
         }
+
+        .over-allocated {
+            background-color: #f8d7da !important;
+            color: #842029 !important;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="container container-xxl mt-2" style="max-width: 1800px">
@@ -66,105 +72,69 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($customers as $customer)
-            @php
-                $validInbounds = $customer->getInbounds()->filter(function ($inbound) {
-                    return $inbound->WarehouseItems->contains(function ($item) {
-                        return $item->quantity - $item->SumOutboundItems() > 0;
-                    });
-                });
-            @endphp
+        @foreach($customerGroups as $customer)
+            <tr>
+                <td colspan="14" style="background: #0B0C10; color: #fff; font-size: 20px">
+                    {{ $customer->name }} - {{ $customer->tax_number }}
+                </td>
+            </tr>
 
-            @if($validInbounds->count() > 0)
-                <tr>
-                    <td colspan="14" style="background: #0B0C10; color: #fff; font-size: 20px">
-                        {{$customer->name}} - {{$customer->tax_number}}
-                    </td>
-                </tr>
+            <tr style="background: #eaeaea; font-weight: bold;">
+                <td colspan="3"></td>
+                <td class="text-danger">{{ $customer->total_quantity }}</td>
+                <td class="text-danger">{{ $customer->total_remaining }}</td>
+                <td class="text-danger">{{ number_format($customer->total_custom_value, 2) }}</td>
+                <td class="text-danger">{{ number_format($customer->total_gross_weight, 2) }}</td>
+                <td colspan="7"></td>
+            </tr>
+
+            @foreach($customer->items as $item)
                 @php
-                    $count = 1;
-                    $totalQuantity = 0;
-                    $totalRemaining = 0;
-                    $totalCustomValue = 0;
-                    $totalGrossWeight = 0;
+                    $loopClass = $item->remaining_quantity < 0
+                        ? 'over-allocated'
+                        : ($loop->iteration % 2 === 0 ? 'odd' : '');
                 @endphp
-
-                @foreach($validInbounds as $inbound)
-                    @foreach($inbound->WarehouseItems as $item)
-                        @php
-                            $remaining = $item->quantity - $item->SumOutboundItems();
-                            $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue();
-                            $remaining_cross_weight =  $item->gross_weight - $item->SumOutboundGrossWeight()
-                        @endphp
-                        @if($remaining > 0)
-                            @php
-                                $totalQuantity += $item->quantity;
-                                $totalRemaining += $remaining;
-                                $totalCustomValue += $remaining_custom_value;
-                                $totalGrossWeight += $remaining_cross_weight;
-                            @endphp
+                <tr>
+                    <td class="{{ $loopClass }}">{{ $loop->iteration }}</td>
+                    <td class="{{ $loopClass }}">{{ $item->bound_number }}</td>
+                    <td class="{{ $loopClass }}" style="font-size:10px" width="400px">
+                        {{ $item->product_name }} - {{ $item->product_barcode }} - {{ $item->batch_number }}
+                    </td>
+                    <td class="{{ $loopClass }}">{{ $item->quantity }}</td>
+                    <td class="{{ $loopClass }}">
+                        {{ $item->remaining_quantity }}
+                        @if($item->remaining_quantity < 0)
+                            <span title="صرف زائد">⚠</span>
                         @endif
-                    @endforeach
-                @endforeach
-
-
-                <tr style="background: #eaeaea; font-weight: bold;">
-                    <td colspan="3"></td>
-                    <td class="text-danger">{{ $totalQuantity }}</td>
-                    <td class="text-danger">{{ $totalRemaining }}</td>
-                    <td class="text-danger"> {{ number_format($totalCustomValue ,2)}}</td>
-                    <td class="text-danger"> {{ number_format($totalGrossWeight ,2)}}</td>
-                    <td colspan="6"></td>
+                    </td>
+                    <td class="{{ $loopClass }}">{{ number_format($item->remaining_custom_value, 2) }}</td>
+                    <td class="{{ $loopClass }}">{{ number_format($item->remaining_gross_weight, 2) }}</td>
+                    <td class="{{ $loopClass }}">
+                        {{ \Carbon\Carbon::parse($item->inbound_date)->format('d/m/Y') }}
+                    </td>
+                    <td class="{{ $loopClass }}">
+                        {{ $item->last_outbound_date
+                            ? \Carbon\Carbon::parse($item->last_outbound_date)->format('d/m/Y')
+                            : '-' }}
+                    </td>
+                    <td class="{{ $loopClass }}">
+                        {{ \Carbon\Carbon::parse($item->inbound_date)->addYears(3)->format('d/m/Y') }}
+                    </td>
+                    <td class="{{ $loopClass }}">{{ $item->manifest_bound_number }}</td>
+                    <td class="{{ $loopClass }}">{{ $item->manifest_type_number }}</td>
+                    <td class="{{ $loopClass }}">{{ $item->manifest_year }}</td>
+                    <td class="{{ $loopClass }}">{{ $item->customs_entry_center }}</td>
                 </tr>
+            @endforeach
 
-                @foreach($validInbounds as $inbound)
-                    @foreach($inbound->WarehouseItems as $item)
-                        @if(($item->quantity - $item->SumOutboundItems()) > 0)
-                            @php
-                                $loopClass = $count % 2 == 0 ? 'odd' : '';
-                                $remaining = $item->quantity - $item->SumOutboundItems();
-                                $remaining_custom_value =  $item->custom_value - $item->SumOutboundCustomValue();
-                                $remaining_cross_weight =  $item->gross_weight - $item->SumOutboundGrossWeight();
-                            @endphp
-                            <tr>
-                                <td class="{{ $loopClass }}">{{$count}}</td>
-                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->bound_number }}</td>
-                                <td class="{{ $loopClass }}" style="font-size:10px" width="400px">
-                                    {{ $item->Product->name }} - {{ $item->Product->barcode }}
-                                    - {{ $item->batch_number }}
-                                </td>
-                                <td class="{{ $loopClass }}">{{ $item->quantity }}</td>
-                                <td class="{{ $loopClass }}">{{$remaining}}</td>
-                                <td class="{{ $loopClass }}">{{number_format($remaining_custom_value,2)}}</td>
-                                <td class="{{ $loopClass }}">{{number_format($remaining_cross_weight,2)}}</td>
-                                <td class="{{ $loopClass }}">
-                                    {{ \Carbon\Carbon::parse($item->EnterRequest->date)->format('d/m/Y') }}
-                                </td>
-                                <td class="{{ $loopClass }}">
-                                    {{ optional($item->EnterRequest->LastOutbound())->date
-                                        ? \Carbon\Carbon::parse($item->EnterRequest->LastOutbound()->date)->format('d/m/Y')
-                                        : '-' }}
-                                </td>
-                                <td class="{{ $loopClass }}">
-                                    {{ \Carbon\Carbon::parse($item->EnterRequest->date)->addYears(3)->format('d/m/Y') }}
-                                </td>
-                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_bound_number }}</td>
-                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_type_number }}</td>
-                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->manifest_year }}</td>
-                                <td class="{{ $loopClass }}">{{ $item->EnterRequest->customs_entry_center }}</td>
-                            </tr>
-                            @php ++$count; @endphp
-                        @endif
-                    @endforeach
-                @endforeach
-                <tr style="background: #eaeaea; font-weight: bold;">
-                    <td colspan="3"></td>
-                    <td class="text-danger">{{ $totalQuantity }}</td>
-                    <td class="text-danger">{{ $totalRemaining }}</td>
-                    <td class="text-danger"> {{ number_format($totalCustomValue ,2)}}</td>
-                    <td colspan="6"></td>
-                </tr>
-            @endif
+            <tr style="background: #eaeaea; font-weight: bold;">
+                <td colspan="3"></td>
+                <td class="text-danger">{{ $customer->total_quantity }}</td>
+                <td class="text-danger">{{ $customer->total_remaining }}</td>
+                <td class="text-danger">{{ number_format($customer->total_custom_value, 2) }}</td>
+                <td class="text-danger">{{ number_format($customer->total_gross_weight, 2) }}</td>
+                <td colspan="7"></td>
+            </tr>
         @endforeach
 
 
