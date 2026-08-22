@@ -22,11 +22,6 @@
                 $selectedAvailable = $selectedBalanceItem
                     ? (float) ($selectedBalanceItem->calculated_available_quantity ?? $selectedBalanceItem->remaining_quantity)
                     : null;
-                $selectedOtherAvailable = $selectedBalanceItem
-                    ? (float) ($selectedBalanceItem->calculated_available_other_quantity
-                        ?? $selectedBalanceItem->remaining_other_quantity
-                        ?? 0)
-                    : null;
             @endphp
 
             <div class="row px-3" data-repeater-products-item
@@ -56,7 +51,6 @@
                                     data-unit-measure="{{ $stockItem?->Product?->UnitMeasure?->name }}"
                                     data-location="{{ $stockLocation }}"
                                     data-available="{{ $stockItem->calculated_available_quantity ?? $stockItem->remaining_quantity }}"
-                                    data-other-available="{{ $stockItem->calculated_available_other_quantity ?? $stockItem->remaining_other_quantity ?? 0 }}"
                                     @selected($outboundItem?->warehouse_item_id === $stockItem->id)>
                                 {{ $stockItem?->Product?->name }}
                                 @if($stockItem->batch_number !== null && $stockItem->batch_number !== '')
@@ -82,8 +76,7 @@
                            class="form-control form-control-sm other_quantities"
                            data-field="other_quantity" placeholder="Other Qty"
                            value="{{ $outboundItem?->other_quantity }}"
-                           @disabled($disabled)
-                           @if($selectedOtherAvailable !== null) max="{{ $selectedOtherAvailable }}" @endif/>
+                           @disabled($disabled)/>
                 </div>
 
                 <div class="col mb-2">

@@ -108,14 +108,12 @@
             const row = select.closest('[data-repeater-products-item]');
             const option = select.find('option:selected');
             let available = Number(option.attr('data-available') || 0);
-            let otherAvailable = Number(option.attr('data-other-available') || 0);
 
             row.find('.barcode').val(option.attr('data-barcode') || '');
             row.find('.batch_number').val(option.attr('data-batch-number') || '');
             row.find('.unit_measure').val(option.attr('data-unit-measure') || '');
             row.find('.location').val(option.attr('data-location') || '');
             row.find('.quantities').attr('max', available > 0 ? available : 0);
-            row.find('.other_quantities').attr('max', otherAvailable > 0 ? otherAvailable : 0);
         }
 
         function sumQuantities() {
