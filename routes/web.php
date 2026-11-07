@@ -12,6 +12,7 @@ use App\Http\Controllers\OperationManagement\EnterRequestController;
 use App\Http\Controllers\OperationManagement\OutboundsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseManagement\LocationController;
+use App\Http\Controllers\WarehouseManagement\ProductTraceabilityController;
 use App\Http\Controllers\WarehouseManagement\WarehouseController;
 use App\Models\EnterRequest;
 use App\Services\Inventory\InventoryAuditor;
@@ -68,6 +69,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('warehouses-report', [WarehouseController::class, 'report'])->name('warehouses.report');
     Route::get('warehouses-report/products', [WarehouseController::class, 'reportDisclosure'])->name('warehouses.report.products');
+    Route::get('warehouses-report/product-traceability', ProductTraceabilityController::class)->name('warehouses.traceability');
+    Route::get('warehouses-report/product-traceability/products', [ProductTraceabilityController::class, 'products'])->name('warehouses.traceability.products');
 
     Route::name('manifest-authorizations.')
         ->prefix('manifest-authorizations')

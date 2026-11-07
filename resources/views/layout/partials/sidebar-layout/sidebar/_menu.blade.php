@@ -144,6 +144,15 @@
                             <span class="menu-title fs-7">Warehouse Report</span>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('warehouses.traceability') ? 'active' : '' }}"
+                           href="{{ route('warehouses.traceability') }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-route"></i>
+                            </span>
+                            <span class="menu-title fs-7">Product Traceability</span>
+                        </a>
+                    </div>
                 @endcanany
 
             @canany(['list_products'])
