@@ -3,11 +3,27 @@
 namespace App\Services\Inventory;
 
 use App\Models\EnterRequestStatus;
+use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ProductTraceabilityReport
 {
+    private const INBOUND_STATUSES = [
+        EnterRequestStatus::VALIDATION,
+        EnterRequestStatus::AUTHORIZATION,
+        EnterRequestStatus::NEED_REVISION,
+        EnterRequestStatus::APPROVED,
+    ];
+
+    public function productsForCustomer(int $customerId): EloquentBuilder
+    {
+        return Product::query()->whereHas('Items.EnterRequest', fn (EloquentBuilder $query) => $query
+            ->where('customer_id', $customerId)
+            ->whereIntegerInRaw('status_id', self::INBOUND_STATUSES));
+    }
+
     public function movements(array $filters): Builder
     {
         $stock = DB::table('warehouse_items as stock')
@@ -19,13 +35,8 @@ class ProductTraceabilityReport
                 $join->on('warehouse.id', '=', DB::raw('COALESCE(hall.warehouse_id, inbound.warehouse_id)'));
             })
             ->where('stock.product_id', $filters['product_id'])
-            ->whereIntegerInRaw('inbound.status_id', [
-                EnterRequestStatus::VALIDATION,
-                EnterRequestStatus::AUTHORIZATION,
-                EnterRequestStatus::NEED_REVISION,
-                EnterRequestStatus::APPROVED,
-            ])
-            ->when($filters['customer_id'] ?? null, fn (Builder $query, $id) => $query->where('inbound.customer_id', $id))
+            ->where('inbound.customer_id', $filters['customer_id'])
+            ->whereIntegerInRaw('inbound.status_id', self::INBOUND_STATUSES)
             ->when($filters['warehouse_id'] ?? null, fn (Builder $query, $id) => $query->where('warehouse.id', $id))
             ->when(isset($filters['batch_number']), fn (Builder $query) => $query->where('stock.batch_number', $filters['batch_number']))
             ->select([
@@ -41,10 +52,9 @@ class ProductTraceabilityReport
             ]);
 
         $inbounds = (clone $stock)
-            ->leftJoin('enter_request_statuses as status', 'status.id', '=', 'inbound.status_id')
             ->where('inbound.date', '<=', $filters['to_date'])
             ->selectRaw('inbound.date as movement_date, 1 as direction, stock.id as movement_id, NULL as outbound_id, NULL as outbound_reference, NULL as recorded_location')
-            ->addSelect('status.name as status_name', 'stock.quantity', 'stock.other_quantity', 'stock.other_quantity as balance_other_quantity');
+            ->addSelect('inbound.status_id', 'stock.quantity', 'stock.other_quantity', 'stock.other_quantity as balance_other_quantity');
 
         $outbounds = $stock
             ->join('outbound_warehouse_items as movement', 'movement.warehouse_item_id', '=', 'stock.id')
@@ -52,7 +62,6 @@ class ProductTraceabilityReport
                 $join->on('outbound.id', '=', 'movement.outbound_id')
                     ->on('outbound.enter_request_id', '=', 'inbound.id');
             })
-            ->leftJoin('outbound_statuses as status', 'status.id', '=', 'outbound.status_id')
             ->whereIntegerInRaw('outbound.status_id', InventoryBalanceCalculator::OFFICIAL_STATUSES)
             ->where('outbound.date', '<=', $filters['to_date'])
             ->selectRaw('outbound.date as movement_date, -1 as direction')
@@ -61,7 +70,7 @@ class ProductTraceabilityReport
                 'outbound.id as outbound_id',
                 'outbound.outbound_number as outbound_reference',
                 'movement.location as recorded_location',
-                'status.name as status_name',
+                'outbound.status_id',
                 'movement.quantity',
                 'movement.other_quantity',
             )

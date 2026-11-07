@@ -10,6 +10,8 @@ use App\Services\Inventory\ProductTraceabilityReport;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -19,20 +21,34 @@ class ProductTraceabilityController extends Controller
     {
         abort_unless($request->user()->can('warehouses_report'), 403);
 
-        $request->mergeIfMissing(['to_date' => now()->toDateString()]);
-        $filters = $request->validate([
-            'product_id' => ['nullable', 'required_if:format,csv', 'integer', 'exists:products,id'],
-            'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+        $query = $request->query() + ['to_date' => now()->toDateString()];
+        $validator = Validator::make($query, [
+            'product_id' => ['nullable', 'required_if:format,csv', 'integer'],
+            'customer_id' => ['nullable', 'required_with:product_id,format', 'integer', 'exists:customers,id'],
             'warehouse_id' => ['nullable', 'integer', 'exists:warehouses,id'],
             'batch_number' => ['nullable', 'string', 'max:255'],
             'from_date' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:to_date'],
             'to_date' => ['required', 'date_format:Y-m-d'],
             'format' => ['nullable', 'in:csv'],
+        ], [
+            'customer_id.required_with' => __('product_traceability.customer_required'),
+            'product_id.required_if' => __('product_traceability.product_required'),
         ]);
+        if ($validator->fails()) {
+            throw (new ValidationException($validator))->redirectTo(route('warehouses.traceability'));
+        }
+        $filters = $validator->validated();
 
         $product = isset($filters['product_id'])
-            ? Product::with('UnitMeasure:id,name')->findOrFail($filters['product_id'])
+            ? $report->productsForCustomer((int) $filters['customer_id'])->with('UnitMeasure:id,name')->find($filters['product_id'])
             : null;
+
+        if (isset($filters['product_id']) && ! $product) {
+            throw ValidationException::withMessages([
+                'product_id' => __('product_traceability.product_customer_mismatch'),
+            ])->redirectTo(route('warehouses.traceability'));
+        }
+
         $summary = null;
         $rows = null;
 
@@ -55,14 +71,20 @@ class ProductTraceabilityController extends Controller
         return view('pages.reports.product-traceability', compact('filters', 'product', 'summary', 'rows', 'customers', 'warehouses'));
     }
 
-    public function products(Request $request): JsonResponse
+    public function products(Request $request, ProductTraceabilityReport $report): JsonResponse
     {
         abort_unless($request->user()->can('warehouses_report'), 403);
 
-        $term = $request->validate(['q' => ['nullable', 'string', 'max:255']])['q'] ?? '';
+        $filters = $request->validate([
+            'customer_id' => ['required', 'integer', 'exists:customers,id'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ], ['customer_id.required' => __('product_traceability.customer_required')]);
+
+        $term = $filters['q'] ?? '';
         $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term).'%';
 
-        $products = Product::with('UnitMeasure:id,name')
+        $products = $report->productsForCustomer((int) $filters['customer_id'])
+            ->with('UnitMeasure:id,name')
             ->where(function ($query) use ($pattern): void {
                 $query->whereRaw("name LIKE ? ESCAPE '!'", [$pattern])
                     ->orWhereRaw("barcode LIKE ? ESCAPE '!'", [$pattern]);
@@ -90,19 +112,20 @@ class ProductTraceabilityController extends Controller
         return response()->streamDownload(function () use ($period, $product): void {
             $output = fopen('php://output', 'wb');
             fwrite($output, "\xEF\xBB\xBF");
-            fputcsv($output, [
-                'المنتج', 'الباركود', 'وحدة القياس', 'التاريخ', 'الحركة', 'مرجع الوارد', 'مرجع الصادر',
-                'الحالة', 'العميل', 'المستودع', 'الموقع', 'الدفعة', 'Qty', 'Other Qty',
-            ], escape: '');
+            $columns = [
+                'product', 'barcode', 'unit', 'date', 'movement', 'inbound_reference', 'outbound_reference',
+                'status', 'customer', 'warehouse', 'location', 'batch', 'qty', 'other_qty',
+            ];
+            fputcsv($output, array_map(fn (string $column) => __('product_traceability.'.$column), $columns), escape: '');
 
             $productFields = array_map($this->csvText(...), [$product->name, $product->barcode, $product->UnitMeasure?->name]);
             foreach ($period->cursor() as $row) {
                 $movementFields = array_map($this->csvText(...), [
                     $row->movement_date,
-                    (int) $row->direction === 1 ? 'وارد' : 'صادر',
+                    __((int) $row->direction === 1 ? 'product_traceability.received' : 'product_traceability.released'),
                     $row->inbound_reference,
                     $row->outbound_reference,
-                    $row->status_name,
+                    __('product_traceability.statuses.'.$row->status_id),
                     $row->customer_name,
                     $row->warehouse_code,
                     ProductTraceabilityReport::location($row),

@@ -100,7 +100,7 @@ Breadcrumbs::for('warehouse.report', function (BreadcrumbTrail $trail) {
 
 Breadcrumbs::for('warehouse.traceability', function (BreadcrumbTrail $trail) {
     $trail->parent('warehouse.report');
-    $trail->push('Product Traceability', route('warehouses.traceability'));
+    $trail->push(__('product_traceability.title'), route('warehouses.traceability'));
 });
 
 // Home > Dashboard > User Management

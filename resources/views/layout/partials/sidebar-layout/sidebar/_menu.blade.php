@@ -150,7 +150,7 @@
                             <span class="menu-icon">
                                 <i class="fa-solid fa-route"></i>
                             </span>
-                            <span class="menu-title fs-7">Product Traceability</span>
+                            <span class="menu-title fs-7">{{ __('product_traceability.title') }}</span>
                         </a>
                     </div>
                 @endcanany
